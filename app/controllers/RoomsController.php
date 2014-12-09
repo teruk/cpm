@@ -26,32 +26,12 @@ class RoomsController extends BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$room = new Room($input);
+		$room = new Room();
 
-		if (Input::get('beamer')==1)
-			$room->beamer = Input::get('beamer');
-		else 
-			$room->beamer = 0;
+		if ($room->register($input))
+			return Redirect::back()->with('message', 'Raum erfolgreich erstellt!');
 
-		if (Input::get('blackboard')==1)
-			$room->blackboard = Input::get('blackboard');
-		else
-			$room->blackboard = 0;
-
-		if (Input::get('overheadprojector')==1)
-			$room->overheadprojector = Input::get('overheadprojector');
-		else
-			$room->overheadprojector = 0;
-
-		if (Input::get('accessible')==1)
-			$room->accessible = Input::get('accessible');
-		else
-			$room->accessible = 0;
-		
-		if ( $room->save() )
-			return Redirect::route('rooms.index')->with('message', 'Raum erfolgreich erstellt!');
-		else
-			return Redirect::route('rooms.index')->withInput()->withErrors( $room->errors() );
+		return Redirect::back()->withInput()->withErrors( $room->errors() );
 	}
 
 	/**
@@ -77,31 +57,11 @@ class RoomsController extends BaseController {
 	public function update(Room $room)
 	{
 		$input = Input::all();
-		$room->fill($input);
-		if (Input::get('beamer')==1)
-			$room->beamer = Input::get('beamer');
-		else
-			$room->beamer = 0;
 
-		if (Input::get('blackboard')==1)
-			$room->blackboard = Input::get('blackboard');
-		else
-			$room->blackboard = 0;
-
-		if (Input::get('overheadprojector')==1)
-			$room->overheadprojector = Input::get('overheadprojector');
-		else
-			$room->overheadprojector = 0;
-
-		if (Input::get('accessible')==1)
-			$room->accessible = Input::get('accessible');
-		else
-			$room->accessible = 0;
- 
-		if ( $room->updateUniques() )
-			return Redirect::route('rooms.show', $room->id)->with('message', 'Der Raum wurde aktualisiert.');
-		else
-			return Redirect::route('rooms.show', array_get($room->getOriginal(), 'id'))->withInput()->withErrors( $room->errors() );
+		if ( $room->updateInformation($input) )
+			return Redirect::back()->with('message', 'Der Raum wurde aktualisiert.');
+		
+		return Redirect::back()->withInput()->withErrors( $room->errors() );
 	}
 
 	/**
