@@ -26,3 +26,49 @@ Route::get('overview/table_researchgroups/{turn}', array('as' => 'overview.table
 
 Route::get('overview/table_plannings', array('as' => 'overview.tablePl', 'uses' => 'OverviewController@tablePlannings'));
 Route::get('overview/table_plannings/{turn}', array('as' => 'overview.tablePlannings', 'uses' => 'OverviewController@getTablePlannings'));
+
+/**
+ * Schedule
+ */
+Route::get('overview/schedule', [
+	'as' => 'overview.default_schedule',
+	'uses' => 'ScheduleController@getDefaultSchedule'
+	]);
+
+Route::get('overview/schedule/{turn}/{degreecourse}/{semester}', [
+	'as' => 'overview.specific_schedule',
+	'uses' => 'ScheduleController@getSpecificSchedule'
+	]);
+
+Route::get('overview/schedule_generate', [
+	'as' => 'overview.generate_schedule',
+	'uses' => 'ScheduleController@generateSchedule'
+	]);
+
+Route::patch('overview/schedule', [
+	'as' => 'overview.grab_schedule',
+	'uses' => 'ScheduleController@grabSchedule'
+	]);
+
+/**
+ * Room Occupation
+ */
+Route::get('overview/room', [
+	'as' => 'overview.default_room',
+	'uses' => 'RoomOccupationController@getDefaultRoom'
+	]);
+
+Route::get('overview/room/{turn}/{room}', [
+	'as' => 'overview.specific_room',
+	'uses' => 'RoomOccupationController@getSpecificRoom'
+	]);
+
+Route::get('overview/room_generate', [
+	'as' => 'overview.generate_room',
+	'uses' => 'RoomOccupationController@generateRoom'
+	]);
+
+Route::patch('overview/room', [
+	'as' => 'overview.grab_room',
+	'uses' => 'RoomOccupationController@grabRoom'
+	]);

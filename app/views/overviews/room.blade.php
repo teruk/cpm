@@ -1,40 +1,5 @@
 @section('scripts')
-	<link rel="stylesheet" type="text/css" href="{{ url('calendar/fullcalendar.css')}}">
-	<script type="text/javascript" language="javascript" src="{{ url('calendar/lib/moment.min.js')}}"></script>
-	<script type="text/javascript" language="javascript" src="{{ url('calendar/lib/jquery-ui.custom.min.js')}}"></script>
-	<script type="text/javascript" language="javascript" src="{{ url('calendar/lang/de.js')}}"></script>
-	<script type="text/javascript" language="javascript" src="{{ url('calendar/fullcalendar.js')}}"></script>
-	
-	<script type="text/javascript" class="init">
-	
-		$(document).ready(function() {
-	
-		    // page is now ready, initialize the calendar...
-	
-		    $('#calendar').fullCalendar({
-		        // put your options and callbacks here
-		        header: {
-					left: '',
-					center: '',
-					right: ''
-				},
-		        lang: 'de',
-		    	defaultView: 'agendaWeek',
-		    	editable: false,
-		    	minTime: "08:00:00",
-		    	maxTime: "20:00:00",
-		    	axisFormat: 'HH:mm',
-		    	allDaySlot: false,
-		    	timezone: "Europe/Berlin",
-		    	columnFormat: "dddd",
-		    	weekends: false,
-		    	slotEventOverlap: true,
-		    	events: {{ json_encode($output) }}
-		    });
-	
-		});
-
-	</script>
+	@include('layouts.partials.calendar-script', ['weekends' => 'true'])
 @stop
 
 @section('breadcrumbs')
@@ -50,7 +15,7 @@
 	<h4>Raumbelegung {{ $room->name }} ({{ $room->location }}) im {{ $turn->name }}  {{ $turn->year }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['rooms.overview']]) }}
+			{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['overview.grab_room']]) }}
 			<div class="col-xs-2">
 			{{ Form::select('turn_id', $listofturns, $turn->id, array('id' => "turn_id", 'class' => "form-control input-sm"))}}
 			</div>

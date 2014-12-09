@@ -5,9 +5,9 @@
   		<li>{{ link_to_route('overview.tablePl', 'Aufstellung Veranstaltungen') }}</li>
       	<li>{{ link_to_route('mediumtermsplannings.index', 'Mittelfristge Lehrplanung') }}</li>
       	<li>{{ link_to_route('overview.exams', 'Prüfungen') }}</li>
-      	<li>{{ link_to_route('rooms.overview', 'Raumbelegung') }}</li>
+      	<li>{{ link_to_route('overview.default_room', 'Raumbelegung') }}</li>
       	<li>{{ link_to_route('overview.showRoomSearch', 'Raumsuche') }}</li>
-      	<li>{{ link_to_route('schedule', 'Stundenpläne') }}</li>
+      	<li>{{ link_to_route('overview.default_schedule', 'Stundenpläne') }}</li>
       	<li>{{ link_to_route('overview.shk', 'SHK-Übersicht') }}</li>
       	<li class="divider"></li>
         <li class="dropdown-header">Details</li>
