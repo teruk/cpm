@@ -24,17 +24,12 @@ class appointeddaysController extends BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$appointedday = new Appointedday($input);
-		$appointedday->read_more = (strlen($appointedday->content) > 120) ? substr($appointedday->content, 0, 120) : $appointedday->content;
-		if (Input::get('date') != "")
-		{
-			$appointedday->date = Input::get('date');
-		}
-		
-		if ( $appointedday->save() )
-			return Redirect::route('appointeddays.index')->with('message', 'Der Termin wurde erfolgreich erstellt!');
-		else
-			return Redirect::route('appointeddays.index')->withInput()->withErrors( $appointedday->errors() );
+		$appointedday = new Appointedday();
+
+		if ($appointedday->publish($input))
+			return Redirect::back()->with('message', 'Der Termin wurde erfolgreich erstellt!');
+
+		return Redirect::back()->withInput()->withErrors( $appointedday->errors() );
 	}
 
 	/**
@@ -47,13 +42,9 @@ class appointeddaysController extends BaseController {
 	public function show(Appointedday $appointedday)
 	{	
 		if (Entrust::hasRole('Admin') || Entrust::can('edit_appointedday'))
-		{
 			$this->layout->content = View::make('appointeddays.show', compact('appointedday'));
-		}
 		else
-		{
-			return Redirect::route('home')->with('error','Zugriff verweigert!');
-		}
+			return Redirect::back()->with('error','Zugriff verweigert!');
 	}
 
 	/**
@@ -78,14 +69,11 @@ class appointeddaysController extends BaseController {
 	public function update(Appointedday $appointedday)
 	{
 		$input = Input::all();
-		$appointedday->fill($input);
-		$appointedday->read_more = (strlen($appointedday->content) > 120) ? substr($appointedday->content, 0, 120) : $appointedday->content;
-		$appointedday->date = Input::get('date');
  
-		if ( $appointedday->updateUniques() )
-			return Redirect::route('appointeddays.show', $appointedday->id)->with('message', 'Der Termin wurde aktualisiert.');
-		else
-			return Redirect::route('appointeddays.show', array_get($appointedday->getOriginal(), 'id'))->withInput()->withErrors( $appointedday->errors() );
+		if ( $appointedday->updateInformation($input) )
+			return Redirect::back()->with('message', 'Der Termin wurde aktualisiert.');
+
+		return Redirect::back()->withInput()->withErrors( $appointedday->errors() );
 	}
 
 	/**
@@ -98,7 +86,7 @@ class appointeddaysController extends BaseController {
 	public function destroy(Appointedday $appointedday)
 	{
 		$appointedday->delete();
-		return Redirect::route('appointeddays.index')->with('message', 'Der Termin wurde erfolgreich gelöscht.');
+		return Redirect::back()->with('message', 'Der Termin wurde erfolgreich gelöscht.');
 	}
 
 }
