@@ -7,11 +7,12 @@
 						<tbody>
 							<tr>
 								<th>Nummer:</th>
-								<td colspan=2 align="right">
-									@if (Entrust::can('edit_planning_course_number') || Entrust::hasRole('Admin'))
+								<td colspan=2>
+									@if ($currentUser->can('edit_planning_course_number') || $currentUser->hasRole('Admin'))
 										{{ Form::input('text', 'course_number', $planning->course_number, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 									@else
-										{{ Form::input('text', 'course_number', $planning->course_number, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm', 'disabled' => true)) }}
+										{{ $planning->course_number }}
+										{{ Form::hidden('course_number', $planning->course_number)}}
 									@endif
 								</td>
 								<!-- <th>Modul:</th>
@@ -23,14 +24,16 @@
 							</tr>
 							<tr>
 								<th>Titel:</th>
-								<td colspan=5 align="right">
+								<td colspan=5>
 									@if (($course->course_type_id == 1 || $course->course_type_id == 4 || $course->course_type_id == 8 || $course->course_type_id == 9))
-										{{ Form::input('text', 'course_title', $planning->course_title, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm', 'disabled' => true)) }}
+										{{ $planning->course_title }}
+										{{ Form::hidden('course_title', $planning->course_title) }}
 									@else
-										@if (Entrust::hasRole('Admin') || Entrust::can('edit_planning'))
+										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
 											{{ Form::input('text', 'course_title', $planning->course_title, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ Form::input('text', 'course_title', $planning->course_title, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm', 'disabled' => true)) }}
+											{{ $planning->course_title }}
+											{{ Form::hidden('course_title', $planning->course_title) }}
 										@endif
 									@endif
 								</td>
@@ -39,14 +42,16 @@
 							</tr>
 							<tr>
 								<td><strong>EngTitel:</strong></td>
-								<td colspan=5 align="right">
+								<td colspan=5>
 									@if (($course->course_type_id == 1 || $course->course_type_id == 4 || $course->course_type_id == 8 || $course->course_type_id == 9))
-										{{ Form::input('text', 'course_title_eng', $planning->course_title_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm', 'disabled' => true)) }}
+										{{ $planning->course_title_eng }}
+										{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
 									@else
-										@if (Entrust::hasRole('Admin') || Entrust::can('edit_planning'))
+										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
 											{{ Form::input('text', 'course_title_eng', $planning->course_title_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ Form::input('text', 'course_title_eng', $planning->course_title_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm', 'disabled' => true)) }}
+											{{ $planning->course_title_eng }}
+											{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
 										@endif
 									@endif
 								</td>
@@ -54,22 +59,24 @@
 								<td align="right">{{ Form::select('language', Config::get('constants.language'), $planning->language, array('class' => 'form-control input-sm'))}}</td>
 							<tr>
 								<th>Zuständig:</th>
-								<td align="right">{{ $lists['departments'][$course->module->department_id] }}</td>
+								<td>{{ $lists['departments'][$course->module->department_id] }}</td>
 								
 								<th>VS:</th>
 								<td colspan=3 align="right">
-									@if (Entrust::hasRole('Admin') || Entrust::can('change_board_status'))
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('change_board_status'))
 										{{ Form::select('board_status', Config::get('constants.pl_board_status'),$planning->board_status, array('class' => 'form-control input-sm')) }}
 									@else
-										{{ Form::select('board_status', Config::get('constants.pl_board_status'),$planning->board_status, array('class' => 'form-control input-sm', 'disabled' => true)) }}
+										{{ Config::get('constants.pl_board_status')[$planning->board_status] }}
+										{{ Form::hidden('board_status', $planning->board_status) }}
 									@endif
 								</td>
 								<th>AB:</th>
 								<td colspan=1 align="right">
-									@if (Entrust::hasRole('Admin') || Entrust::can('change_rg_status'))
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('change_rg_status'))
 										{{ Form::select('researchgroup_status', Config::get('constants.pl_rgstatus'), $planning->researchgroup_status, array('class' => 'form-control input-sm')) }}
 									@else
-										{{ Form::select('researchgroup_status', Config::get('constants.pl_rgstatus'), $planning->researchgroup_status, array('class' => 'form-control input-sm', 'disabled' => true)) }}
+										{{ Config::get('constants.pl_rgstatus')[$planning->researchgroup_status] }}
+										{{ Form::hidden('researchgroup_status', $planning->researchgroup_status) }}
 									@endif
 								</td>
 								
@@ -79,13 +86,13 @@
 								<td colspan=7 align="right">{{ Form::textarea('comment', $planning->comment, array('rows' => 5, 'class' => 'form-control input-sm', 'style' => 'resize:none;')) }}</td>
 							</tr>
 							<tr>
-								<td><strong>Raum- und Zeitwunsch:</strong></td>
+								<td><strong>Raum- und Zeitwunsch*:</strong></td>
 								<td colspan=7 align="right">{{ Form::textarea('room_preference', $planning->room_preference, array('rows' => 5, 'class' => 'form-control input-sm', 'style' => 'resize:none;')) }}</td>
 							</tr>
 							<tr>
 								<td colspan=7>* erforderlich</td>
 								<td align="right">
-									@if (Entrust::can('edit_planning') || Entrust::hasRole('Admin'))
+									@if ($currentUser->can('edit_planning') || $currentUser->hasRole('Admin'))
 										{{ Form::button('<i class="glyphicon glyphicon-refresh"></i> Aktualisieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Informationen aktualisieren')) }}
 									@endif
 								</td>

@@ -25,10 +25,10 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 	Route::patch('{turn}/show/{planning}/copy_employee', array('as' => 'plannings.copyEmployee', 'uses' => 'PlanningsController@copyEmployee'));
 	Route::post('{turn}/show/{planning}/add_employee', array('as' => 'plannings.addEmployee', 'uses' => 'PlanningsController@addEmployee'));
 
-	Route::delete('{turn}/show/{planning}/delete_room', array('as' => 'plannings.deleteRoom', 'uses' => 'PlanningsController@deleteRoom'));
-	Route::patch('{turn}/show/{planning}/update_room', array('as' => 'plannings.updateRoom', 'uses' => 'PlanningsController@updateRoom'));
-	Route::patch('{turn}/show/{planning}/copy_room', array('as' => 'plannings.copyRoom', 'uses' => 'PlanningsController@copyRoom'));
-	Route::post('{turn}/show/{planning}/add_room', array('as' => 'plannings.addRoom', 'uses' => 'PlanningsController@addRoom'));
+	Route::delete('{turn}/show/{planning}/delete_room', array('as' => 'plannings.deleteRoom', 'uses' => 'RoomAssignmentController@destroyRoomAssignment'));
+	Route::patch('{turn}/show/{planning}/update_room', array('as' => 'plannings.updateRoom', 'uses' => 'RoomAssignmentController@updateRoomAssignment'));
+	Route::patch('{turn}/show/{planning}/copy_room', array('as' => 'plannings.copyRoom', 'uses' => 'RoomAssignmentController@copyRoomAssignment'));
+	Route::post('{turn}/show/{planning}/add_room', array('as' => 'plannings.addRoom', 'uses' => 'RoomAssignmentController@assignRoom'));
 
 	Route::patch('{turn}/show/{planning}/update_examType', array('as' => 'plannings.updateExamType', 'uses' => 'PlanningsController@updateExamType'));
 

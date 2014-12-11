@@ -15,36 +15,35 @@ class PlanningsController extends BaseController {
 	 */
 	public function index()
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('plannings.indexTurn', $current_turn->id);
 	}
 
 	/**
 	*
 	*/
-	public function indexTurn(Turn $turn)
+	public function indexTurn(Turn $display_turn)
 	{
-		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || sizeof(Entrust::user()->researchgroups) > 0)
+		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || Entrust::user()->researchgroups->count() > 0)
 		{
-			$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+			$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 			$next_turn = Turn::nextTurn($current_turn)->first();
 			$afternext_turn = Turn::turnAfterNext($current_turn)->first();
 			// set the turn which will be displayed
-			$display_turn = $turn;
 			$before_turns = Turn::beforeTurns($display_turn)->get();
 			$planned_courses = $this->getPlannedCourses($display_turn);
 
 			$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
 			// checking if the predecessor turn contains planned courses
-			$predecessorturn = $turn->getPredecessor();
+			$predecessorturn = $display_turn->getPredecessor();
 			$pastcourses = 0;
 			if (!is_numeric($predecessorturn))
-				$pastcourses = sizeof(DB::table('plannings')->where('turn_id','=',$predecessorturn->id)->get());
-			$lists = $this->getCourseTypes($turn);
+				$pastcourses = Planning::where('turn_id', '=', $predecessorturn->id)->count();
+			$lists = $this->getCourseTypes($display_turn);
 			$this->layout->content = View::make('plannings.index', compact('current_turn','next_turn', 'afternext_turn','before_turns','planned_courses', 'display_turn', 'lists', 'pastcourses', 'listofcoursetypes'));
 		}
 		else
-			return Redirect::route('home')->with('error','Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
+			return Redirect::back()->with('error','Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
 	}
 
 	/**
@@ -193,7 +192,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function schedule()
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('plannings.showSchedule',$current_turn->id);
 	}
 
@@ -203,7 +202,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function showSchedule(Turn $turn)
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 		$next_turn = Turn::nextTurn($current_turn)->first();
 		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
 		// set the turn which will be displayed
@@ -221,7 +220,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function roomPreference()
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('plannings.showRoomPreference',$current_turn->id);
 	}
 
@@ -230,7 +229,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function showRoomPreference(Turn $turn)
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
 		$next_turn = Turn::nextTurn($current_turn)->first();
 		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
 		// set the turn which will be displayed
@@ -257,8 +256,8 @@ class PlanningsController extends BaseController {
 	public function store(Turn $turn)
 	{
 		$input = Input::all();
-		$course = Course::find($input['course_id']);
-		if (!Planning::checkDuplicate($turn, $course, $input['group_number']))
+		$course = Course::findOrFail($input['course_id']);
+		if (Planning::checkDuplicate($course->id, $turn->id, $input['group_number']) == 0)
 		{
 			$planning = new Planning();
 			$planning->store($turn, $input, $course);
@@ -277,7 +276,7 @@ class PlanningsController extends BaseController {
 
 		}
 		else
-			return Redirect::route('plannings.indexTurn', $turn->id)->with('error', 'Fehler: Diese Veranstaltung existiert schon.<br>
+			return Redirect::back()->withInput()->with('error', 'Fehler: Diese Veranstaltung existiert schon.<br>
 																		Veranstaltung: '.$course->course_number.' '.$course->name.' Gruppen-Nr. '.$input['group_number'].' '.$turn->name.' '.$turn->year);
 	}
 
@@ -287,7 +286,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function storeModule(Turn $turn)
 	{
-		$module = Module::find(Input::get('module_id'));
+		$module = Module::findOrFail(Input::get('module_id'));
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		// get the lecture
 		$result = Course::where('module_id','=',$module->id)->whereIn('course_type_id',array(1))->first();
@@ -318,7 +317,7 @@ class PlanningsController extends BaseController {
 				
 				if ( $planning->save() )
 				{
-					$turn = Turn::find($turn->id);
+					$turn = Turn::findOrFail($turn->id);
 					$turn->saveExam($course->module);
 					// log
 					$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
@@ -356,7 +355,7 @@ class PlanningsController extends BaseController {
 					
 					if ( $planning->save() )
 					{
-						$turn = Turn::find($turn->id);
+						$turn = Turn::findOrFail($turn->id);
 						$turn->saveExam($course->module);
 						// log
 						$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
@@ -378,7 +377,7 @@ class PlanningsController extends BaseController {
 	public function storeIndividual(Turn $turn)
 	{
 		// check for duplicates
-		$course = Course::find(Input::get('course_id'));
+		$course = Course::findOrFail(Input::get('course_id'));
 		$result =  Planning::where('course_id','=', $course->id)
 					->where('turn_id','=',$turn->id)
 					->get();
@@ -434,7 +433,7 @@ class PlanningsController extends BaseController {
 	public function storeProject(Turn $turn)
 	{
 		// check for duplicates
-		$course = Course::find(Input::get('course_id'));
+		$course = Course::findOrFail(Input::get('course_id'));
 		$result =  Planning::where('course_id','=',$course->id)
 					->where('turn_id','=',$turn->id)
 					->get();
@@ -516,7 +515,7 @@ class PlanningsController extends BaseController {
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || $planning->user_id == Entrust::user()->id || $responsible)
 		{
 			$employees = Employee::all();
-			$course = Course::find($planning->course_id); // TODO checking if it's a problem, when a course doesn't belong to a module
+			$course = Course::findOrFail($planning->course_id); // TODO checking if it's a problem, when a course doesn't belong to a module
 			if (sizeof(Session::get('tabindex')) == "")
 				$tabindex = 0;
 			else 
@@ -646,62 +645,37 @@ class PlanningsController extends BaseController {
 	*/
 	public function update(Turn $turn, Planning $planning)
 	{
-		$board_statusarray = array('Vorlauf','1.Lesung','2.Lesung');
-		$rgstatusarray = array('unbestätigt', 'bestätigt', 'gestrichen', 'ausgelaufen');
 		$duplicate = false;
+		$input = Input::all();
 		// check if the group number has changed
-		if (Input::get('group_number') != $planning->group_number)
+		if ($input['group_number'] != $planning->group_number)
 		{
 			// number has changed, check for a duplicate
-			$existingplanning = DB::table('plannings')
-							->where('course_id','=',$planning->course_id)
-							->where('turn_id','=',$turn->id)
-							->where('group_number','=',Input::get('group_number'))
-							->first();
-			if (sizeof($existingplanning) == 1)
+			if (Planning::checkDuplicate($planning->course_id, $turn->id, $input['group_number'])->count() == 0)
+				$planning->group_number = $input['group_number'];
+			else
 				$duplicate = true;
 		}
-		// check for duplicates
-		if (!$duplicate)
+		if ($planning->updateInformation($input))
 		{
-			$planning->group_number = Input::get('group_number');
-			$planning->comment = Input::get('comment');
-			$planning->room_preference = Input::get('room_preference');
-			$planning->language = Input::get('language');
-			if (Input::get('course_number'))
-				$planning->course_number = Input::get('course_number');
-
-			if (Input::get('course_title_eng'))
-				$planning->course_title_eng = Input::get('course_title_eng');
-
-			if (Input::get('course_title') != "")
-				$planning->course_title = Input::get('course_title');
-
-			if (Input::get('researchgroup_status') != "")
-				$planning->researchgroup_status = Input::get('researchgroup_status');
-
-			if (Input::get('board_status') != "")
-				$planning->board_status = Input::get('board_status');
-
-			if ( $planning->updateUniques() )
-			{
-				// updating comment and room preferences
-				DB::table('plannings')->where('turn_id','=',$turn->id)->where('course_number','=',$planning->course_number)->update(array(
-					'comment' => $planning->comment, 'room_preference' => $planning->room_preference));
-				// log
-				$action = "Planung aktualisiert (".$turn->name." ".$turn->year."): ".
-							$planning->course_number." ".$planning->course_title." (".$planning->course_title."); Gruppen-Nr. ".
-							$planning->group_number."; Sprache ".Config::get('constants.language')[$planning->language]."; AB: ".Config::get('constants.pl_rgstatus')[$planning->researchgroup_status]."; VS: ".
-							Config::get('constants.pl_board_status')[$planning->board_status]."; Bemerkung: ".$planning->comment."; Raumwunsch: ".$planning->room_preference;
-							$planninglog = new Planninglog();
-				$planninglog->add($planning, 0, $action, 0);
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Veranstaltung erfolgreich aktualisiert.');
-			}
-			else 
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->withInput()->withErrors( $planning->errors() );
+			// updating comment and room preferences
+			Planning::where('turn_id','=',$turn->id)->where('course_number','=',$planning->course_number)->update(array(
+				'comment' => $planning->comment, 'room_preference' => $planning->room_preference));
+			// log
+			$action = "Planung aktualisiert (".$turn->name." ".$turn->year."): ".
+						$planning->course_number." ".$planning->course_title." (".$planning->course_title."); Gruppen-Nr. ".
+						$planning->group_number."; Sprache ".Config::get('constants.language')[$planning->language]."; AB: ".Config::get('constants.pl_rgstatus')[$planning->researchgroup_status]."; VS: ".
+						Config::get('constants.pl_board_status')[$planning->board_status]."; Bemerkung: ".$planning->comment."; Raumwunsch: ".$planning->room_preference;
+						$planninglog = new Planninglog();
+			$planninglog->add($planning, 0, $action, 0);
+			if (!$duplicate)
+				return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.');
+			else
+				return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.')
+										->with('error', 'Die Gruppen-Nr konnte nicht aktualisiert werden, da schon eine Gruppe mit der selben Nummer existiert!');
 		}
-		else 
-			return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error', 'Duplikat aufgetreten! Die Gruppe für diese Veranstaltung existiert bereit.');
+
+		return Redirect::back()->withInput()->withErrors( $planning->errors() );
 	}
 	
 	/**
@@ -750,19 +724,9 @@ class PlanningsController extends BaseController {
 				if (sizeof($planning_ids) > 0)
 					$planned_courses = Planning::related($planning_ids)->get();
 			}
-			$employees = 0;
-			$comments = 0;
-			$room_preferences = 0;
-			if (Input::get('employees') == 1)
-				$employees = 1;
+			$options = Input::all();
 
-			if (Input::get('comments') == 1)
-				$comments = 1;
-
-			if (Input::get('room_preferences') == 1)
-				$room_preferences = 1;
-
-			$result = $this->copyPlannings($turn, $planned_courses, $employees, $comments, $room_preferences);
+			$result = $this->copyPlannings($turn, $planned_courses, $options);
 		
 			if ($result['copyall'])
 				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Alle Veranstaltungen wurden erfolgreich kopiert.')
@@ -784,7 +748,9 @@ class PlanningsController extends BaseController {
 		if (sizeof(Input::get('selected'))  > 0)
 		{
 			$plannings = Planning::whereIn('id',Input::get('selected'))->get();
-			$result = $this->copyPlannings($turn, $plannings, 1, 1, 1);
+			$options = array();
+			$options = Input::all();
+			$result = $this->copyPlannings($turn, $plannings, $options);
 			if ($result['copyall'])
 				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Alle Veranstaltungen wurden erfolgreich kopiert.')
 																		->with('info', 'Hinweis: Die Raumzuordnungen wurden nicht übernommen und der Modulabschluss wurde auf den Standardabschluss zurückgesetzt.');
@@ -860,7 +826,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function addEmployee(Turn $turn, Planning $planning)
 	{
-		$employee = Employee::find(Input::get('employee_id'));
+		$employee = Employee::findOrFail(Input::get('employee_id'));
 		$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name.' ('.Input::get('semester_periods_per_week').' SWS)';
 		$planninglog = new Planninglog();
 		$planninglog->add($planning, 1, $action, 0);
@@ -879,7 +845,7 @@ class PlanningsController extends BaseController {
 	public function updateEmployee(Turn $turn, Planning $planning)
 	{
 		// TODO check if the sum of semester periods per weeks exceeds the semester periods per week of the course
-		$employee = Employee::find(Input::get('employee_id'));
+		$employee = Employee::findOrFail(Input::get('employee_id'));
 		// log
 		foreach ($planning->employees as $e) {
 			if ($e->id == $employee->id)
@@ -902,7 +868,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function copyEmployee(Turn $turn, Planning $planning)
 	{
-		$source_planning = Planning::find(Input::get('source_planning_id'));
+		$source_planning = Planning::findOrFail(Input::get('source_planning_id'));
 		$all_employees_copied = true;
 		$message = "";
 		// if size of $planning->employee is higher than 0, check for duplicates
@@ -951,7 +917,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function deleteEmployee(Turn $turn, Planning $planning)
 	{
-		$employee = Employee::find(Input::get('employee_id'));
+		$employee = Employee::findOrFail(Input::get('employee_id'));
 		// log
 		$action = "Mitarbeiterzuordnung gelöscht (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name;
 		$planninglog = new Planninglog();
@@ -959,449 +925,6 @@ class PlanningsController extends BaseController {
 		// detach
 		$planning->employees()->detach(Input::get('employee_id'));
 		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Mitarbeiter erfolgreich entfernt.')
-																				->with('tabindex', Input::get('tabindex'));
-	}
-	
-	/**
-	* add a planning room relationship
-	* checking for conflicts
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function addRoom(Turn $turn, Planning $planning)
-	{
-		$room = Room::find(Input::get('room_id'));
-		$starttime = date('H:i:s', strtotime(Input::get('start_time')));
-		$endtime = date('H:i:s', strtotime(Input::get('end_time')));
-		if ($starttime < $endtime)
-		{
-			// checking if the room is occupied at that day and time
-			// TODO check for conflicts with other compulsory modules, when course belongs to compulsory module and is a lecture
-			$result = DB::table('planning_room')
-						->join('plannings', 'planning_room.planning_id','=','plannings.id')
-						->select('planning_room.room_id')
-						->where('plannings.turn_id', '=', $turn->id) // Import to select ohne results from the same turn
-						->where('planning_room.weekday','=' ,Input::get('weekday'))
-						->where('planning_room.room_id','=', $room->id)
-						->where(function($query) use ($starttime, $endtime)
-						{
-							$query->where(function($q1) use ($starttime){
-								$q1->where('planning_room.start_time', '<', $starttime)
-								->where('planning_room.end_time', '>', $starttime)
-								->where('planning_room.end_time', '!=', $starttime);
-							})
-							->orWhere(function ($q2) use ($endtime){
-								$q2->where('planning_room.start_time', '<', $endtime)
-								->where('planning_room.end_time', '>', $endtime);
-							})
-							->orWhere(function ($q3) use ($starttime, $endtime){
-								$q3->where('planning_room.start_time', '=', $starttime)
-								->where('planning_room.end_time', '=', $endtime);
-							})
-							->orWhere(function ($q4) use ($starttime, $endtime){
-								$q4->where('planning_room.start_time', '=', $starttime)
-								->where('planning_room.end_time', '<', $endtime);
-							})
-							->orWhere(function ($q5) use ($starttime, $endtime){
-								$q5->where('planning_room.start_time', '>', $starttime)
-								->where('planning_room.end_time', '=', $endtime);
-							})
-							->orWhere(function ($q6) use ($starttime, $endtime){
-								$q6->where('planning_room.start_time', '>', $starttime)
-								->where('planning_room.end_time', '<', $endtime);
-							});
-						})
-						->first();
-			if (sizeof($result) == 0)
-			{
-				$planning->rooms()->attach($room->id, array(
-							'weekday'=>(Input::get('weekday')),
-							'start_time'=>$starttime,
-							'end_time'=>$endtime,
-						));
-				// log
-				$room = Room::find(Input::get('room_id'));
-				$action = "Raum zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-						$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-						$room->name.' ('.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.
-							substr(Input::get('start_time'),0,5).'-'.substr(Input::get('end_time'),0,5).')';
-				$planninglog = new Planninglog();
-				$planninglog->add($planning, 2, $action, 0);
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Raum erfolgreich hinzugefügt.')
-																						->with('tabindex', Input::get('tabindex'));
-			}
-			else 
-			{
-				// conflict
-				// TODO find alternatives to suggest
-				$similarrooms = Room::similar($room)->get();
-				$alternativrooms = array();
-				$freerooms = "Alternative Räume: ";
-				// check if they are free
-				foreach ($similarrooms as $sr)
-				{
-					$result = DB::table('planning_room')
-								->join('plannings', 'planning_room.planning_id','=','plannings.id')
-								->select('planning_room.room_id')
-								->where('plannings.turn_id', '=', $turn->id) // Import to select ohne results from the same turn
-								->where('planning_room.weekday','=' ,Input::get('weekday'))
-								->where('planning_room.room_id','=', $sr->id)
-								->where(function($query) use ($starttime, $endtime)
-								{
-									$query->where(function($q1) use ($starttime){
-										$q1->where('planning_room.start_time', '<', $starttime)
-										->where('planning_room.end_time', '>', $starttime);
-									})
-									->orWhere(function ($q2) use ($endtime){
-										$q2->where('planning_room.start_time', '<', $endtime)
-										->where('planning_room.end_time', '>', $endtime);
-									})
-									->orWhere(function ($q3) use ($starttime, $endtime){
-										$q3->where('planning_room.start_time', '=', $starttime)
-										->where('planning_room.end_time', '=', $endtime);
-									})
-									->orWhere(function ($q4) use ($starttime, $endtime){
-										$q4->where('planning_room.start_time', '=', $starttime)
-										->where('planning_room.end_time', '<', $endtime);
-									})
-									->orWhere(function ($q5) use ($starttime, $endtime){
-										$q5->where('planning_room.start_time', '>', $starttime)
-										->where('planning_room.end_time', '=', $endtime);
-									})
-									->orWhere(function ($q6) use ($starttime, $endtime){
-										$q6->where('planning_room.start_time', '>', $starttime)
-										->where('planning_room.end_time', '<', $endtime);
-									});
-								})
-								->first();
-					if (sizeof($result) == 0)
-					{
-						// room is not occupied at this time
-						array_push($alternativrooms, $sr);
-						$freerooms .= $sr->name.' (Plätze: '.$sr->seats.');';
-					}
-				}
-				if (sizeof($alternativrooms) == 0)
-					$freerooms .= 'Keine freien Räume zu dieser Zeit.';
-
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error', 
-						'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.Input::get('start_time').'-'.Input::get('end_time').' ist zu dieser Zeit schon belegt. <br>'.$freerooms)
-							->with('tabindex', Input::get('tabindex'));
-			}
-		}
-		else 
-			return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error', 'Die Endzeit liegt vor der Startzeit.')
-							->with('tabindex', Input::get('tabindex'));
-	}
-
-	/**
-	* copy a planning room relationship
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function copyRoom(Turn $turn, Planning $planning)
-	{
-		$planning_room = DB::table('planning_room')
-							->select('*')
-							->where('id','=',Input::get('source_planning_room_id'))
-							->first();
-		$room = Room::find($planning_room->room_id);
-		$starttime = $planning_room->start_time;
-		$endtime = $planning_room->end_time;
-		// checking if the room is occupied at that day and time
-		// TODO check for conflicts with other compulsory modules, when course belongs to compulsory module and is a lecture
-		$result = DB::table('planning_room')
-					->join('plannings', 'planning_room.planning_id','=','plannings.id')
-					->select('planning_room.room_id')
-					->where('plannings.turn_id', '=', $turn->id) // Import to select ohne results from the same turn
-					->where('planning_room.weekday','=' ,$planning_room->weekday)
-					->where('planning_room.room_id','=', $room->id)
-					->where(function($query) use ($starttime,$endtime)
-					{
-						$query->where(function($q1) use ($starttime,$endtime) {
-							$q1->where('planning_room.start_time', '<', $starttime)
-							->where('planning_room.end_time', '>', $starttime);
-						})
-						->orWhere(function ($q2) use ($starttime,$endtime) {
-							$q2->where('planning_room.start_time', '<', $endtime)
-							->where('planning_room.end_time', '>', $endtime);
-						})
-						->orWhere(function ($q3) use ($starttime,$endtime) {
-							$q3->where('planning_room.start_time', '=', $starttime)
-							->where('planning_room.end_time', '=', $endtime);
-						})
-						->orWhere(function ($q4) use ($starttime,$endtime) {
-							$q4->where('planning_room.start_time', '=', $starttime)
-							->where('planning_room.end_time', '<', $endtime);
-						})
-						->orWhere(function ($q5) use ($starttime,$endtime) {
-							$q5->where('planning_room.start_time', '>', $starttime)
-							->where('planning_room.end_time', '=', $endtime);
-						})
-						->orWhere(function ($q6) use ($starttime,$endtime) {
-							$q6->where('planning_room.start_time', '>', $starttime)
-							->where('planning_room.end_time', '<', $endtime);
-						});
-					})
-					->first();
-		if (sizeof($result) == 0)
-		{
-			$planning->rooms()->attach($room->id, array(
-						'weekday'=>($planning_room->weekday),
-						'start_time'=>$planning_room->start_time,
-						'end_time'=>$planning_room->end_time,
-					));
-			// log
-			$action = "Raum zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-					$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-					$room->name.' ('.Config::get('constants.weekdays_short')[$planning_room->weekday].', '.
-						substr($planning_room->start_time,0,5).'-'.substr($planning_room->end_time,0,5).')';
-			$planninglog = new Planninglog();
-			$planninglog->add($planning, 2, $action, 0);
-			return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Raum erfolgreich hinzugefügt.')
-																					->with('tabindex', Input::get('tabindex'));
-		}
-		else 
-		{
-			// conflict
-			// TODO find alternatives to suggest
-			$similarrooms = Room::similar($room)->get();
-			$alternativrooms = array();
-			$freerooms = "Alternative Räume: ";
-			// check if they are free
-			foreach ($similarrooms as $sr)
-			{
-				$result = DB::table('planning_room')
-							->join('plannings', 'planning_room.planning_id','=','plannings.id')
-							->select('planning_room.room_id')
-							->where('plannings.turn_id', '=', $turn->id) // Import to select ohne results from the same turn
-							->where('planning_room.weekday','=' ,$planning_room->weekday)
-							->where('planning_room.room_id','=', $sr->id)
-							->where(function($query) use ($starttime, $endtime)
-							{
-								$query->where(function($q1) use ($starttime,$endtime) {
-									$q1->where('planning_room.start_time', '<', $starttime)
-									->where('planning_room.end_time', '>', $starttime);
-								})
-								->orWhere(function ($q2) use ($starttime,$endtime) {
-									$q2->where('planning_room.start_time', '<', $endtime)
-									->where('planning_room.end_time', '>', $endtime);
-								})
-								->orWhere(function ($q3) use ($starttime,$endtime) {
-									$q3->where('planning_room.start_time', '=', $starttime)
-									->where('planning_room.end_time', '=', $endtime);
-								})
-								->orWhere(function ($q4) use ($starttime,$endtime) {
-									$q4->where('planning_room.start_time', '=', $starttime)
-									->where('planning_room.end_time', '<', $endtime);
-								})
-								->orWhere(function ($q5) use ($starttime,$endtime) {
-									$q5->where('planning_room.start_time', '>', $starttime)
-									->where('planning_room.end_time', '=', $endtime);
-								})
-								->orWhere(function ($q6) use ($starttime,$endtime) {
-									$q6->where('planning_room.start_time', '>', $starttime)
-									->where('planning_room.end_time', '<', $endtime);
-								});
-							})
-							->first();
-				if (sizeof($result) == 0)
-				{
-					// room is not occupied at this time
-					array_push($alternativrooms, $sr);
-					$freerooms .= $sr->name.' (Plätze: '.$sr->seats.');';
-				}
-			}
-			if (sizeof($alternativrooms) == 0)
-			{
-				$freerooms .= 'Keine freien Räume zu dieser Zeit.';
-			}
-			return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error', 
-					'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.Config::get('constants.weekdays_short')[$planning_room->weekday].', '.$planning_room->start_time.'-'.$planning_room->end_time.' ist zu dieser Zeit schon belegt. <br>'.$freerooms)
-						->with('tabindex', Input::get('tabindex'));
-		}
-	}
-	
-	/**
-	* update a planning room relationship checks for conflicts
-	*/
-	public function updateRoom(Turn $turn, Planning $planning)
-	{
-		if (Input::get('room_id_old') == Input::get('room_id')) 
-		{
-			$room = Room::find(Input::get('room_id'));
-			$oldroom = $room;
-		}
-		else
-		{
-			$room = Room::find(Input::get('room_id'));
-			$oldroom = Room::find(Input::get('room_id_old'));
-		}
-		$planningroomid = DB::table('planning_room')
-							->select('id')
-							->where('room_id','=',$oldroom->id)
-							->where('planning_id','=', $planning->id)
-							->where('weekday','=', Input::get('weekday_old'))
-							->where('start_time', '=', Input::get('start_time_old'))
-							->where('end_time', '=', Input::get('end_time_old'))
-							->first();
-		$starttime = date('H:i:s', strtotime(Input::get('start_time')));
-		$endtime = date('H:i:s', strtotime(Input::get('end_time')));
-		if ($starttime < $endtime)
-		{
-			//checking if the room is occupied at that day and time
-			$result = DB::table('planning_room')
-						->join('plannings','plannings.id','=','planning_room.planning_id')
-						->select('planning_room.room_id')
-						->where('planning_room.weekday','=' ,Input::get('weekday'))
-						->where('plannings.turn_id', '=', $turn->id)
-// 						->where('planning_room.planning_id', '!=', $planning->id)
-						->where('planning_room.room_id','=', $room->id)
-						->where('planning_room.id', '!=', $planningroomid->id)
-						->where(function($query) use ($starttime,$endtime)
-						{
-							$query->where(function($q1) use ($starttime){
-								$q1->where('planning_room.start_time', '<', $starttime)
-								->where('planning_room.end_time', '>', $starttime)
-								->where('planning_room.end_time', '!=', $starttime);
-							})
-							->orWhere(function ($q2) use ($endtime){
-								$q2->where('planning_room.start_time', '<', $endtime)
-								->where('planning_room.end_time', '>', $endtime);
-							})
-							->orWhere(function ($q3) use ($starttime,$endtime){
-								$q3->where('planning_room.start_time', '=', $starttime)
-								->where('planning_room.end_time', '=', $endtime);
-							})
-							->orWhere(function ($q4) use ($starttime,$endtime){
-								$q4->where('planning_room.start_time', '=', $starttime)
-								->where('planning_room.end_time', '<', $endtime);
-							})
-							->orWhere(function ($q5) use ($starttime,$endtime){
-								$q5->where('planning_room.start_time', '>', $starttime)
-								->where('planning_room.end_time', '=', $endtime);
-							})
-							->orWhere(function ($q6) use ($starttime,$endtime){
-								$q6->where('planning_room.start_time', '>', $starttime)
-								->where('planning_room.end_time', '<', $endtime);
-							});
-						})
-						->first();
-			if (sizeof($result) == 0)
-			{
-				// no conflict
-// 				$planning->rooms()->updateExistingPivot($room->id, array(
-// 						'weekday' => Input::get('weekday'),
-// 						'start_time'=> Input::get('start_time'),
-// 						'end_time'=> Input::get('end_time'),
-// 				), true);
-				$action = "Raum aktualisiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-						$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-						$oldroom->name.' -> ('.$room->name.') ('.Config::get('constants.weekdays_short')[Input::get('weekday_old')].', '.
-							substr(Input::get('start_time_old'),0,5).'-'.substr(Input::get('end_time_old'),0,5).') -> ('.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.
-							substr(Input::get('start_time'),0,5).'-'.substr(Input::get('end_time'),0,5).')';
-
-				DB::table('planning_room')
-					->where('id','=', $planningroomid->id)
-					->update(array('room_id' => Input::get('room_id'), 'weekday' => Input::get('weekday'), 'start_time'=> Input::get('start_time'), 'end_time'=> Input::get('end_time')));
-
-				$planninglog = new Planninglog();
-				$planninglog->add($planning, 2, $action, 1);
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Raum erfolgreich aktualisiert.')
-																->with('tabindex', Input::get('tabindex'));
-			}
-			else
-			{
-				// conflict
-				// TODO find alternativ rooms to suggest
-				$similarrooms = Room::similar($room)->get();
-				$alternativrooms = array();
-				$freerooms = "Alternative Räume: ";
-				// check if they are free
-				foreach ($similarrooms as $sr)
-				{
-					$result = DB::table('planning_room')
-								->join('plannings', 'planning_room.planning_id','=','plannings.id')
-								->select('planning_room.room_id')
-								->where('plannings.turn_id', '=', $turn->id) // Import to select ohne results from the same turn
-								->where('planning_room.weekday','=' ,Input::get('weekday'))
-								->where('planning_room.room_id','=', $sr->id)
-								->where(function($query) use ($starttime,$endtime)
-								{
-									$query->where(function($q1) use ($starttime){
-										$q1->where('planning_room.start_time', '<', $starttime)
-										->where('planning_room.end_time', '>', $starttime);
-									})
-									->orWhere(function ($q2) use ($endtime){
-										$q2->where('planning_room.start_time', '<', $endtime)
-										->where('planning_room.end_time', '>', $endtime);
-									})
-									->orWhere(function ($q3) use ($starttime,$endtime){
-										$q3->where('planning_room.start_time', '=', $starttime)
-										->where('planning_room.end_time', '=', $endtime);
-									})
-									->orWhere(function ($q4) use ($starttime,$endtime){
-										$q4->where('planning_room.start_time', '=', $starttime)
-										->where('planning_room.end_time', '<', $endtime);
-									})
-									->orWhere(function ($q5) use ($starttime,$endtime){
-										$q5->where('planning_room.start_time', '>', $starttime)
-										->where('planning_room.end_time', '=', $endtime);
-									})
-									->orWhere(function ($q6) use ($starttime,$endtime){
-										$q6->where('planning_room.start_time', '>', $starttime)
-										->where('planning_room.end_time', '<', $endtime);
-									});
-								})
-								->first();
-					if (sizeof($result) == 0)
-					{
-						// room is not occupied at this time
-						array_push($alternativrooms, $sr);
-						$freerooms .= $sr->name.' (Plätze: '.$sr->seats.');';
-					}
-				}
-				if (sizeof($alternativrooms) == 0)
-					$freerooms .= 'Keine freien Räume zu dieser Zeit.';
-
-				return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error',
-						'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.Input::get('start_time').'-'.Input::get('end_time').' ist zu dieser Zeit schon belegt.<br>'.$freerooms)
-								->with('tabindex', Input::get('tabindex'));
-			}
-		}
-		else
-			return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('error', 'Die Endzeit liegt vor der Startzeit.')
-																						->with('tabindex', Input::get('tabindex'));
-		
-		$planning->rooms()->updateExistingPivot(Input::get('room_id'), array(
-				'semester_periods_per_week'=>(Input::get('semester_periods_per_week')/2)
-				), true);
-		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Raum erfolgreich aktualisiert.')
-																				->with('tabindex', Input::get('tabindex'));
-	}
-	
-	/**
-	* delete a planning room relation
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function deleteRoom(Turn $turn, Planning $planning)
-	{
-		// TODO überarbeiten
-		DB::table('planning_room')
-			->where('room_id','=',Input::get('room_id'))
-			->where('planning_id', '=', $planning->id)
-			->where('weekday', '=', Input::get('weekday'))
-			->where('start_time','=', Input::get('start_time'))
-			->delete();
-		$room = Room::find(Input::get('room_id'));
-		$action = "Raumzuordnung gelöscht (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-				$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-				$room->name.' ('.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.
-					substr(Input::get('start_time'),0,5).'-'.substr(Input::get('end_time'),0,5).')';
-		$planninglog = new Planninglog();
-		$planninglog->add($planning, 2, $action, 2);
-		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Raum erfolgreich entfernt.')
 																				->with('tabindex', Input::get('tabindex'));
 	}
 
@@ -1474,7 +997,7 @@ class PlanningsController extends BaseController {
 							$planning->researchgroup_status = 0;
 							$planning->board_status = 0;
 							$planning->comment = "";
-							$planning->room_preference = "";
+							$planning->room_preference = "Information fehlt!";
 							$planning->group_number = 1;
 							$planning->language = $course->language;
 							$planning->course_title = $course->name;
@@ -1490,10 +1013,10 @@ class PlanningsController extends BaseController {
 							$planninglog = new Planninglog();
 							$planninglog->add($planning, 0, $action, 0);
 
-							$turn = Turn::find($turn->id); // refresh turn to get the current modules()
+							$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 							$turn->saveExam($planning->course->module);
 							// check if there employees assigned to the module
-							if (sizeof($mtp->employees) > 0)
+							if ($mtp->employees->count() > 0)
 							{
 								foreach ($mtp->employees as $employee)
 								{
@@ -1554,7 +1077,7 @@ class PlanningsController extends BaseController {
 									$planninglog = new Planninglog();
 									$planninglog->add($planning, 0, $action, 0);
 
-									$turn = Turn::find($turn->id); // refresh turn to get the current modules()
+									$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 									$turn->saveExam($planning->course->module);
 									$planninglog = new Planninglog();
 								}
@@ -1590,7 +1113,7 @@ class PlanningsController extends BaseController {
 								$planninglog = new Planninglog();
 								$planninglog->add($planning, 0, $action, 0);
 
-								$turn = Turn::find($turn->id); // refresh turn to get the current modules()
+								$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 								$turn->saveExam($planning->course->module);
 								// check if there employees assigned to the module
 								if (sizeof($mtp->employees) > 0)
@@ -1634,85 +1157,66 @@ class PlanningsController extends BaseController {
 	* @param boolean $copy_comments
 	* @param boolean $copy_room_preferences
 	*/
-	private function copyPlannings(Turn $turn, $plannings, $copy_employees, $copy_comments, $copy_room_preferences)
+	private function copyPlannings(Turn $turn, $plannings, $options)
 	{
 		$copyall = true;
 		$warnmessage = "Es konnten nicht alle Veranstaltungen aus dem letzten Semester kopiert werden,
 					da diese bereits im aktuellen Semester geplant wurden.<br> Folgende Veranstaltungen konnten nicht kopiert werden: ";
 		foreach ($plannings as $planning)
 		{
-			$duplicate = Planning::where('course_id','=',$planning->course_id)
-								->where('turn_id','=',$turn->id)
-								->where('group_number','=',$planning->group_number)
-								->where('course_title', '=', $planning->course_title)
-								->first();
-			$result =  Planning::where('course_id','=',$planning->course_id)
-								->where('turn_id','=',$turn->id)
-								->get();
 			$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
-			if (sizeof($duplicate) == 0)
+
+			if (Planning::checkDuplicate($planning->course_id, $turn->id, $planning->group_number)->count() == 0)
 			{
 				// if not, copy it
 				// Saving the course for the new turn
 				$planningnew = new Planning;
-				$planningnew->turn_id = $turn->id;
-				$planningnew->course_id = $planning->course_id;
-				$planningnew->researchgroup_status = 0;
-				$planningnew->board_status = 0;
-				$planningnew->group_number = $planning->group_number;
-				$planningnew->language = $planning->language;
-				$planningnew->user_id = Entrust::user()->id;
-				$planningnew->course_title = $planning->course_title;
-				$planningnew->course_title_eng = $planning->course_title_eng;
-				if ($planning->course->course_type_id == 4 || $planning->course->course_type_id == 1 || $planning->course->course_type_id == 8 || $planning->course->course_type_id == 9)
-					$planningnew->course_number = $planning->course_number;
-				else
-					$planningnew->course_number = $listofcoursetypes[$planning->course->course_type_id].'-'.(sizeof($result)+1);
-
-				if ($copy_comments == 1)
-					$planningnew->comment = $planning->comment;
-
-				if ($copy_room_preferences == 1)
-					$planningnew->room_preference = $planning->room_preference;
-
-				$planningnew->save();
-				// log
-				$action = "Planung kopiert (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".
-				$planningnew->course_title."; Gruppen-Nr. ".$planningnew->group_number."; Bemerkung: ".$planningnew->comment."; Raumwunsch: ".
-				$planningnew->room_preference;
-				$planninglog = new Planninglog();
-				$planninglog->add($planningnew, 0, $action, 0);
-				
-				if ($copy_employees == 1)
+				if ($planningnew->copy($planning, $turn, $options))
 				{
-					// getting the employees from employee_turn from the old course turn and copy it
-					$planning = Planning::find($planning->id);
-					$employees = $planning->employees;
-					if (sizeof($employees) > 0 )
+					// log
+					$action = "Planung kopiert (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".
+					$planningnew->course_title."; Gruppen-Nr. ".$planningnew->group_number."; Bemerkung: ".$planningnew->comment."; Raumwunsch: ".
+					$planningnew->room_preference;
+					$planninglog = new Planninglog();
+					$planninglog->add($planningnew, 0, $action, 0);
+					
+					if (array_key_exists('employees', $options))
 					{
-						foreach ($employees as $employee)
+						// getting the employees from employee_turn from the old course turn and copy it
+						if ($planning->employees->count() > 0)
 						{
-							$planningnew->employees()->attach($employee->id, array(
-									'semester_periods_per_week' => $employee->pivot->semester_periods_per_week,
-									'created_at' => new Datetime,
-									'updated_at' => new Datetime
-							));
-							$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".$planningnew->course_title." Gruppen-Nr. ".$planningnew->group_number." ".$employee->firstname.' '.$employee->name.' ('.$employee->pivot->semester_periods_per_week.' SWS)';
-							$planninglog = new Planninglog();
-							$planninglog->add($planningnew, 1, $action, 0);
+							// copy every employee
+							foreach ($planning->employees as $employee)
+							{
+								$planningnew->employees()->attach($employee->id, array(
+										'semester_periods_per_week' => $employee->pivot->semester_periods_per_week,
+										'created_at' => new Datetime,
+										'updated_at' => new Datetime
+								));
+								$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".$planningnew->course_title." Gruppen-Nr. ".$planningnew->group_number." ".$employee->firstname.' '.$employee->name.' ('.$employee->pivot->semester_periods_per_week.' SWS)';
+								$planninglog = new Planninglog();
+								$planninglog->add($planningnew, 1, $action, 0);
+							}
 						}
 					}
+					
+					// getting exam type
+					$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
+					$turn->saveExam($planning->course->module);
 				}
-				
-				// getting exam type
-				$turn = Turn::find($turn->id); // refresh turn to get the current modules()
-				$turn->saveExam($planning->course->module);
+				else
+				{
+					// failed to save the new planning
+					$copyall = false;
+					$course = Course::findOrFail($planning->course_id);
+					$warnmessage .= $course->course_number." (".$planning->group_number.");";
+				}
 			}
 			else
 			{
 				// if yes, do nothing
 				$copyall = false;
-				$course = Course::find($planning->course_id);
+				$course = Course::findOrFail($planning->course_id);
 				$warnmessage .= $course->course_number." (".$planning->group_number.");";
 			}
 		}
@@ -1728,18 +1232,15 @@ class PlanningsController extends BaseController {
 	private function getCourseTypes(Turn $turn)
 	{
 		// getting planed modules
-		$planned_modules = DB::table('plannings')
-								->join('courses','courses.id','=','plannings.course_id')
-								->select('courses.module_id')
-								->where('plannings.turn_id','=',$turn->id)
-								->groupBy('courses.module_id')
-								->get();
+		$planned_modules = Planning::with(array('course' => function($query)
+			{
+				$query->groupBy('module_id');
+			}))->where('turn_id', '=', $turn->id)->get();
+
 		if (sizeof($planned_modules) > 0)
 		{
-			$planned_modules_ids = array();
-			foreach ($planned_modules as $plm) {
-				array_push($planned_modules_ids, $plm->module_id);
-			}
+			$planned_modules_ids = $this->getIds($planned_modules);
+
 			$lists['bachelor'] = Module::where('degree_id','=',1)->where('individual_courses','=',0)->whereNotIn('id',$planned_modules_ids)->orderBy('name')->lists('name','id'); // TODO ids are hard coded
 			$lists['master'] = Module::where('degree_id','=',2)->where('individual_courses','=',0)->whereNotIn('id',$planned_modules_ids)->orderBy('name')->lists('name','id');
 		}

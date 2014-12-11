@@ -9,6 +9,7 @@ class Planning extends Ardent {
 			'board_status' => 'required',
 			'researchgroup_status' => 'required',
 			'language' => 'required',
+			'room_preference' => 'required'
 	);
 	
 	public function turn()
@@ -91,6 +92,139 @@ class Planning extends Ardent {
 	}
 
 	/**
+	 * Scope to check if there is already a course with the same course id, turn id and group number
+	 */
+	public function scopeCheckDuplicate($query, $courseId, $turnId, $groupNumber)
+	{
+		return $query->where('course_id','=',$courseId)
+					->where('turn_id','=',$turnId)
+					->where('group_number','=',$groupNumber);
+	}
+
+	/**
+	 * Scope to check if there is already a course with the same course id, turn id and group number
+	 */
+	public function scopeCheckDuplicateIndividualCourse($query, $courseId, $turnId, $courseTitle)
+	{
+		return $query->where('course_id','=',$courseId)
+					->where('turn_id','=',$turnId)
+					->where('course_title','=',$courseTitle);
+	}
+
+	/**
+	 * scope to check if a room is available at a given weekday and time
+	 * 
+	 * @param  [type] $query     [description]
+	 * @param  [type] $turnId    [description]
+	 * @param  [type] $roomId    [description]
+	 * @param  [type] $weekday   [description]
+	 * @param  [type] $starttime [description]
+	 * @param  [type] $endtime   [description]
+	 * @return [type]            [description]
+	 */
+	public function scopeCheckRoomAvailability($query, $turnId, $roomId, $weekday, $starttime, $endtime)
+	{
+		return $query->join('planning_room', 'planning_room.planning_id','=','plannings.id')
+					->where('plannings.turn_id', '=', $turnId) // Import to select ohne results from the same turn
+					->where('planning_room.weekday','=' ,$weekday)
+					->where('planning_room.room_id','=', $roomId)
+					->where(function($query) use ($starttime, $endtime)
+					{
+						$query->where(function($q1) use ($starttime){
+							$q1->where('planning_room.start_time', '<', $starttime)
+							->where('planning_room.end_time', '>', $starttime)
+							->where('planning_room.end_time', '!=', $starttime);
+						})
+						->orWhere(function ($q2) use ($endtime){
+							$q2->where('planning_room.start_time', '<', $endtime)
+							->where('planning_room.end_time', '>', $endtime);
+						})
+						->orWhere(function ($q3) use ($starttime, $endtime){
+							$q3->where('planning_room.start_time', '=', $starttime)
+							->where('planning_room.end_time', '=', $endtime);
+						})
+						->orWhere(function ($q4) use ($starttime, $endtime){
+							$q4->where('planning_room.start_time', '=', $starttime)
+							->where('planning_room.end_time', '<', $endtime);
+						})
+						->orWhere(function ($q5) use ($starttime, $endtime){
+							$q5->where('planning_room.start_time', '>', $starttime)
+							->where('planning_room.end_time', '=', $endtime);
+						})
+						->orWhere(function ($q6) use ($starttime, $endtime){
+							$q6->where('planning_room.start_time', '>', $starttime)
+							->where('planning_room.end_time', '<', $endtime);
+						});
+					});
+	}
+
+	/**
+	 * [scopeCheckRoomAvailabilityUpdate description]
+	 * @param  [type] $query          [description]
+	 * @param  [type] $turnId         [description]
+	 * @param  [type] $roomId         [description]
+	 * @param  [type] $weekday        [description]
+	 * @param  [type] $starttime      [description]
+	 * @param  [type] $endtime        [description]
+	 * @param  [type] $planningRoomId [description]
+	 * @return [type]                 [description]
+	 */
+	public function scopeCheckRoomAvailabilityUpdate($query, $turnId, $roomId, $weekday, $starttime, $endtime, $planningRoomId)
+	{
+		return $query->join('planning_room','plannings.id','=','planning_room.planning_id')
+						->where('planning_room.weekday','=' ,$weekday)
+						->where('plannings.turn_id', '=', $turnId)
+						->where('planning_room.room_id','=', $roomId)
+						->where('planning_room.id', '!=', $planningRoomId)
+						->where(function($query) use ($starttime,$endtime)
+						{
+							$query->where(function($q1) use ($starttime){
+								$q1->where('planning_room.start_time', '<', $starttime)
+								->where('planning_room.end_time', '>', $starttime)
+								->where('planning_room.end_time', '!=', $starttime);
+							})
+							->orWhere(function ($q2) use ($endtime){
+								$q2->where('planning_room.start_time', '<', $endtime)
+								->where('planning_room.end_time', '>', $endtime);
+							})
+							->orWhere(function ($q3) use ($starttime,$endtime){
+								$q3->where('planning_room.start_time', '=', $starttime)
+								->where('planning_room.end_time', '=', $endtime);
+							})
+							->orWhere(function ($q4) use ($starttime,$endtime){
+								$q4->where('planning_room.start_time', '=', $starttime)
+								->where('planning_room.end_time', '<', $endtime);
+							})
+							->orWhere(function ($q5) use ($starttime,$endtime){
+								$q5->where('planning_room.start_time', '>', $starttime)
+								->where('planning_room.end_time', '=', $endtime);
+							})
+							->orWhere(function ($q6) use ($starttime,$endtime){
+								$q6->where('planning_room.start_time', '>', $starttime)
+								->where('planning_room.end_time', '<', $endtime);
+							});
+						});
+	}
+
+	/**
+	 * scope to delete a specific room assignment
+	 * @param  [type] $query      [description]
+	 * @param  [type] $roomId     [description]
+	 * @param  [type] $planningId [description]
+	 * @param  [type] $weekday    [description]
+	 * @param  [type] $starttime  [description]
+	 * @return [type]             [description]
+	 */
+	public function scopeDetachRoomAssignment($query, $roomId, $planningId, $weekday, $starttime)
+	{
+		return $query->join('planning_room', 'planning_room.planning_id', '=', 'plannings.id')
+					->where('planning_room.room_id','=', $roomId)
+					->where('planning_room.planning_id', '=', $planningId)
+					->where('planning_room.weekday', '=', $weekday)
+					->where('planning_room.start_time','=', $starttime);
+	}
+
+	/**
 	 * Returns the courses which could be in conflikt with the current planning
 	 * but only lectures will be returned
 	 * @return array of plannings
@@ -144,22 +278,6 @@ class Planning extends Ardent {
 	}
 
 	/**
-	* Returns true, if the course exists
-	* @return boolean
-	*/
-	public static function checkDuplicate(Turn $turn, Course $course, $group_number)
-	{
-		$result = static::where('course_id','=',$course->id)
-					->where('turn_id','=',$turn->id)
-					->where('group_number','=',$group_number)
-					->first();
-		if (sizeof($result) == 0)
-			return false;
-		else			
-			return true;
-	}
-
-	/**
 	* Stores the information in the planning object
 	* @param Turn $turn
 	* @param Array $input
@@ -186,5 +304,74 @@ class Planning extends Ardent {
 			$this->board_status = 1;
 		if ($input['researchgroup_status'] != "")
 			$this->researchgroup_status = 1;
+	}
+
+	public function copy(Planning $planning, Turn $turn, $options)
+	{
+		$this->turn_id = $turn->id;
+		$this->course_id = $planning->course->id;
+		$this->researchgroup_status = 0;
+		$this->board_status = 0;
+		$this->group_number = $planning->group_number;
+		$this->language = $planning->language;
+		$this->course_title = $planning->course->name;
+		$this->course_title_eng = $planning->course->name_eng;
+		$this->semester_periods_per_week = $planning->course->semester_periods_per_week;
+		$this->user_id = Entrust::user()->id;
+
+		// identify if a generic course number is needed
+		if ($planning->course->module->individual_courses == 0)
+			$this->course_number = $planning->course->course_number;
+		else
+			$this->course_number = $planning->course->coursetype->short.' '.time();
+		
+		// check the options
+		if (array_key_exists('comments', $options))
+			$this->comment = 1;
+		else
+			$this->comment = 0;
+
+		if (array_key_exists('room_preferences', $options))
+			$this->room_preference = 1;
+		else
+			$this->room_preference = 0;
+
+		if ($this->save())
+			return true;
+	}
+
+	/**
+	 * update the information of the planning
+	 * @param  [type] $input [description]
+	 * @return [type]        [description]
+	 */
+	public function updateInformation($input)
+	{
+		$this->comment = $input['comment'];
+		$this->room_preference = $input['room_preference'];
+		$this->language = $input['language'];
+		$this->course_number = $input['course_number'];
+		$this->course_title_eng = $input['course_title_eng'];
+		$this->course_title = $input['course_title'];
+		$this->researchgroup_status = $input['researchgroup_status'];
+		$this->board_status = $input['board_status'];
+
+		if ($this->updateUniques())
+			return true;
+	}
+
+	/**
+	 * delete a specific room assignment
+	 * @param  [type] $input [description]
+	 * @return [type]        [description]
+	 */
+	public function deleteRoomAssignment($input)
+	{
+		DB::table('planning_room')
+			->where('room_id','=',$input['room_id'])
+			->where('planning_id', '=', $this->id)
+			->where('weekday', '=', $input['weekday'])
+			->where('start_time','=', $input['start_time'])
+			->delete();
 	}
 }

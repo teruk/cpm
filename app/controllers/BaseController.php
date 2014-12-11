@@ -60,4 +60,19 @@ class BaseController extends Controller {
 		}
 		return $day;
 	}
+
+	/**
+	 * Extract the ids from an array of objects
+	 * 
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	public function getIds($data)
+	{
+		$ids = array();
+		foreach ($data as $key) {
+			array_push($ids, $key->id);
+		}
+		return $ids;
+	}
 }
