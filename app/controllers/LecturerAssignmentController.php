@@ -17,9 +17,9 @@ class LecturerAssignmentController extends \BaseController {
 				'semester_periods_per_week'=> Input::get('semester_periods_per_week')
 				]);
 
-		$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name.' ('.Input::get('semester_periods_per_week').' SWS)';
 		$planninglog = new Planninglog();
-		$planninglog->add($planning, 1, $action, 0);
+		$planninglog->logAssignedPlanningEmployee($planning, $turn, $employee, Input::get('semester_periods_per_week'));
+
 		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich hinzugefügt.');
 	}
 
@@ -33,19 +33,20 @@ class LecturerAssignmentController extends \BaseController {
 	{
 		Session::set('plannings_edit_tabindex', 1);
 		// TODO check if the sum of semester periods per weeks exceeds the semester periods per week of the course
-		$employee = Employee::findOrFail(Input::get('employee_id'));
-		// update
-		$planning->employees()->updateExistingPivot($employee->id, [
-			'semester_periods_per_week' => Input::get('semester_periods_per_week')
-			], true);
+		$employee = Employee::findOrFail(Input::get('employee_id'));		
 
 		// log
 		foreach ($planning->employees as $e) {
 			if ($e->id == $employee->id)
-				$action = "Mitarbeiter aktualisiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name.' ('.$e->pivot->semester_periods_per_week.' SWS -> '.Input::get('semester_periods_per_week').' SWS)';
+			{
+				$planninglog = new Planninglog();
+				$planninglog->logUpdatedPlanningEmployee($planning, $turn, $e, $Input::get('semester_periods_per_week'));
+			}
 		}
-		$planninglog = new Planninglog();
-		$planninglog->add($planning, 1, $action, 1);
+		// update
+		$planning->employees()->updateExistingPivot($employee->id, [
+			'semester_periods_per_week' => Input::get('semester_periods_per_week')
+			], true);
 		
 		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich aktualisiert.');
 	}
@@ -59,13 +60,13 @@ class LecturerAssignmentController extends \BaseController {
 	{
 		Session::set('plannings_edit_tabindex', 1);
 
+		// detach
 		$employee = Employee::findOrFail(Input::get('employee_id'));
 		$planning->employees()->detach($employee->id);
+
 		// log
-		$action = "Mitarbeiterzuordnung gelöscht (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name;
 		$planninglog = new Planninglog();
-		$planninglog->add($planning, 1, $action, 2);
-		// detach
+		$planninglog->logDetachedPlanningEmployee($planning, $turn, $employee);
 		
 		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich entfernt.');
 	}
@@ -89,9 +90,9 @@ class LecturerAssignmentController extends \BaseController {
 				if (!in_array($spe->id, $current_employee_ids))
 				{
 					$planning->employees()->attach($spe->id, array('semester_periods_per_week' => $spe->pivot->semester_periods_per_week));
-					$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$spe->firstname.' '.$spe->name.' ('.$spe->pivot->semester_periods_per_week.' SWS)';
+					// log
 					$planninglog = new Planninglog();
-					$planninglog->add($planning, 1, $action, 0);
+					$planninglog->logCopiedPlanningEmployee($planning, $turn, $spe);
 				}
 				else
 				{
@@ -104,9 +105,9 @@ class LecturerAssignmentController extends \BaseController {
 		{
 			foreach ($source_planning->employees as $e) {
 				$planning->employees()->attach($e->id, array('semester_periods_per_week' => $e->pivot->semester_periods_per_week));
-				$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$e->firstname.' '.$e->name.' ('.$e->pivot->semester_periods_per_week.' SWS)';
+				// log
 				$planninglog = new Planninglog();
-				$planninglog->add($planning, 1, $action, 0);
+				$planninglog->logCopiedPlanningEmployee($planning, $turn, $e);
 			}
 		}
 		if ($all_employees_copied)

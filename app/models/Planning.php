@@ -12,35 +12,67 @@ class Planning extends Ardent {
 			'room_preference' => 'required'
 	);
 	
+	/**
+	 * fetch associated turn
+	 * @return [type] [description]
+	 */
 	public function turn()
 	{
 		return $this->belongsTo('Turn');
 	}
 	
+	/**
+	 * fetch associated course
+	 * @return [type] [description]
+	 */
 	public function course()
 	{
 		return $this->belongsTo('Course');
 	}
 	
+	/**
+	 * fetch associated employees
+	 * @return [type] [description]
+	 */
 	public function employees()
 	{
 		return $this->belongsToMany('Employee')->withPivot('semester_periods_per_week','created_at','updated_at');
 	}
 	
+	/**
+	 * fetch associated rooms
+	 * @return [type] [description]
+	 */
 	public function rooms()
 	{
 		return $this->belongsToMany('Room')->withPivot('weekday','start_time','end_time','created_at','updated_at');
 	}
 
+	/**
+	 * fetch associated planning logs
+	 * @return [type] [description]
+	 */
 	public function planninglogs()
 	{
 		return $this->hasMany('Planninglog');
 	}
+
+	/**
+	 * fetch associated user
+	 * @return [type] [description]
+	 */
 	public function user()
 	{
 		return $this->belongsTo('User');
 	}
 	
+	/**
+	 * scope to get related plannings
+	 * 
+	 * @param  [type] $query     [description]
+	 * @param  [type] $plannings [description]
+	 * @return [type]            [description]
+	 */
 	public function scopeRelated($query, $plannings)
 	{
 		return $query->whereIn('id',$plannings);
@@ -294,10 +326,27 @@ class Planning extends Ardent {
 		$this->room_preference = $input['room_preference'];
 		$this->group_number = $input['group_number'];
 		$this->language = $input['language'];
-		$this->course_number = $course->course_number;
-		$this->course_title = $course->name;
-		$this->course_title_eng = $course->name_eng;
-		$this->semester_periods_per_week = $course->semester_periods_per_week;
+
+		if (array_key_exists('course_number', $input))
+			$this->course_number = $input['course_number'];
+		else
+			$this->course_number = $course->course_number;
+
+		if (array_key_exists('course_title', $input))
+			$this->course_title = $input['course_title'];
+		else
+			$this->course_title = $course->name;
+
+		if (array_key_exists('course_title_eng', $input))
+			$this->course_title_eng = $input['course_title_eng'];
+		else
+			$this->course_title_eng = $course->name_eng;
+
+		if (array_key_exists('semester_periods_per_week', $input))
+			$this->semester_periods_per_week = $input['semester_periods_per_week'];
+		else
+			$this->semester_periods_per_week = $course->semester_periods_per_week;
+		
 		$this->user_id = Entrust::user()->id;
 		$this->teaching_assignment = 0;
 		if ($input['board_status'] != "")
@@ -306,6 +355,13 @@ class Planning extends Ardent {
 			$this->researchgroup_status = 1;
 	}
 
+	/**
+	 * copy an old planning in to a new turn
+	 * @param  Planning $planning [description]
+	 * @param  Turn     $turn     [description]
+	 * @param  [type]   $options  [description]
+	 * @return [type]             [description]
+	 */
 	public function copy(Planning $planning, Turn $turn, $options)
 	{
 		$this->turn_id = $turn->id;

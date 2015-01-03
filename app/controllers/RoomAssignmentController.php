@@ -27,13 +27,11 @@ class RoomAssignmentController extends \BaseController {
 							'start_time'=>$input['start_time'],
 							'end_time'=>$input['end_time'],
 						));
+
 				// log
-				$action = "Raum zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-						$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-						$room->name.' ('.Config::get('constants.weekdays_short')[Input::get('weekday')].', '.
-							substr($input['start_time'],0,5).'-'.substr($input['end_time'],0,5).')';
 				$planninglog = new Planninglog();
-				$planninglog->add($planning, 2, $action, 0);
+				$planninglog->logAssignedPlanningRoom($planning, $turn, $room, $input);
+
 				return Redirect::back()->with('message', 'Raum erfolgreich hinzugefügt.');
 			}
 			else 
@@ -90,18 +88,14 @@ class RoomAssignmentController extends \BaseController {
 		{
 			if (Planning::checkRoomAvailabilityUpdate($turn->id, $room->id, $input['weekday'], $input['start_time'], $input['end_time'], $planningroomid->id)->count() == 0)
 			{
-				$action = "Raum aktualisiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-						$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-						$oldroom->name.' -> ('.$room->name.') ('.Config::get('constants.weekdays_short')[$input['weekday_old']].', '.
-							substr($input['start_time_old'],0,5).'-'.substr($input['end_time_old'],0,5).') -> ('.Config::get('constants.weekdays_short')[$input['weekday']].', '.
-							substr($input['start_time'],0,5).'-'.substr($input['end_time'],0,5).')';
+				$planninglog = new Planninglog();
+				$planninglog->logUpdatedPlanningRoom($planning, $turn, $room, $input, $oldroom);
 
 				DB::table('planning_room')
 					->where('id','=', $planningroomid->id)
 					->update(array('room_id' => $input['room_id'], 'weekday' => $input['weekday'], 'start_time'=> $input['start_time'], 'end_time'=> $input['end_time']));
 
-				$planninglog = new Planninglog();
-				$planninglog->add($planning, 2, $action, 1);
+				
 				return Redirect::back()->with('message', 'Raum erfolgreich aktualisiert.');
 			}
 			else
@@ -146,12 +140,9 @@ class RoomAssignmentController extends \BaseController {
 						'end_time'=>$planning_room->end_time,
 					));
 			// log
-			$action = "Raum zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-					$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-					$room->name.' ('.Config::get('constants.weekdays_short')[$planning_room->weekday].', '.
-						substr($planning_room->start_time,0,5).'-'.substr($planning_room->end_time,0,5).')';
 			$planninglog = new Planninglog();
-			$planninglog->add($planning, 2, $action, 0);
+			$planninglog->logCopiedPlanningRoom($planning, $turn, $room, $planning_room);
+
 			return Redirect::back()->with('message', 'Raum erfolgreich hinzugefügt.');
 		}
 		else 
@@ -209,13 +200,11 @@ class RoomAssignmentController extends \BaseController {
 		$planning->deleteRoomAssignment($input);		
 
 		$room = Room::findOrFail($input['room_id']);
+
 		// log
-		$action = "Raumzuordnung gelöscht (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-				$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".
-				$room->name.' ('.Config::get('constants.weekdays_short')[$input['weekday']].', '.
-					substr($input['start_time'],0,5).'-'.substr($input['end_time'],0,5).')';
 		$planninglog = new Planninglog();
-		$planninglog->add($planning, 2, $action, 2);
+		$planninglog->logDetachedPlanningRoom($planning, $turn, $room, $input);
+
 		return Redirect::back()->with('message', 'Raum erfolgreich entfernt.');
 	}
 

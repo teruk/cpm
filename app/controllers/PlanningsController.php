@@ -5,6 +5,7 @@
 
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
+
 class PlanningsController extends BaseController {
 
 	/**
@@ -264,11 +265,10 @@ class PlanningsController extends BaseController {
 			if ($planning->save())
 			{
 				$turn->saveExam($course->module);
-				$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-				$planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
-				$planning->room_preference;
+				//log
 				$planninglog = new Planninglog();
-				$planninglog->add($planning, 0, $action, 0);
+				$planninglog->logCreatedPlanning($planning, $turn);
+
 				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Veranstaltung '.$planning->course_title.' erfolgreich erstellt.');
 			}
 			else
@@ -286,45 +286,31 @@ class PlanningsController extends BaseController {
 	*/
 	public function storeModule(Turn $turn)
 	{
-		$module = Module::findOrFail(Input::get('module_id'));
+		$input = Input::all();
+		$module = Module::findOrFail($input['module_id']);
+
+		$input = array_add($input, 'group_number', 1);
+
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		// get the lecture
 		$result = Course::where('module_id','=',$module->id)->whereIn('course_type_id',array(1))->first();
+
 		foreach ($module->courses as $course) 
 		{
 			if ($listofcoursetypes[$course->course_type_id] == "Vorlesung" || $listofcoursetypes[$course->course_type_id] == "Vorlesung + Übung")
 			{
 				$planning = new Planning;
-				$planning->turn_id = $turn->id;
-				$planning->course_id = $course->id;
-				$planning->researchgroup_status = 0;
-				$planning->board_status = 0;
-				$planning->comment = Input::get('comment');
-				$planning->room_preference = Input::get('room_preference');
-				$planning->group_number = 1;
-				$planning->language = Input::get('language');
-				$planning->course_number = $course->course_number;
-				$planning->course_title = $course->name;
-				$planning->course_title_eng = $course->name_eng;
-				$planning->semester_periods_per_week = $course->semester_periods_per_week;
-				$planning->user_id = Entrust::user()->id;
-				$planning->teaching_assignment = 0;
-				if (Input::get('board_status') != "")
-					$planning->board_status = 1;
+				$input['group_number'] = 1;
 
-				if (Input::get('researchgroup_status') != "")
-					$planning->researchgroup_status = 1;
+				$planning->store($turn, $input, $course);
 				
 				if ( $planning->save() )
 				{
 					$turn = Turn::findOrFail($turn->id);
 					$turn->saveExam($course->module);
 					// log
-					$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-					$planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
-					$planning->room_preference;
 					$planninglog = new Planninglog();
-					$planninglog->add($planning, 0, $action, 0);
+					$planninglog->logCreatedPlanning($planning, $turn);
 				}
 			}
 			else
@@ -333,36 +319,18 @@ class PlanningsController extends BaseController {
 				for($x = 1; $x <= $number_of_groups; $x++)
 				{
 					$planning = new Planning;
-					$planning->turn_id = $turn->id;
-					$planning->course_id = $course->id;
-					$planning->researchgroup_status = 0;
-					$planning->board_status = 0;
-					$planning->comment = Input::get('comment');
-					$planning->room_preference = Input::get('room_preference');
-					$planning->group_number = $x;
-					$planning->language = Input::get('language');
-					$planning->course_number = $course->course_number;
-					$planning->course_title = $course->name;
-					$planning->course_title_eng = $course->name_eng;
-					$planning->semester_periods_per_week = $course->semester_periods_per_week;
-					$planning->user_id = Entrust::user()->id;
-					$planning->teaching_assignment = 0;
-					if (Input::get('board_status') != "")
-						$planning->board_status = 1;
+					$input['group_number'] = $x;
 
-					if (Input::get('researchgroup_status') != "")
-						$planning->researchgroup_status = 1;
+					$planning->store($turn, $input, $course);
 					
 					if ( $planning->save() )
 					{
 						$turn = Turn::findOrFail($turn->id);
 						$turn->saveExam($course->module);
+
 						// log
-						$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-						$planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
-						$planning->room_preference;
 						$planninglog = new Planninglog();
-						$planninglog->add($planning, 0, $action, 0);
+						$planninglog->logCreatedPlanning($planning, $turn);
 					}
 				}
 			}
@@ -376,46 +344,35 @@ class PlanningsController extends BaseController {
 	*/
 	public function storeIndividual(Turn $turn)
 	{
+		$input = Input::all();
 		// check for duplicates
-		$course = Course::findOrFail(Input::get('course_id'));
+		$course = Course::findOrFail($input['course_id']);
+
 		$result =  Planning::where('course_id','=', $course->id)
 					->where('turn_id','=',$turn->id)
 					->get();
+
 		$duplicate = Planning::where('course_id', '=',$course->id)
 							->where('turn_id', '=', $turn->id)
-							->where('course_title', '=', Input::get('course_title'))
+							->where('course_title', '=', $input['course_title'])
 							->get();
+
 		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
 		if (sizeof($duplicate) == 0)
 		{
 			$planning = new Planning;
-			$planning->turn_id = $turn->id;
-			$planning->course_id = $course->id;
-			$planning->researchgroup_status = 0;
-			$planning->board_status = 0;
-			$planning->comment = Input::get('comment');
-			$planning->room_preference = Input::get('room_preference');
-			$planning->group_number = sizeof($result)+1;
-			$planning->language = Input::get('language');
-			$planning->course_number = $listofcoursetypes[$course->course_type_id].'-'.(sizeof($result)+1);
-			$planning->course_title = Input::get('course_title');
-			$planning->course_title_eng = Input::get('course_title_eng');
-			$planning->semester_periods_per_week = $course->semester_periods_per_week;
-			$planning->user_id = Entrust::user()->id;
-			if (Input::get('teaching_assignment') == 1)
-				$planning->teaching_assignment = 1;
-			else
-				$planning->teaching_assignment = 0;
+			$input = array_add($input, 'group_number', time());
+			$input = array_add($input, 'course_number', $listofcoursetypes[$course->course_type_id].'-'.time());
+
+			$planning->store($turn, $input, $course);
 
 			if ( $planning->save() )
 			{
 				$turn->saveExam($course->module);
 				// log
-				$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-				$planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
-				$planning->room_preference;
 				$planninglog = new Planninglog();
-				$planninglog->add($planning, 0, $action, 0);
+				$planninglog->logCreatedPlanning($planning, $turn);
+
 				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Veranstaltung '.$planning->course_title.' erfolgreich erstellt.');
 			}
 			else
@@ -432,47 +389,39 @@ class PlanningsController extends BaseController {
 	*/
 	public function storeProject(Turn $turn)
 	{
+		$input = Input::all();
 		// check for duplicates
-		$course = Course::findOrFail(Input::get('course_id'));
-		$result =  Planning::where('course_id','=',$course->id)
-					->where('turn_id','=',$turn->id)
-					->get();
+		$course = Course::findOrFail($input['course_id']);
+
+		// $result =  Planning::where('course_id','=',$course->id)
+		// 			->where('turn_id','=',$turn->id)
+		// 			->get();
+
 		$duplicate = Planning::where('course_id', '=',$course->id)
 							->where('turn_id', '=', $turn->id)
-							->where('course_title', '=', Input::get('course_title'))
+							->where('course_title', '=', $input['course_title'])
 							->get();
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+
+		$courseType = CourseType::findOrFail($course->course_type_id);
 		if (sizeof($duplicate) == 0)
 		{
 			$planning = new Planning;
-			$planning->turn_id = $turn->id;
-			$planning->course_id = $course->id;
-			$planning->researchgroup_status = 0;
-			$planning->board_status = 0;
-			$planning->comment = Input::get('comment');
-			$planning->room_preference = Input::get('room_preference');
-			$planning->group_number = sizeof($result)+1;
-			$planning->language = Input::get('language');
-			$planning->course_number = $listofcoursetypes[$course->course_type_id].'-'.(sizeof($result)+1);
-			$planning->course_title = Input::get('course_title');
-			$planning->course_title_eng = Input::get('course_title_eng');
-			$planning->semester_periods_per_week = Input::get('semester_periods_per_week');
-			$planning->user_id = Entrust::user()->id;
-			if (Input::get('teaching_assignment') == 1)
-				$planning->teaching_assignment = 1;
-			else
-				$planning->teaching_assignment = 0;
+			$input = array_add($input, 'group_number', time());
+			$input = array_add($input, 'course_number', $courseType->short.'-'.time());
+
+			$planning->store($turn, $input, $course);
 
 			if ( $planning->save() )
 			{
 				// exam
 				$turn->saveExam($course->module);
 				// log
-				$action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-				$planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
-				$planning->room_preference;
+				// $action = "Planung erstellt (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
+				// $planning->course_title."; Gruppen-Nr. ".$planning->group_number."; Bemerkung: ".$planning->comment."; Raumwunsch: ".
+				// $planning->room_preference;
 				$planninglog = new Planninglog();
-				$planninglog->add($planning, 0, $action, 0);
+				$planninglog->logCreatedPlanning($planning, $turn);
+				// $planninglog->add($planning, 0, $action, 0);
 				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Veranstaltung '.$planning->course_title.' erfolgreich erstellt.');
 			}
 			else
@@ -480,7 +429,7 @@ class PlanningsController extends BaseController {
 		}
 		else
 			return Redirect::route('plannings.indexTurn', $turn->id)->with('error', 'Fehler: Diese Veranstaltung existiert schon.<br>
-																	Veranstaltung: '.$listofcoursetypes[$course->course_type_id].' '.Input::get('course_title').' '.$turn->name.' '.$turn->year);
+																	Veranstaltung: '.$courseType->short.' '.$input['course_title'].' '.$turn->name.' '.$turn->year);
 	}
 	
 	/**
@@ -662,16 +611,13 @@ class PlanningsController extends BaseController {
 			Planning::where('turn_id','=',$turn->id)->where('course_number','=',$planning->course_number)->update(array(
 				'comment' => $planning->comment, 'room_preference' => $planning->room_preference));
 			// log
-			$action = "Planung aktualisiert (".$turn->name." ".$turn->year."): ".
-						$planning->course_number." ".$planning->course_title." (".$planning->course_title."); Gruppen-Nr. ".
-						$planning->group_number."; Sprache ".Config::get('constants.language')[$planning->language]."; AB: ".Config::get('constants.pl_rgstatus')[$planning->researchgroup_status]."; VS: ".
-						Config::get('constants.pl_board_status')[$planning->board_status]."; Bemerkung: ".$planning->comment."; Raumwunsch: ".$planning->room_preference;
-						$planninglog = new Planninglog();
-			$planninglog->add($planning, 0, $action, 0);
+			$planninglog = new Planninglog();
+			$planninglog->logUpdatedPlanning($planning, $turn);
+
 			if (!$duplicate)
 				return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.');
-			else
-				return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.')
+			
+			return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.')
 										->with('error', 'Die Gruppen-Nr konnte nicht aktualisiert werden, da schon eine Gruppe mit der selben Nummer existiert!');
 		}
 
@@ -772,14 +718,15 @@ class PlanningsController extends BaseController {
 		{
 			$plannings = Planning::whereIn('id',Input::get('selected'))->get();
 			foreach ($plannings as $p) {
-				$action = "Planung aktualisiert (".$turn->name." ".$turn->year."): ".$p->course_number." ".$p->course_title." Gruppen-Nr. ".
-				$p->group_number."; AB: ".Config::get('constants.pl_rgstatus')[$p->researchgroup_status]."->".Config::get('constants.pl_rgstatus')[Input::get('researchgroup_status')]."; VS: ".
-				Config::get('constants.pl_board_status')[$p->board_status]."->".Config::get('constants.pl_board_status')[Input::get('board_status')];
+				$oldResearchGroupStatus = $p->researchgroup_status;
+				$oldBoardStatus = $p->board_status;
+
 				$p->board_status = Input::get('board_status');
 				$p->researchgroup_status = Input::get('researchgroup_status');
-				$p->save();				
+				$p->save();
+
 				$planninglog = new Planninglog();
-				$planninglog->add($p, 0, $action, 1);
+				$planninglog->logUpdatedPlanningStatus($planning, $turn, $oldBoardStatus, $oldResearchGroupStatus);
 			}
 			return Redirect::route('plannings.statusOverview', $turn->id)->with('message','Die Status wurden erfolgreich aktualisiert.');
 		}
@@ -812,9 +759,9 @@ class PlanningsController extends BaseController {
 			$turn->modules()->detach($planning->course->module_id);
 
 		// delete planning
-		$action = "Planung gelöscht (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number;
 		$planninglog = new Planninglog();
-		$planninglog->add($planning, 0, $action, 2);
+		$planninglog->logDeletedPlanning($planning, $turn);
+		
 		$planning->delete();
 		return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Veranstaltung erfolgreich gelöscht.');
 	}
@@ -833,9 +780,10 @@ class PlanningsController extends BaseController {
 			}
 		}
 		$turn->modules()->updateExistingPivot(Input::get('module_id'), array('exam' => Input::get('exam_type'), 'updated_at' => new Datetime));
-		$action = "Modulabschlussart aktualisiert (".$turn->name." ".$turn->year."): ".$planning->course->module->short." ".$planning->course->module->name."; Abschluss: ".Config::get('constants.exam_type')[$old_exam_type]." -> ".Config::get('constants.exam_type')[Input::get('exam_type')];
+		// log
 		$planninglog = new Planninglog();
-		$planninglog->add($planning, 3, $action, 1);
+		$planninglog->logUpdatedPlanningExam($planning, $turn);
+
 		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Modulabschluss erfolgreich aktualisiert.')
 																				->with('tabindex', Input::get('tabindex'));
 	}
@@ -1065,11 +1013,8 @@ class PlanningsController extends BaseController {
 				if ($planningnew->copy($planning, $turn, $options))
 				{
 					// log
-					$action = "Planung kopiert (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".
-					$planningnew->course_title."; Gruppen-Nr. ".$planningnew->group_number."; Bemerkung: ".$planningnew->comment."; Raumwunsch: ".
-					$planningnew->room_preference;
 					$planninglog = new Planninglog();
-					$planninglog->add($planningnew, 0, $action, 0);
+					$planninglog->logCopiedPlanning($planningnew, $turn);
 					
 					if (array_key_exists('employees', $options))
 					{
@@ -1084,9 +1029,9 @@ class PlanningsController extends BaseController {
 										'created_at' => new Datetime,
 										'updated_at' => new Datetime
 								));
-								$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planningnew->course_number." ".$planningnew->course_title." Gruppen-Nr. ".$planningnew->group_number." ".$employee->firstname.' '.$employee->name.' ('.$employee->pivot->semester_periods_per_week.' SWS)';
+								
 								$planninglog = new Planninglog();
-								$planninglog->add($planningnew, 1, $action, 0);
+								$planninglog->logCopiedPlanningEmployee($planningnew, $turn, $employee);
 							}
 						}
 					}

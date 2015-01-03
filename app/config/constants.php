@@ -8,6 +8,6 @@ return array(	'degrees' 			=> array('Bachelor', 'Master', 'Diplom', 'Magister'),
 				'weekdays'			=> array('Montag','Dienstag','Mittwoch','Donnerstag','Samstag','Sonntag'),
 				'weekdays_short' 	=> array('Mo','Di','Mi','Do','Fr','Sa','So'),
 				'exam_type'			=> array('Klausur', 'mdl. Prüfung', 'Hausarbeit/Referat','Referat','Hausarbeit','Keine'),
-				'planninglog_category' => array('Planung','Planung - Mitarbeiter', 'Planung - Raum', 'Planung - Abschluss', 'Mitarbeiter'),
+				'planninglog_category' => array('Planung','Planung - Mitarbeiter', 'Planung - Raum', 'Planung - Abschluss', 'Planung - Status'),
 				'planninglog_action_type' => array('hinzugefügt', 'aktualisiert', 'gelöscht'),
 );
