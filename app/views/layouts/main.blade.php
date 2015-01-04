@@ -52,6 +52,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="bs-component">
+							@include('flash::message')
 							@yield('breadcrumbs')
 			    			@yield('main')
 						</div>

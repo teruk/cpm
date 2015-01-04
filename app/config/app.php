@@ -125,6 +125,7 @@ return array(
 		'Cviebrock\EloquentSluggable\SluggableServiceProvider', // Slug helper
 		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // IDE Helpers
 		'Zizaco\Entrust\EntrustServiceProvider', // Entrust
+		'Laracasts\Flash\FlashServiceProvider',
 
 	),
 
@@ -193,6 +194,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Sluggable'		  => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
 		'Entrust'		  => 'Zizaco\Entrust\EntrustFacade',
+		'Flash'				=> 'Laracasts\Flash\Flash',
 
 	),
 

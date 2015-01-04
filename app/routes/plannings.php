@@ -12,13 +12,12 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 	Route::delete('{turn}/delete/{planning}', array('as' => 'plannings.destroy', 'uses' => 'PlanningsController@destroy'));
 	Route::patch('{turn}/show/{planning}/update', array('as' => 'plannings.update', 'uses' => 'PlanningsController@update'));
 	Route::patch('{turn}/generateFromMediumtermplanning', array('as' => 'plannings.generateFromMediumtermplanning', 'uses' => 'PlanningsController@generatePlanningsFromMediumtermplanning'));
-	Route::post('{turn}/copyselected', array('as' => 'plannings.copyselected', 'uses' => 'PlanningsController@copySelectedPlanning'));
 	Route::post('{turn}/update_status', array('as' => 'plannings.updateStatus', 'uses' => 'PlanningsController@updateStatus'));
-	Route::post('{turn}/save', array('as' => 'plannings.store', 'uses' => 'PlanningsController@store'));
-	Route::post('{turn}/save_module', array('as' => 'plannings.storeModule', 'uses' => 'PlanningsController@storeModule'));
-	Route::post('{turn}/save_individual', array('as' => 'plannings.storeIndividual', 'uses' => 'PlanningsController@storeIndividual'));
-	Route::post('{turn}/save_project', array('as' => 'plannings.storeProject', 'uses' => 'PlanningsController@storeProject'));
-	Route::post('{turn}/copylastturn', array('as' => 'plannings.copylastturn', 'uses' => 'PlanningsController@copyLastTurn'));
+
+	Route::post('{turn}/save', array('as' => 'plannings.store', 'uses' => 'StorePlanningsController@store'));
+	Route::post('{turn}/save_module', array('as' => 'plannings.storeModule', 'uses' => 'StorePlanningsController@storeModule'));
+	Route::post('{turn}/save_individual', array('as' => 'plannings.storeIndividual', 'uses' => 'StorePlanningsController@storeIndividual'));
+	Route::post('{turn}/copy', array('as' => 'plannings.copy', 'uses' => 'CopyPlanningsController@copy'));
 
 	Route::delete('{turn}/show/{planning}/delete_employee', array('as' => 'plannings.deleteEmployee', 'uses' => 'LecturerAssignmentController@detachLecturer'));
 	Route::patch('{turn}/show/{planning}/update_employee', array('as' => 'plannings.updateEmployee', 'uses' => 'LecturerAssignmentController@updateLecturer'));

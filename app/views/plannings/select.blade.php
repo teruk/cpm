@@ -55,7 +55,7 @@
 
 @section('main')
 	<h4>Semesterplanung {{ $turn->name }} {{ $turn->year }} - Lehrveranstaltungen übernehmen</h4>
-	{{ Form::model(new Planning, ['route' => ['plannings.copyselected', $turn->id], 'class' => "form-horizontal"])}}
+	{{ Form::model(new Planning, ['route' => ['plannings.copy', $turn->id], 'class' => "form-horizontal"])}}
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="col-sm-12 well well-sm">

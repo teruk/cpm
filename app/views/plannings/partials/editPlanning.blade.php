@@ -18,7 +18,7 @@
 								<!-- <th>Modul:</th>
 								<td align="right">{{ $course->module->short }}</td> -->
 								<th>SWS:</th>
-								<td colspan=2 align="right">{{ $course->semester_periods_per_week }}</td>
+								<td colspan=2 align="right">{{ $planning->semester_periods_per_week }}</td>
 								<th>Typ:</th>
 								<td align="right">{{ $lists['coursetypes'][$course->course_type_id] }}</td>
 							</tr>
