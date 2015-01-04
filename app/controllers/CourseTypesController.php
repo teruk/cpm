@@ -12,18 +12,8 @@ class CourseTypesController extends BaseController {
 	public function index()
 	{
 		$coursetypes = CourseType::all();
-		$this->layout->content = View::make('coursetypes.index', compact('coursetypes'));
-	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 * GET /coursetypes/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-// 		$this->layout->content = View::make('degree_courses.index');
+		$this->layout->content = View::make('coursetypes.index', compact('coursetypes'));
 	}
 
 	/**
@@ -38,9 +28,13 @@ class CourseTypesController extends BaseController {
 		$coursetype = new CourseType($input);
 		
 		if ( $coursetype->save() )
-			return Redirect::route('coursetypes.index')->with('message', 'Kurstyp erfolgreich erstellt!');
-		else
-			return Redirect::route('coursetypes.index')->withInput()->withErrors( $coursetype->errors() );
+		{
+			Flash::success('Kurstyp erfolgreich erstellt!');
+			return Redirect::back();
+		}
+
+		Flash::error($coursetype->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -68,9 +62,13 @@ class CourseTypesController extends BaseController {
 		$coursetype->fill($input);
  
 		if ( $coursetype->updateUniques() )
-			return Redirect::route('coursetypes.show', $coursetype->id)->with('message', 'Der Kurstyp wurde aktualisiert.');
-		else
-			return Redirect::route('coursetypes.show', array_get($coursetype->getOriginal(), 'id'))->withInput()->withErrors( $coursetype->errors() );
+		{
+			Flash::success('Der Kurstyp wurde aktualisiert.');
+			return Redirect::route('coursetypes.show', $coursetype->id);
+		}
+		
+		Flash::error($coursetype->errors());
+		return Redirect::route('coursetypes.show', array_get($coursetype->getOriginal(), 'id'))->withInput();
 	}
 
 	/**
@@ -83,7 +81,8 @@ class CourseTypesController extends BaseController {
 	public function destroy(CourseType $coursetype)
 	{
 		$coursetype->delete();
-		return Redirect::route('coursetypes.index')->with('message', 'Kurstyp erfolgreich gelöscht.');
+		Flash::success('Kurstyp erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 
 }

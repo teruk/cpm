@@ -14,6 +14,7 @@ class DegreeCoursesController extends \BaseController {
 		$degreecourses = DegreeCourse::all();
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
+
 		$this->layout->content = View::make('degree_courses.index', compact('degreecourses','listofdepartments', 'listofdegrees'));
 	}
 
@@ -40,9 +41,13 @@ class DegreeCoursesController extends \BaseController {
 		$degreecourse = new DegreeCourse($input);
 		
 		if ( $degreecourse->save() )
-			return Redirect::route('degree_courses.index')->with('message', 'Studiengang erfolgreich erstellt!');
-		else
-			return Redirect::route('degree_courses.index')->withInput()->withErrors( $degreecourse->errors() );
+		{
+			Flash::success('Studiengang erfolgreich erstellt!');
+			return Redirect::back();
+		}
+
+		Flash::error($degreecourse->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -58,6 +63,7 @@ class DegreeCoursesController extends \BaseController {
 		$listofdegrees = Degree::lists('name','id');
 		$listofrotations = Rotation::lists('name','id');
 		$listofsections = Section::lists('name','id');
+
 		$this->layout->content = View::make('degree_courses.show', compact('degreecourse', 'listofdepartments', 'listofdegrees', 'listofsections', 'listofrotations'));
 	}
 
@@ -86,9 +92,13 @@ class DegreeCoursesController extends \BaseController {
 		$degreecourse->fill($input);
  
 		if ( $degreecourse->updateUniques() )
-			return Redirect::route('degree_courses.show', $degreecourse->id)->with('message', 'Der Studiengang wurde aktualisiert.');
-		else
-			return Redirect::route('degree_courses.show', array_get($degreecourse->getOriginal(), 'id'))->withInput()->withErrors( $degreecourse->errors() );
+		{
+			Flash::success('Der Studiengang wurde aktualisiert.');
+			return Redirect::route('degree_courses.show', $degreecourse->id);
+		}
+
+		Flash::error($degreecourse->errors());
+		return Redirect::route('degree_courses.show', array_get($degreecourse->getOriginal(), 'id'))->withInput();
 	}
 
 	/**
@@ -101,7 +111,8 @@ class DegreeCoursesController extends \BaseController {
 	public function destroy(DegreeCourse $degreecourse)
 	{
 		$degreecourse->delete();
-		return Redirect::route('degree_courses.index')->with('message', 'Studiengang erfolgreich geloescht.');
+		Flash::success('Studiengang erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 
 }

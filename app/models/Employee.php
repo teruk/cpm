@@ -13,16 +13,28 @@ class Employee extends Ardent {
 			'employed_since' 	=> 'required',
 	);
 	
+	/**
+	 * [researchgroup description]
+	 * @return [type] [description]
+	 */
 	public function researchgroup()
 	{
 		return $this->belongsTo('Researchgroup');
 	}
 	
+	/**
+	 * [mediumtermplannings description]
+	 * @return [type] [description]
+	 */
 	public function mediumtermplannings()
 	{
 		return $this->belongsToMany('Mediumtermplanning')->withPivot('semester_periods_per_week','annulled');
 	}
 	
+	/**
+	 * [plannings description]
+	 * @return [type] [description]
+	 */
 	public function plannings()
 	{
 		return $this->belongsToMany('Planning')->withPivot('semester_periods_per_week','created_at','updated_at');
@@ -60,5 +72,24 @@ class Employee extends Ardent {
 			$list = array_add($list, $employee->id, $employee->firstname.' '.$employee->name.' ('.$listofresearchgroups[$employee->researchgroup_id].')');
 		}
 		return $list;
+	}
+
+	/**
+	 * [saveDummyEmployee description]
+	 * @param  [type]        $firstname     [description]
+	 * @param  Researchgroup $researchgroup [description]
+	 * @param  [type]        $title         [description]
+	 * @return [type]                       [description]
+	 */
+	public function saveDummyEmployee($firstname, Researchgroup $researchgroup, $title)
+	{
+		$this->firstname = $firstname;
+		$this->name = $researchgroup->short;
+		$this->title = $title;
+		$this->researchgroup_id = $researchgroup->id;
+		$this->teaching_load = 0;
+		$this->employed_since = date("Y-m-d");
+		$this->employed_till = date('Y-m-d',strtotime(date("Y-m-d", time()) . " + 10 year"));
+		$this->inactive = 0;
 	}
 }

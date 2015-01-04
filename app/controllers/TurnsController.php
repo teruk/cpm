@@ -25,12 +25,14 @@ class TurnsController extends BaseController {
 		 * if yes, then the turn can't be deleted
 		 */
 		if (sizeof($turn->midtermplannings) > 0)
-			return Redirect::route('turns.index')->with('error', 'Dieses Semester kann nicht gelöscht werden, da es bereits in die mittelfristige Lehrplanung miteinbezogen wurde.');
-		else 
 		{
-			$turn->delete();
-			return Redirect::route('turns.index')->with('message', 'Semester erfolgreich gelöscht.');
+			Flash::error('Dieses Semester kann nicht gelöscht werden, da es bereits in die mittelfristige Lehrplanung miteinbezogen wurde.');
+			return Redirect::back();
 		}
+		
+		$turn->delete();
+		Flash::success('Semester erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	/**
@@ -65,16 +67,22 @@ class TurnsController extends BaseController {
 		if (sizeof($duplicate))
 			$message = "Dieses Semester existiert schon.";
 		$passed = $turn->checkLogic();
+
 		// if the logical check is passed and there are no duplicates, then try to save the turn
 		if ($passed['successful'] && sizeof($duplicate) == 0)
 		{
 			if ( $turn->save() )
-				return Redirect::route('turns.index')->with('message', 'Semester erfolgreich erstellt!');
-			else
-				return Redirect::route('turns.index')->withInput()->withErrors( $turn->errors() );
+			{
+				Flash::success('Semester erfolgreich erstellt!');
+				return Redirect::back();
+			}
+			
+			Flash::error($turn->errors());
+			return Redirect::back();
 		}
-		else 
-			return Redirect::route('turns.index')->with('error', $passed['message']);
+		
+		Flash::error($passed['message']);
+		return Redirect::back();
 	}
 	
 	/**
@@ -88,11 +96,16 @@ class TurnsController extends BaseController {
 		if ($passed['successful'])
 		{
 			if ($turn->updateUniques())
-				return Redirect::route('turns.show', $turn->id)->with('message','Das Semester wurde aktualisiert.');
-			else
-				return Redirect::route('turns.show', array_get($turn->getOriginal(), 'id'))->withInput()->withErrors($turn->errors());
+			{
+				Flash::success('Das Semester wurde aktualisiert.');
+				return Redirect::route('turns.show', $turn->id);
+			}
+			
+			Flash::error($turn->errors());
+			return Redirect::route('turns.show', array_get($turn->getOriginal(), 'id'))->withInput();
 		}
-		else 
-			return Redirect::route('turns.show', $turn->id)->with('error',$passed['message']);
+
+		Flash::error($passed['message']);
+		return Redirect::route('turns.show', $turn->id);
 	}
 }

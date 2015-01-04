@@ -3,7 +3,8 @@
 class DegreesController extends BaseController {
 	
 	/**
-	 * 
+	 * [index description]
+	 * @return [type] [description]
 	 */
 	public function index()
 	{
@@ -12,8 +13,9 @@ class DegreesController extends BaseController {
 	}
 	
 	/**
-	 * 
-	 * @param Degree $degree
+	 * [show description]
+	 * @param  Degree $degree [description]
+	 * @return [type]         [description]
 	 */
 	public function show(Degree $degree)
 	{
@@ -21,7 +23,8 @@ class DegreesController extends BaseController {
 	}
 	
 	/**
-	 * 
+	 * [store description]
+	 * @return [type] [description]
 	 */
 	public function store()
 	{
@@ -29,33 +32,45 @@ class DegreesController extends BaseController {
 		$degree = new Degree($input);
 		
 		if ($degree->save())
-			return Redirect::route('degrees.index')->with('message','Bereich erfolgreich angelegt.');
-		else
-			return Redirect::route('degrees.index')->withInput()->withErrors($degree->errors());
+		{
+			Flash::success('Bereich erfolgreich angelegt.');
+			return Redirect::back();
+		}
+
+		Flash::error($degree->errors());
+		return Redirect::back();
 	}
 	
 	/**
-	 * 
-	 * @param Degree $degree
+	 * [destroy description]
+	 * @param  Degree $degree [description]
+	 * @return [type]         [description]
 	 */
 	public function destroy(Degree $degree)
 	{
 		$degree->delete();
-		return Redirect::route('degrees.index')->with('message','Bereich erfolgreich gelöscht.');
+
+		Flash::success('Bereich erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	/**
-	 * 
-	 * @param Degree $degree
+	 * [update description]
+	 * @param  Degree $degree [description]
+	 * @return [type]         [description]
 	 */
 	public function update(Degree $degree)
 	{
 		$input = Input::all();
 		$degree->fill($input);
 		if ($degree->updateUniques())
-			return Redirect::route('degrees.show', $degree->id)->with('message','Der Bereich wurde aktualisiert.');
-		else
-			return Redirect::route('degrees.show', array_get($degree->getOriginal(), 'id'))->withInput()->withErrors($degree->errors());
+		{
+			Flash::success('Der Bereich wurde aktualisiert.');
+			return Redirect::route('degrees.show', $degree->id);
+		}
+
+		Flash::error($degree->errors());
+		return Redirect::route('degrees.show', array_get($degree->getOriginal(), 'id'))->withInput();
 	}
 	
 }

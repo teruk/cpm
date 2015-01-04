@@ -27,9 +27,13 @@ class AnnouncementsController extends BaseController {
 		$announcement = new Announcement();
 		
 		if ($announcement->publish($input))
-			return Redirect::back()->with('message', 'Ankündigung wurde erfolgreich erstellt!');
+		{
+			Flash::success('Ankündigung wurde erfolgreich erstellt!');
+			return Redirect::back();
+		}
 
-		return Redirect::back()->withInput()->withErrors($announcement->errors());
+		Flash::error($announcement->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -55,9 +59,13 @@ class AnnouncementsController extends BaseController {
 	{
 		$input = Input::all();
 		if ($announcement->updateInformation($input))
-			return Redirect::back()->with('message', 'Die Ankündigung wurde aktualisiert.');
+		{
+			Flash::success('Die Ankündigung wurde aktualisiert.');
+			return Redirect::back();
+		}
 		
-		return Redirect::back()->withInput()->withErrors( $announcement->errors() );
+		Flash::error($announcement->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -70,7 +78,8 @@ class AnnouncementsController extends BaseController {
 	public function destroy(Announcement $announcement)
 	{
 		$announcement->delete();
-		return Redirect::back()->with('message', 'Die Ankündigung erfolgreich gelöscht.');
+		Flash::success('Die Ankündigung erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 
 }

@@ -15,6 +15,7 @@ class CoursesController extends BaseController {
 		$courses = Course::all();
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		$listofmodules = Module::orderBy('name','ASC')->lists('name','id'); // list is different from Module::lists
+
 		$this->layout->content = View::make('courses.index', compact('courses','listofcoursetypes', 'listofmodules'));
 	}
 
@@ -34,26 +35,28 @@ class CoursesController extends BaseController {
 			// check the origin of the save request
 			if (Input::get('tabindex') == "")
 			{
-				return Redirect::route('courses.index')->with('message', 'Lehrveranstaltung erfolgreich erstellt!');
+				Flash::success('Lehrveranstaltung erfolgreich erstellt!');
+				return Redirect::back();
 			}
 			else 
 			{
 				// back to module show
 				$module = Module::find($course->module_id);
-				return Redirect::route('modules.show',$module->id)->with('message', 'Lehrveranstaltung erfolgreich erstellt!')
-				->with('tabindex', Input::get('tabindex'));
+				Flash::success('Lehrveranstaltung erfolgreich erstellt!');
+				return Redirect::route('modules.show',$module->id)->with('tabindex', Input::get('tabindex'));
 			}
 		else
 			if (Input::get('tabindex') == "")
 			{
-				return Redirect::route('courses.index')->withInput()->withErrors( $course->errors() );
+				Flash::error($course->errors());
+				return Redirect::back()->withInput();
 			}
 			else
 			{
 				// back to module show
 				$module = Module::find($course->module_id);
-				return Redirect::route('modules.show', $module->id)->withInput()->withErrors( $course->errors() )
-				->with('tabindex', Input::get('tabindex'));
+				Flash::error($course->errors());
+				return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex', Input::get('tabindex'));
 			}
 	}
 
@@ -69,12 +72,9 @@ class CoursesController extends BaseController {
 		$listofcoursetypes = CourseType::lists('name','id');
 		$listofmodules = Module::orderBy('name','ASC')->lists('name','id');
 		if (sizeof(Session::get('tabindex')) == "")
-		{
 			$tabindex = 0;
-		}
-		else {
+		else 
 			$tabindex = Session::get('tabindex');
-		}
 		
 		// get the information for the course history
 		$history = Planning::courses($course)->get();
@@ -96,9 +96,13 @@ class CoursesController extends BaseController {
 		$course->department_id = 1;
  
 		if ( $course->updateUniques() )
-			return Redirect::route('courses.show', $course->id)->with('message', 'Der Lehrveranstaltung wurde aktualisiert.');
-		else
-			return Redirect::route('courses.show', array_get($course->getOriginal(), 'id'))->withInput()->withErrors( $course->errors() );
+		{
+			Flash::success('Der Lehrveranstaltung wurde aktualisiert.');
+			return Redirect::route('courses.show', $course->id);
+		}
+
+		Flash::error($course->errors());
+		return Redirect::route('courses.show', array_get($course->getOriginal(), 'id'))->withInput();
 	}
 
 	/**
@@ -111,7 +115,8 @@ class CoursesController extends BaseController {
 	public function destroy(Course $course)
 	{
 		$course->delete();
-		return Redirect::route('courses.index')->with('message', 'Lehrveranstaltung erfolgreich gelöscht.');
+		Flash::success('Lehrveranstaltung erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	// public function export()

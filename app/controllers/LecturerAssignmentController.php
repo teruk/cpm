@@ -20,7 +20,8 @@ class LecturerAssignmentController extends \BaseController {
 		$planninglog = new Planninglog();
 		$planninglog->logAssignedPlanningEmployee($planning, $turn, $employee, Input::get('semester_periods_per_week'));
 
-		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich hinzugefügt.');
+		Flash::success('Mitarbeiter erfolgreich hinzugefügt.');
+		return Redirect::back();
 	}
 
 	/**
@@ -48,7 +49,8 @@ class LecturerAssignmentController extends \BaseController {
 			'semester_periods_per_week' => Input::get('semester_periods_per_week')
 			], true);
 		
-		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich aktualisiert.');
+		Flash::success('Mitarbeiter erfolgreich aktualisiert.');
+		return Redirect::back();
 	}
 
 	/**
@@ -68,7 +70,8 @@ class LecturerAssignmentController extends \BaseController {
 		$planninglog = new Planninglog();
 		$planninglog->logDetachedPlanningEmployee($planning, $turn, $employee);
 		
-		return Redirect::back()->with('message', 'Mitarbeiter erfolgreich entfernt.');
+		Flash::success('Mitarbeiter erfolgreich entfernt.');
+		return Redirect::back();
 	}
 
 	/**
@@ -111,8 +114,12 @@ class LecturerAssignmentController extends \BaseController {
 			}
 		}
 		if ($all_employees_copied)
-			return Redirect::back()->with('message', 'Mitarbeiter wurden erfolgreich übernommen.');
-		else
-			return Redirect::back()->with('error', 'Es konnten nicht alle Mitarbeiter übernommen werden: '.$message);
+		{
+			Flash::success('Mitarbeiter wurden erfolgreich übernommen.');
+			return Redirect::back();
+		}
+		
+		Flash::error('Es konnten nicht alle Mitarbeiter übernommen werden: '.$message);
+		return Redirect::back();
 	}
 }

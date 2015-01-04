@@ -16,17 +16,6 @@ class RoomTypesController extends BaseController {
 	}
 
 	/**
-	 * Show the form for creating a new resource.
-	 * GET /roomtypes/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-// 		$this->layout->content = View::make('degree_courses.index');
-	}
-
-	/**
 	 * Store a newly created resource in storage.
 	 * POST /roomtypes
 	 *
@@ -38,9 +27,13 @@ class RoomTypesController extends BaseController {
 		$roomtype = new RoomType($input);
 		
 		if ( $roomtype->save() )
-			return Redirect::route('roomtypes.index')->with('message', 'Raumtyp erfolgreich erstellt!');
-		else
-			return Redirect::route('roomtypes.index')->withInput()->withErrors( $roomtype->errors() );
+		{
+			Flash::success('Raumtyp erfolgreich erstellt!');
+			return Redirect::back();
+		}
+
+		Flash::error($roomtype->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -68,9 +61,13 @@ class RoomTypesController extends BaseController {
 		$roomtype->fill($input);
  
 		if ( $roomtype->updateUniques() )
-			return Redirect::route('roomtypes.show', $roomtype->id)->with('message', 'Der Raumtyp wurde aktualisiert.');
-		else
-			return Redirect::route('roomtypes.show', array_get($roomtype->getOriginal(), 'id'))->withInput()->withErrors( $roomtype->errors() );
+		{
+			Flash::success('Der Raumtyp wurde aktualisiert.');
+			return Redirect::route('roomtypes.show', $roomtype->id);
+		}
+
+		Flash::error($roomtype->errors());
+		return Redirect::route('roomtypes.show', array_get($roomtype->getOriginal(), 'id'))->withInput();
 	}
 
 	/**
@@ -83,7 +80,8 @@ class RoomTypesController extends BaseController {
 	public function destroy(RoomType $roomtype)
 	{
 		$roomtype->delete();
-		return Redirect::route('roomtypes.index')->with('message', 'Raumtyp erfolgreich gelöscht.');
+		Flash::success('Raumtyp erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 
 }

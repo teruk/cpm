@@ -70,9 +70,9 @@ class ScheduleController extends \BaseController {
 	*/
 	private function generate()
 	{
-		$semester = Session::get('overview_schedule_semester');
-		$degreecourseId = Session::get('overview_schedule_degreecourse');
-		$turnId = Session::get('overview_schedule_turn');
+		$semester = Session::pull('overview_schedule_semester');
+		$degreecourseId = Session::pull('overview_schedule_degreecourse');
+		$turnId = Session::pull('overview_schedule_turn');
 
 		$listofcoursetypes = CourseType::lists('short','id');
 		// Get all lectures

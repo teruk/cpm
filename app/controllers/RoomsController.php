@@ -29,9 +29,13 @@ class RoomsController extends BaseController {
 		$room = new Room();
 
 		if ($room->register($input))
-			return Redirect::back()->with('message', 'Raum erfolgreich erstellt!');
+		{
+			Flash::success('Raum erfolgreich erstellt!');
+			return Redirect::back();
+		}
 
-		return Redirect::back()->withInput()->withErrors( $room->errors() );
+		Flash::error($room->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -59,9 +63,13 @@ class RoomsController extends BaseController {
 		$input = Input::all();
 
 		if ( $room->updateInformation($input) )
-			return Redirect::back()->with('message', 'Der Raum wurde aktualisiert.');
+		{
+			Flash::success('Der Raum wurde aktualisiert.');
+			return Redirect::back();
+		}
 		
-		return Redirect::back()->withInput()->withErrors( $room->errors() );
+		Flash::error($room->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -74,6 +82,7 @@ class RoomsController extends BaseController {
 	public function destroy(Room $room)
 	{
 		$room->delete();
-		return Redirect::back()->with('message', 'Raum erfolgreich gelöscht.');
+		Flash::success('Raum erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 }

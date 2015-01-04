@@ -43,8 +43,9 @@ class PlanningsController extends BaseController {
 			$lists = $this->getCourseTypes($display_turn);
 			$this->layout->content = View::make('plannings.index', compact('current_turn','next_turn', 'afternext_turn','before_turns','planned_courses', 'display_turn', 'lists', 'pastcourses', 'listofcoursetypes'));
 		}
-		else
-			return Redirect::back()->with('error','Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
+		
+		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
+		return Redirect::back();
 	}
 
 	/**
@@ -120,8 +121,11 @@ class PlanningsController extends BaseController {
 	}
 	
 	/**
-	*
-	*/
+	 * show all plannings
+	 * 
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function showall(Turn $turn)
 	{
 		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
@@ -402,8 +406,9 @@ class PlanningsController extends BaseController {
 			$output = $this->getConflictCourseSchedule($conflictcourses);
 			$this->layout->content = View::make('plannings.edit', compact('course', 'turn','planning', 'lists','tabindex', 'oldrooms','relatedplannings', 'oldplannings', 'conflictcourses', 'exam','output','planninglog'));
 		}
-		else
-			return Redirect::route('home')->with('error', 'Sie besitzen keine Rechte für diesen Bereich!');
+		
+		Flash::error('Sie besitzen keine Rechte für diesen Bereich!');
+		return Redirect::route('home');
 	}
 	
 	/**
@@ -440,7 +445,8 @@ class PlanningsController extends BaseController {
 										->with('error', 'Die Gruppen-Nr konnte nicht aktualisiert werden, da schon eine Gruppe mit der selben Nummer existiert!');
 		}
 
-		return Redirect::back()->withInput()->withErrors( $planning->errors() );
+		Flash::error($planning->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -463,11 +469,12 @@ class PlanningsController extends BaseController {
 				$planninglog = new Planninglog();
 				$planninglog->logUpdatedPlanningStatus($planning, $turn, $oldBoardStatus, $oldResearchGroupStatus);
 			}
-			return Redirect::route('plannings.statusOverview', $turn->id)->with('message','Die Status wurden erfolgreich aktualisiert.');
+			Flash::success('Die Status wurden erfolgreich aktualisiert.');
+			return Redirect::route('plannings.statusOverview', $turn->id);
 		}
-		else
-		{
-			return Redirect::route('plannings.statusOverview', $turn->id)->with('error','Es wurden keine Veranstaltungen ausgewählt.');
+
+		Flash::error('Es wurden keine Veranstaltungen ausgewählt.');
+		return Redirect::route('plannings.statusOverview', $turn->id);
 		}
 	}
 	
@@ -498,7 +505,9 @@ class PlanningsController extends BaseController {
 		$planninglog->logDeletedPlanning($planning, $turn);
 
 		$planning->delete();
-		return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Veranstaltung erfolgreich gelöscht.');
+
+		Flash::success('Veranstaltung erfolgreich gelöscht.');
+		return Redirect::route('plannings.indexTurn', $turn->id);
 	}
 
 	/**
@@ -519,8 +528,8 @@ class PlanningsController extends BaseController {
 		$planninglog = new Planninglog();
 		$planninglog->logUpdatedPlanningExam($planning, $turn);
 
-		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('message', 'Modulabschluss erfolgreich aktualisiert.')
-																				->with('tabindex', Input::get('tabindex'));
+		Flash::success('Modulabschluss erfolgreich aktualisiert.');
+		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('tabindex', Input::get('tabindex'));
 	}
 	
 	/**
@@ -714,12 +723,17 @@ class PlanningsController extends BaseController {
 				}
 			}
 			if ($module == "")
-				return Redirect::route('plannings.indexTurn', $turn->id)->with('message', 'Lehrveranstaltungen erfolgreich aus der mittelfristigen Lehrplanung generiert.');
-			else 
-				return Redirect::route('plannings.indexTurn', $turn->id)->with('error', $warnmessage.''.$module);
+			{
+				Flash::success('Lehrveranstaltungen erfolgreich aus der mittelfristigen Lehrplanung generiert.');
+				return Redirect::back();
+			}
+			
+			Flash::error($warnmessage.''.$module);
+			return Redirect::back();
 		}
-		else 
-			return Redirect::route('plannings.indexTurn', $turn->id)->with('error', 'Es existiert keine mittelfristige Planung für dieses Semester.');
+		
+		Flash::error('Es existiert keine mittelfristige Planung für dieses Semester.');
+		return Redirect::back();
 		
 	}
 	

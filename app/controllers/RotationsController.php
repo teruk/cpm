@@ -29,9 +29,13 @@ class RotationsController extends BaseController {
 		$rotation = new Rotation($input);
 		
 		if ($rotation->save())
-			return Redirect::route('rotations.index')->with('message','Bereich erfolgreich angelegt.');
-		else
-			return Redirect::route('rotations.index')->withInput()->withErrors($rotation->errors());
+		{
+			Flash::success('Bereich erfolgreich angelegt.');
+			return Redirect::back();
+		}
+
+		Flash::error($rotation->errors());
+		return Redirect::back();
 	}
 	
 	/**
@@ -41,7 +45,8 @@ class RotationsController extends BaseController {
 	public function destroy(Rotation $rotation)
 	{
 		$rotation->delete();
-		return Redirect::route('rotations.index')->with('message','Bereich erfolgreich gelöscht.');
+		Flash::success('Bereich erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	/**
@@ -53,9 +58,13 @@ class RotationsController extends BaseController {
 		$input = Input::all();
 		$rotation->fill($input);
 		if ($rotation->updateUniques())
-			return Redirect::route('rotations.show', $rotation->id)->with('message','Der Abschluss wurde aktualisiert.');
-		else
-			return Redirect::route('rotations.show', array_get($rotation->getOriginal(), 'id'))->withInput()->withErrors($rotation->errors());
+		{
+			Flash::success('Der Abschluss wurde aktualisiert.');
+			return Redirect::route('rotations.show', $rotation->id);
+		}
+		
+		Flash::error($rotation->errors());
+		return Redirect::route('rotations.show', array_get($rotation->getOriginal(), 'id'))->withInput();
 	}
 	
 }

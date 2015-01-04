@@ -24,6 +24,7 @@ class ModulesController extends \BaseController {
 		$listofdepartments = Department::orderBy('name','ASC')->lists('name','id');
 		$listofrotations = Rotation::orderBy('name','ASC')->lists('name','id');
 		$listofdegrees = Degree::orderBy('name','ASC')->lists('name','id');
+
 		$this->layout->content = View::make('modules.index', compact('modules', 'listofdepartments', 'listofdegrees', 'listofrotations'));
 	}
 
@@ -43,9 +44,13 @@ class ModulesController extends \BaseController {
 		
 		// the ardent package is responsible for the validation
 		if ( $this->module->save() )
-			return Redirect::route('modules.index')->with('message', 'Modul erfolgreich erstellt!');
-		else
-			return Redirect::route('modules.index')->withInput()->withErrors( $this->module->errors() );
+		{
+			Flash::success('Modul erfolgreich erstellt!');
+			return Redirect::back();
+		}
+		
+		Flash::error($this->module->errors());
+		return Redirect::back();
 	}
 
 	/**
@@ -106,10 +111,15 @@ class ModulesController extends \BaseController {
 			$module->individual_courses = 0;
 		else
 			$module->individual_courses = 1;
+
 		if ( $module->updateUniques() )
-			return Redirect::route('modules.show', $module->id)->with('message', 'Das Modul wurde aktualisiert.');
-		else
-			return Redirect::route('modules.show', array_get($module->getOriginal(), 'id'))->withInput()->withErrors( $module->errors() );
+		{
+			Flash::success('Das Modul wurde aktualisiert.');
+			return Redirect::route('modules.show', $module->id);
+		}
+		
+		Flash::error($module->errors());
+		return Redirect::route('modules.show', array_get($module->getOriginal(), 'id'))->withInput();
 	}
 	
 	/**
@@ -121,11 +131,13 @@ class ModulesController extends \BaseController {
 	public function attachDegreecourse(Module $module)
 	{
 		if($module->saveDegreeCourse($input = Input::all()))
-			return Redirect::route('modules.show', $module->id)->with('message', 'Das Modul wurde dem Studiengang zugeordnet.')
-															->with('tabindex',$input['tabindex']);
-		else
-			return Redirect::route('modules.show', $module->id)->with('error', 'Die Kombination aus Modul-Studiengang-Semester existiert bereits.')
-															->with('tabindex',$input['tabindex']);
+		{
+			Flash::success('Das Modul wurde dem Studiengang zugeordnet.');
+			return Redirect::route('modules.show', $module->id)->with('tabindex',$input['tabindex']);
+		}
+		
+		Flash::error('Die Kombination aus Modul-Studiengang-Semester existiert bereits.');
+		return Redirect::route('modules.show', $module->id)->with('tabindex',$input['tabindex']);
 	}
 	
 	/**
@@ -135,15 +147,21 @@ class ModulesController extends \BaseController {
 	public function detachDegreecourse(Module $module)
 	{
 		$module->degreecourses()->detach(Input::get('degree_course_id'));
-		return Redirect::route('modules.show', $module->id)->with('message', 'Die Zuordnung wurde erfolgreich aufgehoben.')
-															->with('tabindex',Input::get('tabindex'));
+
+		Flash::success('Die Zuordnung wurde erfolgreich aufgehoben.');
+		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
 	}
 	
 	public function updateDegreecourse(Module $module)
-	{				
-		$module->degreecourses()->updateExistingPivot(Input::get('degreecourse_id'),array('semester' => Input::get('semester'), 'section' => Input::get('section'), 'updated_at' => new Datetime), false);
-		return Redirect::route('modules.show', $module->id)->with('message', 'Die Zuordnung wurde erfolgreich aktualisiert.')
-															->with('tabindex',Input::get('tabindex'));
+	{
+		$module->degreecourses()
+				->updateExistingPivot(Input::get('degreecourse_id'), array(
+					'semester' => Input::get('semester'), 
+					'section' => Input::get('section'), 
+					'updated_at' => new Datetime), false);
+
+		Flash::success('Die Zuordnung wurde erfolgreich aktualisiert.');
+		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
 	}
 
 	/**
@@ -160,12 +178,14 @@ class ModulesController extends \BaseController {
 		 * if yes, the module can't be deleted
 		 */
 		if (sizeof($module->courses()) > 0)
-			return Redirect::route('modules.index')->with('error', 'Das Modul konnte nicht gelöscht werden, da dem Modul noch Lehrveranstaltungen zugeordnet sind.');
-		else 
 		{
-			$module->delete();
-			return Redirect::route('modules.index')->with('message', 'Modul erfolgreich gelöscht.');
+			Flash::error('Das Modul konnte nicht gelöscht werden, da dem Modul noch Lehrveranstaltungen zugeordnet sind.');
+			return Redirect::back();
 		}
+
+		$module->delete();
+		Flash::success('Modul erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	/**
@@ -186,12 +206,13 @@ class ModulesController extends \BaseController {
 					'semester_periods_per_week' => $e->pivot->semester_periods_per_week, 
 					'annulled' => $e->pivot->annulled));
 			}
-			return Redirect::route('modules.show', $module->id)->with('message', 'Die mittelfristige Lehrplanung wurde erfolgreich kopiert.')
-																	->with('tabindex', Input::get('tabindex'));
+
+			Flash::success('Die mittelfristige Lehrplanung wurde erfolgreich kopiert.');
+			return Redirect::route('modules.show', $module->id)->with('tabindex', Input::get('tabindex'));
 		}
-		else
-			return Redirect::route('modules.show', $module->id)->with('error', 'Die mittelfristige Lehrplanung konnte nicht kopiert werden.')
-																	->with('tabindex', Input::get('tabindex'));
+
+		Flash::error('Die mittelfristige Lehrplanung konnte nicht kopiert werden.');
+		return Redirect::route('modules.show', $module->id)->with('tabindex', Input::get('tabindex'));
 	}
 	
 	
@@ -206,8 +227,9 @@ class ModulesController extends \BaseController {
 		$mediumtermplanning->detachEmployees();
 		// second step: delete mediumtermplanning table
 		$mediumtermplanning->delete();
-		return Redirect::route('modules.show', $module->id)->with('message', 'Die Planung wurde erfolgreich gelöscht.')
-																->with('tabindex',Input::get('tabindex'));
+
+		Flash::success('Die Planung wurde erfolgreich gelöscht.');
+		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
 	}
 	
 	/**
@@ -219,32 +241,36 @@ class ModulesController extends \BaseController {
 	{
 		$mtp_employees_ids = $mediumtermplanning->getEmployeeIds();
 		$available_employees = Employee::getAvailableEmployeesWithResearchgroup($mtp_employees_ids);
+
 		$this->layout->content = View::make('modules.mediumtermplanning', compact('module', 'mediumtermplanning','available_employees'));
-		// return Redirect::route('modules.show', $module->id)->with('mtp_id', $mediumtermplanning->id)
-		// 											->with('tabindex',Input::get('tabindex'));
 	}
 	
 	/**
-	 * 
-	 * @param Module $module
+	 * [storeMediumtermplanning description]
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
 	 */
 	public function storeMediumtermplanning(Module $module)
 	{
 		$mediumtermplanning = new Mediumtermplanning();
 		$mediumtermplanning->module_id = $module->id;
 		$mediumtermplanning->turn_id = Input::get('turn_id');
+
 		if ( $mediumtermplanning->save() )
-			return Redirect::route('modules.show', $module->id)->with('message', 'Ein neues Semester wurde zur mittelfristigen Lehrplanung des Moduls erfolgreich hinzugefügt.')
-																->with('tabindex',Input::get('tabindex'));
-		else
-			return Redirect::route('modules.show', $module->id)->withInput()->withErrors( $mediumtermplanning->errors() )
-																->with('tabindex',Input::get('tabindex'));
+		{
+			Flash::success('Ein neues Semester wurde zur mittelfristigen Lehrplanung des Moduls erfolgreich hinzugefügt.');
+			return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
+		}
+
+		Flash::error($mediumtermplanning->errors());
+		return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex',Input::get('tabindex'));
 	}
 	
 	/**
-	* 
-	*
-	*/
+	 * [addEmployee description]
+	 * @param Module             $module             [description]
+	 * @param Mediumtermplanning $mediumtermplanning [description]
+	 */
 	public function addEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
 	{
 		if (Input::get('annulled')==1)
@@ -256,13 +282,16 @@ class ModulesController extends \BaseController {
 				'semester_periods_per_week' => Input::get('semester_periods_per_week'),
 				'annulled' => $annulled,
 			));
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id))->with('message','Mitarbeiter erfolgreich zur Planung hinzugefügt.');
+
+		Flash::success('Mitarbeiter erfolgreich zur Planung hinzugefügt.');
+		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
 	}
 	
 	/**
-	 * 
-	 * @param Module $module
-	 * @param Mediumtermplanning $mediumtermplanning
+	 * [updateEmployee description]
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
 	 */
 	public function updateEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
 	{
@@ -270,12 +299,14 @@ class ModulesController extends \BaseController {
 			$annulled = Input::get('annulled');
 		else
 			$annulled = 0;
+
 		$mediumtermplanning->employees()->updateExistingPivot(Input::get('employee_id'), array(
 				'semester_periods_per_week' => Input::get('semester_periods_per_week'),
 				'annulled' => $annulled,
 			),false);
 
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id))->with('message','Mitarbeiter erfolgreich aktualisiert.');
+		Flash::success('Mitarbeiter erfolgreich aktualisiert.');
+		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
 	}
 	
 	/**
@@ -286,7 +317,9 @@ class ModulesController extends \BaseController {
 	public function destroyEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
 	{
 		$mediumtermplanning->employees()->detach(Input::get('employee_id'));
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id))->with('message','Mitarbeiter erfolgreich gelöscht.');
+
+		Flash::success('Mitarbeiter erfolgreich gelöscht.');
+		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
 	}
 	
 	// public function export()

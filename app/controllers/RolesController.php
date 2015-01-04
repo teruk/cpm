@@ -2,12 +2,21 @@
 
 class RolesController extends BaseController {
 
+	/**
+	 * show role overview
+	 * @return [type] [description]
+	 */
 	public function index()
 	{
 		$roles = Role::all();
 		$this->layout->content = View::make('roles.index', compact('roles'));
 	}
 
+	/**
+	 * show specific role
+	 * @param  Role   $role [description]
+	 * @return [type]       [description]
+	 */
 	public function show(Role $role)
 	{
 		// set nav tab
@@ -46,9 +55,12 @@ class RolesController extends BaseController {
 		$role->name = Input::get('name');
 		$role->description = Input::get('description');
 		if ( $role->save() )
-			return Redirect::route('roles.index', $role->id)->with('message', 'Die Rolle wurde erfolgreich angelegt.');
-		else
-			return Redirect::route('roles.index', array_get($role->getOriginal(), 'id'))->withInput()->withErrors( $role->errors() );
+		{
+			Flash::success('Die Rolle wurde erfolgreich angelegt.');
+			return Redirect::back();
+		}
+		Flash::error($role->errors());
+		return Redirect::back()->withInput();
 
 	}
 
@@ -63,12 +75,17 @@ class RolesController extends BaseController {
 			$role->name = Input::get('name');
 			$role->description = Input::get('description');
 			if ( $role->save() )
-				return Redirect::route('roles.show', $role->id)->with('message', 'Die Rolle wurde aktualisiert.');
-			else
-				return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput()->withErrors( $role->errors() );
+			{
+				Flash::success('Die Rolle wurde aktualisiert.');
+				return Redirect::route('roles.show', $role->id);
+			}
+			
+			Flash::error($role->errors());
+			return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput();
 		}
-		else
-			return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput()->with('error','Die Admin-Rolle kann nicht aktualisiert werden!');
+		
+		Flash::error('Die Admin-Rolle kann nicht aktualisiert werden!');
+		return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput();
 	}
 
 	/**
@@ -81,10 +98,12 @@ class RolesController extends BaseController {
 		if ($role->name != "Admin")
 		{
 			$role->delete();
-			return Redirect::route('roles.index')->with('message', 'Die Rolle wurde erfolgreich gelöscht.');
+			Flash::success('Die Rolle wurde erfolgreich gelöscht.');
+			return Redirect::back();
 		}
-		else
-			return Redirect::route('roles.index')->with('error', 'Die Rolle konnte nicht gelöscht werden! Grund: Fehlende Rechte.');
+
+		Flash::error('Die Rolle konnte nicht gelöscht werden! Grund: Fehlende Rechte.');
+		return Redirect::back();
 	}
 
 	/**
@@ -103,18 +122,21 @@ class RolesController extends BaseController {
 		}
 		else
 			$permissions = Permission::all();
+
 		// check the current attached permissions, if there is any changed
 		foreach ($role->perms as $p) {
 			if(Input::get($p->name) == "")
 				$role->detachPermission($p->id);
 		}
+
 		// check the unattached permissions
 		foreach ($permissions as $ps) {
 			if (Input::get($ps->name) != "")
 				$role->attachPermission($ps->id);
 		}
-		return Redirect::route('roles.show',$role->id)->with('message', 'Die Berechtigung wurden erfolgreich aktualisiert.')
-			->with('tabindex', Input::get('tabindex'));
+
+		Flash::success('Die Berechtigung wurden erfolgreich aktualisiert.');
+		return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
 	}
 
 	/**
@@ -127,11 +149,11 @@ class RolesController extends BaseController {
 		if (Entrust::hasRole('Admin') || Entrust::can('detach_role_permission'))
 		{
 			$role->detachPermission($permission);
-			return Redirect::route('roles.show',$role->id)->with('message', 'Die Zuordnung wurde erfolgreich aufgelöst.')
-					->with('tabindex', Input::get('tabindex'));
+			Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
+			return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
 		}
-		else
-			return Redirect::route('roles.show',$role->id)->with('error', 'Die Zuordnung konnte nicht aufgelöst werden. Fehlende Rechte!')
-					->with('tabindex', Input::get('tabindex'));
+		
+		Flash::error('Die Zuordnung konnte nicht aufgelöst werden. Fehlende Rechte!');
+		return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
 	}
 }

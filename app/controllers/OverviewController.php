@@ -3,18 +3,31 @@
 use Illuminate\Support\Facades\Redirect;
 class OverviewController extends BaseController {
 
+	/**
+	 * [getDegreeCourses description]
+	 * @return [type] [description]
+	 */
 	public function getDegreeCourses()
 	{
 		$degreecourses = DegreeCourse::orderBy('degree_id','ASC')->orderBy('name','ASC')->get();
 		$this->layout->content = View::make('overviews.degreecourses', compact('degreecourses'));
 	}
 
+	/**
+	 * [getDegreeCourse description]
+	 * @param  DegreeCourse $degreecourse [description]
+	 * @return [type]                     [description]
+	 */
 	public function getDegreeCourse(DegreeCourse $degreecourse)
 	{
 		$listofsections = Section::lists('name','id');
 		$this->layout->content = View::make('overviews.degreecourse', compact('degreecourse','listofsections'));
 	}
 
+	/**
+	 * [getCourses description]
+	 * @return [type] [description]
+	 */
 	public function getCourses()
 	{
 		$courses = Course::orderBy('course_number','ASC')->get();
@@ -22,30 +35,53 @@ class OverviewController extends BaseController {
 		$this->layout->content = View::make('overviews.courses', compact('courses','listofcoursetypes'));
 	}
 
+	/**
+	 * [getCourse description]
+	 * @param  Course $course [description]
+	 * @return [type]         [description]
+	 */
 	public function getCourse(Course $course)
 	{
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.course', compact('course','listofcoursetypes'));
 	}
 
+	/**
+	 * [getEmployees description]
+	 * @return [type] [description]
+	 */
 	public function getEmployees()
 	{
 		$employees = Employee::orderBy('researchgroup_id','ASC')->orderBy('name','ASC')->get();
 		$this->layout->content = View::make('overviews.employees', compact('employees'));
 	}
 
+	/**
+	 * [getEmployee description]
+	 * @param  Employee $employee [description]
+	 * @return [type]             [description]
+	 */
 	public function getEmployee(Employee $employee)
 	{
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.employee', compact('employee','listofcoursetypes'));
 	}
 
+	/**
+	 * [getModules description]
+	 * @return [type] [description]
+	 */
 	public function getModules()
 	{
 		$modules = Module::orderBy('short','ASC')->get();
 		$this->layout->content = View::make('overviews.modules', compact('modules'));
 	}
 
+	/**
+	 * [getModule description]
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
 	public function getModule(Module $module)
 	{
 		$listofsections = Section::orderBy('name', 'ASC')->lists('name','id');
@@ -53,12 +89,21 @@ class OverviewController extends BaseController {
 		$this->layout->content = View::make('overviews.module', compact('module','listofsections','listofcoursetypes'));
 	}
 
+	/**
+	 * [tableReseachgroups description]
+	 * @return [type] [description]
+	 */
 	public function tableReseachgroups()
 	{
 		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('overview.tableResearchgroups', $turn->id);
 	}
 
+	/**
+	 * [getTableResearchgroups description]
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function getTableResearchgroups(Turn $turn)
 	{
 		// turn settings
@@ -92,13 +137,9 @@ class OverviewController extends BaseController {
 			}
 
 			if (sizeof($rg_pl_ids) > 0)
-			{
 				$plannings = Planning::whereIn('id',$rg_pl_ids)->orderBy('course_number','ASC')->get();
-			}
 			else
-			{
 				$plannings = array();
-			}
 
 			if (sizeof($plannings) > 0)
 			{
@@ -112,12 +153,21 @@ class OverviewController extends BaseController {
 		$this->layout->content = View::make('overviews.table_researchgroups', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn', 'listofcoursetypes','output'));
 	}
 
+	/**
+	 * [tablePlannings description]
+	 * @return [type] [description]
+	 */
 	public function tablePlannings()
 	{
 		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('overview.tablePlannings', $turn->id);
 	}
 
+	/**
+	 * [getTablePlannings description]
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function getTablePlannings(Turn $turn)
 	{
 		// turn settings
@@ -166,6 +216,11 @@ class OverviewController extends BaseController {
 		$this->layout->content = View::make('overviews.table_plannings', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn', 'listofcoursetypes','plannings','plannings_data'));
 	}
 
+	/**
+	 * [showExams description]
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function showExams(Turn $turn)
 	{
 		// turn settings
@@ -179,18 +234,31 @@ class OverviewController extends BaseController {
 		$this->layout->content = View::make('overviews.exams', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn'));
 	}
 
+	/**
+	 * [exams description]
+	 * @return [type] [description]
+	 */
 	public function exams()
 	{
 		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('overview.showExams', $turn->id);
 	}
 
+	/**
+	 * [shk description]
+	 * @return [type] [description]
+	 */
 	public function shk()
 	{
 		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
 		return Redirect::route('overview.showShk',$current_turn->id);
 	}
 
+	/**
+	 * [showShk description]
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function showShk(Turn $turn)
 	{
 		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
@@ -226,29 +294,31 @@ class OverviewController extends BaseController {
 			'semester_periods_per_week_total'));
 	}
 
+	/**
+	 * [showRoomSearch description]
+	 * @return [type] [description]
+	 */
 	public function showRoomSearch()
 	{
 		if(Session::get('result') == "")
-		{
 			$searchresults = array();
-		}
 		else
-		{
 			$searchresults = Session::get('result');
-		}
+
 		if(Session::get('turn') == "")
-		{
 			$turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		}
 		else
-		{
 			$turn = Turn::find(Session::get('turn'));
-		}
+
 		$turns = Turn::getList();
 		$roomtypes = RoomType::lists('name','id');
 		$this->layout->content = View::make('overviews.room_search', compact('searchresults','turns','roomtypes','turn'));
 	}
 
+	/**
+	 * [roomSearch description]
+	 * @return [type] [description]
+	 */
 	public function roomSearch()
 	{
 		$starttime = date('H:i:s', strtotime(Input::get('start_time')));
@@ -319,13 +389,14 @@ class OverviewController extends BaseController {
 			if (sizeof($result) > 0)
 				return Redirect::route('overview.showRoomSearch')->withInput()->with('result', $result)->with('turn', Input::get('turn_id'));
 			else
-				return Redirect::route('overview.showRoomSearch')->withInput()->with('error', 'Keine freien Räume gefunden!');
+			{
+				Flash::error('Keine freien Räume gefunden!');
+				return Redirect::route('overview.showRoomSearch')->withInput();
+			}
 		}
-		else
-		{
-			return Redirect::route('overview.showRoomSearch')->withInput()->with('error', 'Fehlerhafte Eingabe! Die maximale Platzanzahl ist kleiner als die minimale Platzanzahl!');
-		}
-		
+
+		Flash::error('Fehlerhafte Eingabe! Die maximale Platzanzahl ist kleiner als die minimale Platzanzahl!');
+		return Redirect::route('overview.showRoomSearch')->withInput();
 	}
 
 }

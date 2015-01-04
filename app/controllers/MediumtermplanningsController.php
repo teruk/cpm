@@ -19,6 +19,7 @@ class MediumtermplanningsController extends BaseController {
 		$mtpgrid['employees_all'] = $this->sortEmployees("Alle");
 		$mtpgrid['employees_bachelor'] = $this->sortEmployees("Bachelor");
 		$mtpgrid['employees_master'] = $this->sortEmployees("Master");
+		
 		$this->layout->content = View::make('mediumtermplannings.index', compact('mtpgrid','turns'));
 	}
 	

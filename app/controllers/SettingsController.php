@@ -15,18 +15,20 @@ class SettingsController extends \BaseController {
 	}
 
 	/**
-	* update the current turn
-	*/
+	 * update setting current turn
+	 * 
+	 * @return [type] [description]
+	 */
 	public function updateCurrentTurn()
 	{
 		if (Input::get('current_turn') != Setting::setting('current_turn')->first()->value)
 		{
 			DB::table('settings')->where('name','=','current_turn')->update(array('value' => Input::get('current_turn')));
-			return Redirect::route('settings.index')->with('message','Die Einstellung aktuelles Semester erfolgreich aktualisiert.');
+			Flash::success('Die Einstellung aktuelles Semester erfolgreich aktualisiert.');
+			return Redirect::route('settings.index')->with('message',);
 		}
-		else
-		{
-			return Redirect::route('settings.index')->with('info','Keine Änderungen registriert!');
-		}
+
+		Flash::message('Keine Änderungen registriert!');
+		return Redirect::route('settings.index');
 	}
 }

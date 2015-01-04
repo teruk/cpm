@@ -29,9 +29,13 @@ class SectionsController extends BaseController {
 		$section = new Section($input);
 		
 		if ($section->save())
-			return Redirect::route('sections.index')->with('message','Bereich erfolgreich angelegt.');
-		else
-			return Redirect::route('sections.index')->withInput()->withErrors($section->errors());
+		{
+			Flash::success('Bereich erfolgreich angelegt.');
+			return Redirect::back();
+		}
+
+		Flash::error($section->errors());
+		return Redirect::back()->withInput();
 	}
 	
 	/**
@@ -41,7 +45,8 @@ class SectionsController extends BaseController {
 	public function destroy(Section $section)
 	{
 		$section->delete();
-		return Redirect::route('sections.index')->with('message','Bereich erfolgreich gelöscht.');
+		Flash::success('Bereich erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 	
 	/**
@@ -53,9 +58,13 @@ class SectionsController extends BaseController {
 		$input = Input::all();
 		$section->fill($input);
 		if ($section->updateUniques())
-			return Redirect::route('sections.show', $section->id)->with('message','Der Bereich wurde aktualisiert.');
-		else
-			return Redirect::route('sections.show', array_get($section->getOriginal(), 'id'))->withInput()->withErrors($section->errors());
+		{
+			Flash::success('Der Bereich wurde aktualisiert.');
+			return Redirect::route('sections.show', $section->id);
+		}
+		
+		Flash::error($section->errors());
+		return Redirect::route('sections.show', array_get($section->getOriginal(), 'id'))->withInput();
 	}
 	
 }

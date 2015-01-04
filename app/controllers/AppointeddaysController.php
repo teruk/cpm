@@ -27,9 +27,13 @@ class appointeddaysController extends BaseController {
 		$appointedday = new Appointedday();
 
 		if ($appointedday->publish($input))
-			return Redirect::back()->with('message', 'Der Termin wurde erfolgreich erstellt!');
+		{
+			Flash::success('Der Termin wurde erfolgreich erstellt!');
+			return Redirect::back();
+		}
 
-		return Redirect::back()->withInput()->withErrors( $appointedday->errors() );
+		Flash::error($appointedday->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -44,7 +48,10 @@ class appointeddaysController extends BaseController {
 		if (Entrust::hasRole('Admin') || Entrust::can('edit_appointedday'))
 			$this->layout->content = View::make('appointeddays.show', compact('appointedday'));
 		else
-			return Redirect::back()->with('error','Zugriff verweigert!');
+		{
+			Flash::error('Zugriff verweigert!');
+			return Redirect::back();
+		}
 	}
 
 	/**
@@ -71,9 +78,13 @@ class appointeddaysController extends BaseController {
 		$input = Input::all();
  
 		if ( $appointedday->updateInformation($input) )
-			return Redirect::back()->with('message', 'Der Termin wurde aktualisiert.');
+		{
+			Flash::success('Der Termin wurde aktualisiert.');
+			return Redirect::back();
+		}
 
-		return Redirect::back()->withInput()->withErrors( $appointedday->errors() );
+		Flash::error($appointedday->errors());
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -86,7 +97,8 @@ class appointeddaysController extends BaseController {
 	public function destroy(Appointedday $appointedday)
 	{
 		$appointedday->delete();
-		return Redirect::back()->with('message', 'Der Termin wurde erfolgreich gelöscht.');
+		Flash::success('Der Termin wurde erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 
 }

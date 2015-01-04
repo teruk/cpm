@@ -47,8 +47,9 @@ class UsersController extends BaseController {
 	}
 
 	/**
-	* save a new user
-	*/
+	 * save a new user
+	 * @return [type] [description]
+	 */
 	public function store()
 	{
 		$input = Input::all();
@@ -56,26 +57,36 @@ class UsersController extends BaseController {
 		{
 			$user = new User();
 			if ($user->register($input))
-				return Redirect::back()->with('message', 'Der Benutzer wurde erfolgreich.');
+			{
+				Flash::success('Der Benutzer wurde erfolgreich.');
+				return Redirect::back();
+			}
 
-			return Redirect::back()->withInput()->withErrors( $user->errors() );
+			Flash::error($user->errors());
+			return Redirect::back()->withInput();
 		}
-		else 
-			return Redirect::back()->withInput()->with('error', 'Die Passwörter stimmen nicht überein!');
+		
+		Flash::error('Die Passwörter stimmen nicht überein!');
+		return Redirect::back()->withInput();
 	}
 
 	/**
-	* update the user
-	* @param User $user
-	*/
+	 * update a user
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
 	public function update(User $user)
 	{
 		Session::set('users_tabindex', 'home');
 
 		if ( $user->updateUser(Input::all()) )
-			return Redirect::back()->with('message', 'Die Benutzerinformationen wurden aktualisiert.');
+		{
+			Flash::success('Die Benutzerinformationen wurden aktualisiert.');
+			return Redirect::back();
+		}
 
-		return Redirect::back()->withErrors( $user->errors() );
+		Flash::error($user->errors());
+		return Redirect::back();
 	}
 
 	/**
@@ -89,26 +100,36 @@ class UsersController extends BaseController {
 		if (Input::get('password') == Input::get('password_repeat'))
 		{
 			if ($user->changePassword(Hash::make(Input::get('password'))))
-				return Redirect::back()->with('message', 'Das Passwort wurde erfolgreich aktualisiert.');
+			{
+				Flash::success('Das Passwort wurde erfolgreich aktualisiert.');
+				return Redirect::back();
+			}
 
-			return Redirect::back()->with('error','Die Passwortänderung konnte nicht gespeichert werden.');
+			Flash::error('Die Passwortänderung konnte nicht gespeichert werden.');
+			return Redirect::back();
 		}
-		else
-			return Redirect::back()->with('error', 'Die Passwörter stimmen nicht überein!');
+		
+		Flash::error('Die Passwörter stimmen nicht überein!');
+		return Redirect::back();
 	}
 
 	/**
-	* reactive the deactivated user
-	* @param User $user
-	*/
+	 * reactive the deactivated user
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
 	public function activate(User $user)
 	{
 		Session::set('users_tabindex', 'deactivation');
 
 		if ($user->activate())
-			return Redirect::back()->with('message', 'Der Benutzer wurde erfolgreich aktiviert.');
+		{
+			Flash::success('Der Benutzer wurde erfolgreich aktiviert!');
+			return Redirect::back();
+		}
 		
-		return Redirect::back()->with('error', 'Der Benutzer konnte nicht aktiviert werden!');
+		Flash::error('Der Benutzer konnte nicht aktiviert werden!');
+		return Redirect::back();
 	}
 
 	/**
@@ -119,9 +140,13 @@ class UsersController extends BaseController {
 	{
 		Session::set('users_tabindex', 'deactivation');
 		if ($user->deactivate())
-			return Redirect::back()->with('message', 'Der Benutzer wurde erfolgreich deaktiviert.');
+		{
+			Flash::success('Der Benutzer wurde erfolgreich deaktiviert!');
+			return Redirect::back();
+		}
 		
-		return Redirect::back()->with('error', 'Der Benutzer konnte nicht deaktiviert werden!');
+		Flash::error('Der Benutzer konnte nicht deaktiviert werden!');
+		return Redirect::back();
 	}
 
 	/**
@@ -134,10 +159,12 @@ class UsersController extends BaseController {
 		if (!$user->hasRole('Admin'))
 		{
 			$user->delete();
-			return Redirect::back()->with('message', 'Der Benutzer wurde erfolgreich gelöscht.');
+			Flash::success('Der Benutzer wurde erfolgreich gelöscht!');
+			return Redirect::back();
 		}
-		else
-			return Redirect::back()->with('error', 'Der Benutzer konnte nicht gelöscht werden! Grund: Benutzer ist Administrator.');
+		
+		Flash::error('Der Benutzer konnte nicht gelöscht werden! Grund: Benutzer ist Administrator.');
+		return Redirect::back();
 	}
 
 	/**
@@ -151,7 +178,8 @@ class UsersController extends BaseController {
 		$role = Role::findOrFail(Input::get('role_id'));
 		$user->attachRole($role);
 
-		return Redirect::back()->with('message', 'Die Rolle wurde erfolgreich zugeordnet.');
+		Flash::success('Die Rolle wurde erfolgreich zugeordnet.');
+		return Redirect::back();
 	}
 
 	/**
@@ -168,16 +196,17 @@ class UsersController extends BaseController {
 			if ($user->hasRole('Admin') && $user->id != Auth::id())
 			{
 				$user->detachRole($role);
-				return Redirect::back()->with('message', 'Die Zuordnung wurde erfolgreich aufgelöst.');
+				Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
+				return Redirect::back();
 			}
-			else
-				return Redirect::back()->with('error', 'Die Zuordnung konnte nicht aufgelöst werden.');
+			
+			Flash::error('Die Zuordnung konnte nicht aufgelöst werden.');
+			return Redirect::back();
 		}
-		else
-		{
-			$user->detachRole($role);
-			return Redirect::back()->with('message', 'Die Zuordnung wurde erfolgreich aufgelöst.');
-		}
+		
+		$user->detachRole($role);
+		Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
+		return Redirect::back();
 	}
 
 	/**
@@ -191,13 +220,15 @@ class UsersController extends BaseController {
 		$researchgroup = ResearchGroup::find(Input::get('researchgroup_id'));
 		$user->researchgroups()->attach($researchgroup->id);
 
-		return Redirect::back()->with('message', 'Der Arbeitsbereich wurde erfolgreich zugeordnet.');
+		Flash::success('Der Arbeitsbereich wurde erfolgreich zugeordnet.');
+		return Redirect::back();
 	}
 
 	/**
-	* detach a research group
-	* @param User $user
-	*/
+	 * detach a research group
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
 	public function detachResearchGroup(User $user)
 	{
 		Session::set('users_tabindex', 'researchgroups');
@@ -205,6 +236,7 @@ class UsersController extends BaseController {
 		$researchgroup = ResearchGroup::find(Input::get('researchgroup_id'));
 		$user->researchgroups()->detach($researchgroup->id);
 
-		return Redirect::back()->with('message', 'Die Zuordnung wurde erfolgreich aufgelöst.');
+		Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
+		return Redirect::back();
 	}
 }

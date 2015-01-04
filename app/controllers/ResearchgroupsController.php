@@ -44,32 +44,20 @@ class ResearchgroupsController extends BaseController{
 		{
 			// default shk for researchgroup
 			$employee_shk = new Employee();
-			$employee_shk->firstname = "SHK";
-			$employee_shk->name = $researchgroup->short;
-			$employee_shk->title = "";
-			$employee_shk->researchgroup_id = $researchgroup->id;
-			$employee_shk->teaching_load = 0;
-			$employee_shk->employed_since = date("Y-m-d");
-			$employee_shk->employed_till = date('Y-m-d',strtotime(date("Y-m-d", time()) . " + 10 year"));
-			$employee_shk->inactive = 0;
+			$employee_shk->saveDummyEmployee("SHK", $researchgroup, "");
 			$employee_shk->save();
 
 			// default nn for researchgroup
 			$employee_nn = new Employee();
-			$employee_nn->firstname = "N.N.";
-			$employee_nn->name = $researchgroup->short;
-			$employee_nn->title = "";
-			$employee_nn->researchgroup_id = $researchgroup->id;
-			$employee_nn->teaching_load = 0;
-			$employee_nn->employed_since = date("Y-m-d");
-			$employee_nn->employed_till = date('Y-m-d',strtotime(date("Y-m-d", time()) . " + 10 year"));
-			$employee_nn->inactive = 0;
+			$employee_nn->saveDummyEmployee('N.N.', $researchgroup, "");
 			$employee_nn->save();
 
-			return Redirect::route('researchgroups.index')->with('message','Arbeitsbereich erfolgreich angelegt.');
+			Flash::success('Arbeitsbereich erfolgreich angelegt.');
+			return Redirect::back();
 		}
-		else 
-			return Redirect::route('researchgroups.index')->withInput()->withErrors( $researchgroup->errors());
+
+		Flash::error($researchgroup->errors());
+		return Redirect::back()->withInput();
 	}
 	
 	/**
@@ -119,10 +107,13 @@ class ResearchgroupsController extends BaseController{
 				$employee_shk->updateUniques();
 				$employee_nn->updateUniques();
 			}
-			return Redirect::route('researchgroups.show', $researchgroup->id)->with('message', 'Der Arbeitsbereich wurde erfolgreich aktualisiert.');
+
+			Flash::success('Der Arbeitsbereich wurde erfolgreich aktualisiert.');
+			return Redirect::route('researchgroups.show', $researchgroup->id);
 		}
-		else
-			return Redirect::route('researchgroups.show', array_get($researchgroup->getOriginal(), 'id'))->withInput()->withErrors($researchgroup->errors());
+
+		Flash::error($researchgroup->errors());
+		return Redirect::route('researchgroups.show', array_get($researchgroup->getOriginal(), 'id'))->withInput();
 	}
 	
 	/**
@@ -134,9 +125,11 @@ class ResearchgroupsController extends BaseController{
 		if (sizeof($researchgroup->employees) == 0)
 		{
 			$researchgroup->delete();
-			return Redirect::route('researchgroups.index')->with('message', 'Arbeitsbereich wurde erfolgreich gelöscht.');
+			Flash::success('Arbeitsbereich wurde erfolgreich gelöscht.');
+			return Redirect::back();
 		}
-		else
-			return Redirect::route('researchgroups.index')->with('error', 'Der Arbeitsbereich kann nicht gelöscht werden, da ihm noch Mitarbeiter zugeordnet sind.');
+		
+		Flash::error('Der Arbeitsbereich kann nicht gelöscht werden, da ihm noch Mitarbeiter zugeordnet sind.');
+		return Redirect::back();
 	}
 }

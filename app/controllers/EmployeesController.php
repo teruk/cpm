@@ -52,9 +52,13 @@ class EmployeesController extends BaseController {
 		$employee->inactive = 0;
 		
 		if ( $employee->save() )
-			return Redirect::route('employees.index')->with('message', 'Mitarbeiter erfolgreich erstellt!');
-		else
-			return Redirect::route('employees.index')->withInput()->withErrors( $employee->errors() );
+		{
+			Flash::success('Mitarbeiter erfolgreich erstellt!');
+			return Redirect::back();
+		}
+		
+		Flash::error($employee->errors());
+		return Redirect::back()->withInput();
 	}
 	
 	/**
@@ -97,8 +101,9 @@ class EmployeesController extends BaseController {
 			}
 			$this->layout->content = View::make('employees.show', compact('employee', 'listofresearchgroups', 'plannings'));
 		}
-		else
-			return Redirect::route('home')->with('error','Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
+		
+		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
+		return Redirect::route('home');
 	}
 	
 	/**
@@ -116,9 +121,13 @@ class EmployeesController extends BaseController {
 			$employee->inactive = 1;
 
 		if ( $employee->updateUniques() )
-			return Redirect::route('employees.show', $employee->id)->with('message', 'Das Modul wurde aktualisiert.');
-		else
-			return Redirect::route('employees.show', array_get($employee->getOriginal(), 'id'))->withInput()->withErrors( $employee->errors() );
+		{
+			Flash::success('Das Modul wurde aktualisiert.');
+			return Redirect::route('employees.show', $employee->id);
+		}
+		
+		Flash::error($employee->errors());
+		return Redirect::route('employees.show', array_get($employee->getOriginal(), 'id'))->withInput();
 	}
 	
 	/**
@@ -135,17 +144,19 @@ class EmployeesController extends BaseController {
 		 * if yes, the employee can't be deleted
 		 */
 		if (sizeof($employee->mediumtermplannings) > 0 || sizeof($employee->plannings) > 0)
-			return Redirect::route('employees.index')->with('error', 'Mitarbeiter kann nicht gelöscht werden, da er bereits in Planungen miteinbezogen wurde.');
-		else 
 		{
-			$employee->delete();
-			return Redirect::route('employees.index')->with('message', 'Mitarbeiter erfolgreich gelöscht');
+			Flash::error('Mitarbeiter kann nicht gelöscht werden, da er bereits in Planungen miteinbezogen wurde.');
+			return Redirect::back();
 		}
+
+		$employee->delete();
+		Flash::success('Mitarbeiter erfolgreich gelöscht');
+		return Redirect::back();
 	}
 
-	public function export()
-	{
-		$employees = Employee::all();
-		$this->layout->content = View::make('employees.export', compact('employees'));
-	}
+	// public function export()
+	// {
+	// 	$employees = Employee::all();
+	// 	$this->layout->content = View::make('employees.export', compact('employees'));
+	// }
 }

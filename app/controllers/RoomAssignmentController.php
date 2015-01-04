@@ -32,21 +32,21 @@ class RoomAssignmentController extends \BaseController {
 				$planninglog = new Planninglog();
 				$planninglog->logAssignedPlanningRoom($planning, $turn, $room, $input);
 
-				return Redirect::back()->with('message', 'Raum erfolgreich hinzugefügt.');
+				Flash::success('Raum erfolgreich hinzugefügt.');
+				return Redirect::back();
 			}
-			else 
-			{
-				// find alternative rooms
-				$message = $this->findAlternativeRooms($room, $turn, $input);
+			
+			// find alternative rooms
+			$message = $this->findAlternativeRooms($room, $turn, $input);
 
-				return Redirect::back()->with('error', 
-						'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
-							Config::get('constants.weekdays_short')[$input['weekday']].', '.$input['start_time'].'-'.
-							$input['end_time'].' ist zu dieser Zeit schon belegt. <br>'.$message);
-			}
+			Flash::error('Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
+						Config::get('constants.weekdays_short')[$input['weekday']].', '.$input['start_time'].'-'.
+						$input['end_time'].' ist zu dieser Zeit schon belegt. <br>'.$message);
+			return Redirect::back();
 		}
-		else 
-			return Redirect::back()->with('error', 'Die Endzeit liegt vor der Startzeit.');
+		
+		Flash::error('Die Endzeit liegt vor der Startzeit.');
+		return Redirect::back();
 	}
 
 
@@ -95,22 +95,20 @@ class RoomAssignmentController extends \BaseController {
 					->where('id','=', $planningroomid->id)
 					->update(array('room_id' => $input['room_id'], 'weekday' => $input['weekday'], 'start_time'=> $input['start_time'], 'end_time'=> $input['end_time']));
 
-				
-				return Redirect::back()->with('message', 'Raum erfolgreich aktualisiert.');
+				Flash::success('Raum erfolgreich aktualisiert.');
+				return Redirect::back();
 			}
-			else
-			{
-				// find alternative
-				$message = $this->findAlternativeRooms($room, $turn, $input);
-
-				return Redirect::back()->with('error',
-						'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
-							Config::get('constants.weekdays_short')[$input['weekday']].', '.
-							$input['start_time'].'-'.$input['end_time'].' Uhr ist zu dieser Zeit schon belegt.<br>'.$message);
-			}
+			
+			// find alternative
+			$message = $this->findAlternativeRooms($room, $turn, $input);
+			Flash::error('Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
+						Config::get('constants.weekdays_short')[$input['weekday']].', '.
+						$input['start_time'].'-'.$input['end_time'].' Uhr ist zu dieser Zeit schon belegt.<br>'.$message);
+			return Redirect::back();
 		}
-		else
-			return Redirect::back()->with('error', 'Die Endzeit liegt vor der Startzeit.');
+
+		Flash::error('Die Endzeit liegt vor der Startzeit.');
+		return Redirect::back();
 	}
 
 	/**
@@ -143,23 +141,22 @@ class RoomAssignmentController extends \BaseController {
 			$planninglog = new Planninglog();
 			$planninglog->logCopiedPlanningRoom($planning, $turn, $room, $planning_room);
 
-			return Redirect::back()->with('message', 'Raum erfolgreich hinzugefügt.');
+			Flash::success('Raum erfolgreich hinzugefügt.');
+			return Redirect::back();
 		}
-		else 
-		{
-			// find alternative
-			$input = [
-				'weekday' => $planning_room->weekday,
-				'start_time' => $planning_room->start_time,
-				'end_time' => $planning_room->end_time
-				];
-			$message = $this->findAlternativeRooms($room, $turn, $input);
 
-			return Redirect::back()->with('error',
-					'Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
-						Config::get('constants.weekdays_short')[$input['weekday']].', '.
-						$input['start_time'].'-'.$input['end_time'].' Uhr ist zu dieser Zeit schon belegt.<br>'.$message);
-		}
+		// find alternative
+		$input = [
+			'weekday' => $planning_room->weekday,
+			'start_time' => $planning_room->start_time,
+			'end_time' => $planning_room->end_time
+			];
+		$message = $this->findAlternativeRooms($room, $turn, $input);
+
+		Flash::error('Es ist Konflikt aufgetreten: Raum '.$room->name.' ('.$room->location.') '.
+					Config::get('constants.weekdays_short')[$input['weekday']].', '.
+					$input['start_time'].'-'.$input['end_time'].' Uhr ist zu dieser Zeit schon belegt.<br>'.$message);
+		return Redirect::back();
 	}
 
 	/**
@@ -205,7 +202,8 @@ class RoomAssignmentController extends \BaseController {
 		$planninglog = new Planninglog();
 		$planninglog->logDetachedPlanningRoom($planning, $turn, $room, $input);
 
-		return Redirect::back()->with('message', 'Raum erfolgreich entfernt.');
+		Flash::success('Raum erfolgreich entfernt.');
+		return Redirect::back();
 	}
 
 
