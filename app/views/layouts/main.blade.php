@@ -20,34 +20,10 @@
 
 	<body>
 		<!-- Navigation Bar -->
-		@include('layouts/navigation')
+		@include('layouts.partials.navigation')
+
 	    <div class="container">
-	    	<!-- Alerts -->
-		    @if (Session::has('message'))
-				<div class="alert alert-success alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-		        	{{ Session::get('message') }}
-		      	</div>
-			@endif
-			@if (Session::has('error'))
-				<div class="alert alert-danger alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					{{ Session::get('error') }}
-				</div>
-			@endif
-			@if (Session::has('info'))
-				<div class="alert alert-info alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					{{ Session::get('info') }}
-				</div>
-			@endif
-			@if ($errors->any()) 
-				<div class="alert alert-danger alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-			       	{{ implode('', $errors->all('<li class="error">:message</li>')) }}
-			   	</div>
-			@endif
-			<!-- Main Body -->
+	    	<!-- Main Body -->
 			<div class="bs-docs-section clearfix">
 				<div class="row">
 					<div class="col-lg-12">
@@ -61,19 +37,7 @@
 			</div>
 		    
 			<!-- Footer -->
-	      	<footer>
-	      		<div class="row" style="border-top: 1px solid; border-color: #dddddd; margin-top: 5px;">
-	      			<div class="col-lg-12">
-
-	      				<ul class="list-unstyled">
-	      					<li class="pull-right"><a href="#top">Nach oben</a></li>
-	      				</ul>
-			        	<p>&copy; Universtät Hamburg, Fachbereich Informatik 2014</p>
-			        	<p>Basierend auf dem PHP-Framework <a href="http://laravel.com/">Laravel</a></p>
-			        	<p>Verwendetes <a href="http://bootswatch.com/">Bootswatch</a>-Theme: <a href="http://bootswatch.com/readable/">Readable</a></p>
-			        </div>
-			    </div>
-	      	</footer>
+	      	@include('layouts.partials.footer')
 	    </div> <!-- /container -->
 
 

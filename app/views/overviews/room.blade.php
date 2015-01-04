@@ -50,7 +50,7 @@
 		       				<td>{{ $room->name }}</td>
 		    					<td>{{ $room->location }}</td>
 		    					<td>{{ $room->seats }}</td>
-		    					<td>{{ $listofroomtypes[$room->room_type_id] }}</td>
+		    					<td>{{ $listofroomtypes[$room->roomtype_id] }}</td>
 		    					@if ($room->beamer)
 		    						<td>ja</td>
 		    					@else

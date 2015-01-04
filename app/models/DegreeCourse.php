@@ -1,7 +1,7 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class DegreeCourse extends Ardent {
+class Degreecourse extends Ardent {
 	
 	protected $fillable = ['name', 'short', 'degree_id', 'department_id'];
 	public static $rules = array(
@@ -10,6 +10,8 @@ class DegreeCourse extends Ardent {
 		'degree_id' => 'required',
 		'department_id' => 'required'
 	);
+
+	protected $table = 'degreecourses';
 
 	/**
 	 * Returns a list of modules which are assigned to the degree course

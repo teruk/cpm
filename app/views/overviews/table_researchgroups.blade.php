@@ -83,7 +83,7 @@
 			          			<td>{{ $o['name'] }} ({{ $o['short'] }})</td>
 			          			<td>
 			          				{{ $p->course_number }}<br>
-			          				{{ $listofcoursetypes[$p->course->course_type_id] }}
+			          				{{ $listofcoursetypes[$p->course->coursetype_id] }}
 			          			</td>
 			          			<td>{{ $p->course->semester_periods_per_week }}</td>
 			          			<td>{{ $p->group_number }}</td>

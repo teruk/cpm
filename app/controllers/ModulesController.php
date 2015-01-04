@@ -73,7 +73,7 @@ class ModulesController extends \BaseController {
 		$lists['degrees'] 		= Degree::orderBy('name','ASC')->lists('name','id');
 		$lists['sections'] 		= Section::orderBy('name','ASC')->lists('name','id');
 		$lists['coursetypes'] 	= CourseType::orderBy('name','ASC')->lists('name','id');
-		$lists['degreecourses'] = DegreeCourse::getList();
+		$lists['degreecourses'] = Degreecourse::getList();
 		// get courses
 // 		$courses = DB::table('courses')->where('module_id','=',$module->id)->get();
 		$courses = $module->courses;

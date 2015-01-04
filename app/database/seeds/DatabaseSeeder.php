@@ -2,6 +2,70 @@
 
 class DatabaseSeeder extends Seeder {
 
+	protected $tables = [
+        'settings', 
+        'degrees', 
+        'sections',
+        'rotations',
+        'departments',
+        'turns',
+        'degreecourses',
+        'modules',
+        'degreecourse_module',
+        'researchgroups',
+        'employees',
+        'roomtypes',
+        'rooms',
+        'coursetypes',
+        'courses',
+        'users',
+        'plannings',
+        'employee_planning',
+        'module_turn',
+        'planning_room',
+        'mediumtermplannings',
+        'employee_mediumtermplanning',
+        'permissions',
+        'roles',
+        'assigned_roles',
+        'permission_role',
+        'researchgroup_user',
+        'appointeddays',
+        'announcements',
+        'planninglogs',
+    ];
+
+    protected $seeders = [
+        'SettingsTableSeeder', 
+        'DegreesTableSeeder', 
+        'SectionsTableSeeder',
+        'RotationsTableSeeder',
+        'DepartmentsTableSeeder',
+        'TurnsTableSeeder',
+        'DegreeCoursesTableSeeder',
+        'ModulesTableSeeder',
+        'DegreeCourseModuleTableSeeder',
+        'ResearchGroupsTableSeeder',
+        'EmployeesTableSeeder',
+        'RoomTypesTableSeeder',
+        'RoomsTableSeeder',
+        'CourseTypesTableSeeder',
+        'CoursesTableSeeder',
+        'UsersTableSeeder',
+        'PlanningsTableSeeder',
+        'EmployeePlanningTableSeeder',
+        'ModuleTurnTableSeeder',
+        'PlanningRoomTableSeeder',
+        'MediumtermplanningsTableSeeder',
+        'EmployeeMediumtermplanningTableSeeder',
+        'PermissionsTableSeeder',
+        'RolesTableSeeder',
+        'AssignedRolesTableSeeder',
+        'PermissionRoleTableSeeder',
+        'ResearchgroupUserTableSeeder',
+        'PlanninglogsTableSeeder',
+
+    ];
 	/**
 	 * Run the database seeds.
 	 *
@@ -10,26 +74,30 @@ class DatabaseSeeder extends Seeder {
 	public function run()
 	{
 		Eloquent::unguard();
-		$this->call('DegreesTableSeeder');
-		$this->call('SettingsTableSeeder');
-		$this->call('SectionsTableSeeder');
-		$this->call('RotationsTableSeeder');
-		$this->call('RoomTypesTableSeeder');
-		$this->call('DepartmentsTableSeeder');
-		$this->call('TurnsTableSeeder');
-		$this->call('ModulesTableSeeder');
-		$this->call('DegreeCoursesTableSeeder');
-		$this->call('DegreeCourseModuleTableSeeder');
-		$this->call('ResearchGroupsTableSeeder');
-		$this->call('EmployeesTableSeeder');
-		$this->call('MediumtermplanningsTableSeeder');
-		$this->call('RoomsTableSeeder');
-		$this->call('CourseTypesTableSeeder');
-		$this->call('CoursesTableSeeder');
-		$this->call('PermissionsTableSeeder'); // order is important, permissions seeder has to run before roles
-		$this->call('RolesTableSeeder'); // roles seeder has to run before users
-		$this->call('UsersTableSeeder');
-		$this->call('PlanningsTableSeeder');
+
+		$this->cleanDatabase();
+
+		foreach ($this->seeders as $seedClass)
+        {
+            $this->call($seedClass);
+        }
 	}
+
+	/**
+     * clean up the database
+     */
+    private function cleanDatabase()
+    {
+        // sets foreign key checks to zero
+        // TODO: needs to removed before going live
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        foreach ($this->tables as $table)
+        {
+            DB::table($table)->truncate();
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
 
 }

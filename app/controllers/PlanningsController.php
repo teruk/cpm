@@ -568,7 +568,7 @@ class PlanningsController extends BaseController {
 				// check if courses are already planned for this turn
 				foreach ($mtp->module->courses as $course)
 				{
-					if ($listofcoursetypes[$course->course_type_id] == "Vorlesung")
+					if ($listofcoursetypes[$course->coursetype_id] == "Vorlesung")
 					{
 						$plannings = Planning::courseTurn($course,$turn)->get();					
 						if (sizeof($plannings) == 0)
@@ -624,7 +624,7 @@ class PlanningsController extends BaseController {
 					{
 						// generate the number of courses that are needed to match the participant number of the lecture
 						$result = DB::table('courses')
-											->join('course_types','course_types.id','=','courses.course_type_id')
+											->join('course_types','course_types.id','=','courses.coursetype_id')
 											->select('courses.participants')
 											->where('courses.module_id','=',$course->module_id)
 											->where('course_types.name','=','Vorlesung')
@@ -771,9 +771,9 @@ class PlanningsController extends BaseController {
 		//lectures
 		
 		if (sizeof($course_ids) > 0)
-			$lectures = Course::whereIn('course_type_id',array(1,8))->whereNotIn('id',$course_ids)->where('department_id','=',1)->orderBy('name','ASC')->get();
+			$lectures = Course::whereIn('coursetype_id',array(1,8))->whereNotIn('id',$course_ids)->where('department_id','=',1)->orderBy('name','ASC')->get();
 		else
-			$lectures = Course::whereIn('course_type_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get();
+			$lectures = Course::whereIn('coursetype_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get();
 
 		if (sizeof($lectures) > 0)
 		{
@@ -786,7 +786,7 @@ class PlanningsController extends BaseController {
 		else
 			$lists['lecture'] = array();
 
-		$courses = Course::whereNotIn('course_type_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get(); // TODO remove hard coded ids
+		$courses = Course::whereNotIn('coursetype_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get(); // TODO remove hard coded ids
 		$lists['seminar'] =  array();
 		$lists['exercise'] =  array();
 		$lists['integrated_seminar'] =  array();
@@ -795,7 +795,7 @@ class PlanningsController extends BaseController {
 		$lists['practical_course'] = array();
 		$lists['other'] = array();
 		foreach ($courses as $c) {
-			switch ($c->course_type_id)
+			switch ($c->coursetype_id)
 			{
 				case 2:
 					$lists['seminar'] = array_add($lists['seminar'], $c->id, $c->name.' ('.$c->module->short.')');
@@ -852,7 +852,7 @@ class PlanningsController extends BaseController {
 		foreach ($plannings as $p) {
 			foreach ($p->rooms as $room) {
 				$e = array();
-				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->course_type_id].' '.$p->course_title.' Gruppe: '.$p->group_number;
+				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->coursetype_id].' '.$p->course_title.' Gruppe: '.$p->group_number;
 				$day = $this->getWeekdayDate($room->pivot->weekday);
 					
 				$e['start'] = $day.'T'.$room->pivot->start_time;
@@ -876,7 +876,7 @@ class PlanningsController extends BaseController {
 		foreach ($plannings as $p) {
 			foreach ($p->rooms as $room) {
 				$e = array();
-				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->course_type_id].' '.$p->course->module->short.' ';
+				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->coursetype_id].' '.$p->course->module->short.' ';
 				foreach ($p->employees as $employee) {
 					$e['title'] .= $employee->name.'; ';
 				}

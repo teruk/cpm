@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Announcements extends Migration {
+class CreateTableResearchgroupUser extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,14 +12,14 @@ class Announcements extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('announcements', function(Blueprint $table)
+		Schema::create('researchgroup_user', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('subject');
-			$table->text('content');
-			$table->string('read_more');
+			$table->integer('researchgroup_id')->unsigned()->index();
+			$table->foreign('researchgroup_id')->references('id')->on('researchgroups')->onDelete('cascade');
 			$table->integer('user_id')->unsigned()->index();
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+			$table->unique(array('researchgroup_id','user_id'));
 			$table->timestamps();
 		});
 	}
@@ -31,7 +31,7 @@ class Announcements extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('announcements');
+		Schema::drop('researchgroup_user');
 	}
 
 }

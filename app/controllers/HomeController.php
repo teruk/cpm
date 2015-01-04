@@ -58,15 +58,19 @@ class HomeController extends BaseController {
 					$user = Entrust::user();
 					$user->last_login = new Datetime;
 					$user->save();
+					Flash::success('Sie haben sich erfolgreich eingeloggt.');
 					return Redirect::to('home');
 				}
 				else
 				{
 					Auth::logout();
-					return Redirect::to('login')->with('error', 'Dieser Account wurde deaktiviert! Bitte kontaktieren Sie den Administrator.');
+					Flash::error('Dieser Account wurde deaktiviert! Bitte kontaktieren Sie den Administrator.');
+					return Redirect::to('login');
 				}
-			} else 
-				return Redirect::to('login')->with('error','Login fehlgeschlagen! E-Mail-Adresse oder Passwort ungültig!');
+			} else
+
+			Flash::error('Login fehlgeschlagen! E-Mail-Adresse oder Passwort ungültig!');
+			return Redirect::to('login');
 		}
 	}
 

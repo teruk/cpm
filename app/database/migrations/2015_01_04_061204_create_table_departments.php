@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Planninglogs extends Migration {
+class CreateTableDepartments extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,15 +12,12 @@ class Planninglogs extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('planninglogs', function(Blueprint $table)
+		Schema::create('departments', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('planning_id');
-			$table->integer('turn_id');
-			$table->text('action');
-			$table->integer('category');
-			$table->integer('action_type');
-			$table->string('username');
+			$table->string('name');
+			$table->string('short');
+			$table->unique(array('name','short'));
 			$table->timestamps();
 		});
 	}
@@ -32,7 +29,7 @@ class Planninglogs extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('planninglogs');
+		Schema::drop('departments');
 	}
 
 }

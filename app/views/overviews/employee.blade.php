@@ -104,7 +104,7 @@
 								<td>{{ $planning->turn->name }} {{ $planning->turn->year }}</td>
 								<td><a href="{{ route('overview.module',$planning->course->module_id) }}">{{ $planning->course->module->short }}</a></td>
 								<td>{{ $planning->course_number }}</td>
-								<td>{{ $listofcoursetypes[$planning->course->course_type_id] }}</td>
+								<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>
 								<td>{{ $planning->course_title }}<br> {{$planning->course_title_eng }}</td>
 								<td>{{ $planning->group_number }}</td>
 								<td>{{ $planning->pivot->semester_periods_per_week }}</td>

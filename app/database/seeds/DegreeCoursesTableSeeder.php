@@ -18,7 +18,7 @@ class DegreeCoursesTableSeeder extends Seeder {
 		);
 		
 		// Uncomment the below to run the seeder
-		DB::table('degree_courses')->insert($degree_courses);
+		DB::table('degreecourses')->insert($degree_courses);
 	}
 
 }

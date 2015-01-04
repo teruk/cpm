@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Appointeddays extends Migration {
+class CreateTableAnnouncements extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,13 +12,14 @@ class Appointeddays extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('appointeddays', function(Blueprint $table)
+		Schema::create('announcements', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('subject');
-			$table->string('read_more');
 			$table->text('content');
-			$table->timestamp('date');
+			$table->string('read_more');
+			$table->integer('user_id')->unsigned()->index();
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}
@@ -30,7 +31,7 @@ class Appointeddays extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('appointeddays');
+		Schema::drop('announcements');
 	}
 
 }

@@ -265,19 +265,19 @@ class Planning extends Ardent {
 	{
 		// get all the degree courses where the target module is mandatory
 		$conflictplannings = array();
-		$degreecourses = DB::table('degree_course_module')
-							->join('sections', 'sections.id','=', 'degree_course_module.section') 
-							->select('degree_course_module.degree_course_id', 'degree_course_module.semester')
+		$degreecourses = DB::table('degreecourse_module')
+							->join('sections', 'sections.id','=', 'degreecourse_module.section') 
+							->select('degreecourse_module.degree_course_id', 'degreecourse_module.semester')
 							->where('sections.name','=', 'Pflicht')
-							->where('degree_course_module.module_id','=',$this->course->module_id) // TODO it needs to be checked, if the course belongs to a module
+							->where('degreecourse_module.module_id','=',$this->course->module_id) // TODO it needs to be checked, if the course belongs to a module
 							->get();
 		// get all modules which in the same semester as the target module and also mandatory
 		$modules = array();
 		foreach ($degreecourses as $dg)
 		{
-			$result = DB::table('degree_course_module')
+			$result = DB::table('degreecourse_module')
 						->select('module_id')
-						->where('degree_course_id','=',$dg->degree_course_id)
+						->where('degreecourse_id','=',$dg->degreecourse_id)
 						->where('semester','=',$dg->semester)
 						->where('section', '=', 1)
 						->where('module_id','!=', $this->course->module_id)
@@ -293,7 +293,7 @@ class Planning extends Ardent {
 		if (sizeof($modules) > 0)
 		{
 			$courses = Course::whereIn('module_id',$modules)
-							->where('course_type_id','=',1) // Check before if it's a "Vorlesung"
+							->where('coursetype_id','=',1) // Check before if it's a "Vorlesung"
 							->get();
 			$conflictplannings = array();
 			if (sizeof($courses) > 0)

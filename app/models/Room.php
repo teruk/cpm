@@ -3,12 +3,12 @@
 use LaravelBook\Ardent\Ardent;
 class Room extends Ardent {
 	
-	protected $fillable = ['name','location', 'seats', 'room_type_id', 'beamer', 'blackboard', 'overheadprojector','accessible'];
+	protected $fillable = ['name','location', 'seats', 'roomtype_id', 'beamer', 'blackboard', 'overheadprojector','accessible'];
 	public static $rules = array(
 			'name' => 'required|unique:rooms',
 			'location' => 'required',
 			'seats' => 'required|min:1',
-			'room_type_id' => 'required',
+			'roomtype_id' => 'required',
 	);
 	public $timestamps = false;
 	protected $table = 'rooms';
@@ -38,7 +38,7 @@ class Room extends Ardent {
 	{
 		return $query->where('id', '!=', $room->id)
 // 					->where('seats', '>=', $room->seats)
-					->where('room_type_id', '=', $room->room_type_id)
+					->where('roomtype_id', '=', $room->roomtype_id)
 					->orderBy('seats', 'ASC');
 	}
 	
@@ -92,7 +92,7 @@ class Room extends Ardent {
 		$this->attributes['name'] = $data['name'];
 		$this->attributes['location'] = $data['location'];
 		$this->attributes['seats'] = $data['seats'];
-		$this->attributes['room_type_id'] = $data['room_type_id'];
+		$this->attributes['roomtype_id'] = $data['roomtype_id'];
 		$this->attributes['beamer'] = 0;
 		$this->attributes['blackboard'] = 0;
 		$this->attributes['overheadprojector'] = 0;

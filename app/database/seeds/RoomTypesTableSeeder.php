@@ -11,6 +11,6 @@ class RoomTypesTableSeeder extends Seeder
 			['name' => 'Labor', 'description' => ''],
 		);
 		
-		DB::table('room_types')->insert($roomtypes);
+		DB::table('roomtypes')->insert($roomtypes);
 	}
 }

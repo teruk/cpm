@@ -68,7 +68,7 @@
 								<td>{{ $course->course_number }}</td>
 								<td><a href="{{ route('overview.course',$course->id)}}">{{ $course->name }}</a></td>
 								<td>{{ $course->name_eng }}</td>
-								<td>{{ $listofcoursetypes[$course->course_type_id] }}</td>
+								<td>{{ $listofcoursetypes[$course->coursetype_id] }}</td>
 								<td>{{ $course->participants }}</td>
 								<td>{{ $course->semester_periods_per_week }}</td>
 								<td>{{ Config::get('constants.language')[$course->language] }}</td>

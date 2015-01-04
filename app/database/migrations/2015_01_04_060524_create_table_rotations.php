@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Settings extends Migration {
+class CreateTableRotations extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,11 +12,10 @@ class Settings extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('settings', function(Blueprint $table)
+		Schema::create('rotations', function(Blueprint $table)
 		{
+			$table->increments('id');
 			$table->string('name');
-			$table->string('display_name');
-			$table->string('value');
 			$table->unique('name');
 			$table->timestamps();
 		});
@@ -29,7 +28,7 @@ class Settings extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('settings');
+		Schema::drop('rotations');
 	}
 
 }

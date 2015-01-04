@@ -10,7 +10,7 @@ class Degree extends Ardent {
 	
 	public function degreecourses()
 	{
-		return $this->hasMany('DegreeCourse');
+		return $this->hasMany('Degreecourse');
 	}
 	
 	public function modules()

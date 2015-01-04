@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class PlanningRoom extends Migration {
+class CreateTableEmployeePlanning extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,16 +12,15 @@ class PlanningRoom extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('planning_room', function (Blueprint $table)
+		Schema::create('employee_planning', function (Blueprint $table)
 		{
 			$table->increments('id');
 			$table->integer('planning_id')->unsigned()->index();
 			$table->foreign('planning_id')->references('id')->on('plannings')->onDelete('cascade');
-			$table->integer('room_id')->unsigned()->index();
-			$table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-			$table->integer('weekday');
-			$table->time('start_time');
-			$table->time('end_time');
+			$table->integer('employee_id')->unsigned()->index();
+			$table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+			$table->float('semester_periods_per_week');
+			$table->unique(array('employee_id','planning_id'));
 			$table->timestamps();
 		});
 	}
@@ -33,7 +32,7 @@ class PlanningRoom extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('planning_room');
+		Schema::drop('employee_planning');
 	}
 
 }

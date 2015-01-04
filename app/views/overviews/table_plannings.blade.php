@@ -80,7 +80,7 @@
 		          				<td>{{ $p->course->module->short }} {{ $p->course->module->name }}</td>
 		          				<td>
 		          					{{ $p->course_number }}<br>
-		          					{{ $listofcoursetypes[$p->course->course_type_id] }}
+		          					{{ $listofcoursetypes[$p->course->coursetype_id] }}
 		          				</td>
 		          				<td>{{ $plannings_data[$p->course_id]['groups'] }} * {{ $p->course->semester_periods_per_week }}</td>
 		          				<td>

@@ -102,7 +102,7 @@
 			          			<tr>
 				       				<td><a href="{{ route('rooms.showRoomSchedule', array($turn->id, $room->id))}}">{{ $room->name }} ({{ $room->location }})</td>
 			    					<td>{{ $room->seats }}</td>
-			    					<td>{{ $roomtypes[$room->room_type_id] }}</td>
+			    					<td>{{ $roomtypes[$room->roomtype_id] }}</td>
 			    					@if ($room->beamer)
 			    						<td>ja</td>
 			    					@else

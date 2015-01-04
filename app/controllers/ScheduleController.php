@@ -8,7 +8,7 @@ class ScheduleController extends \BaseController {
 	public function getDefaultSchedule()
 	{
 		$turn = Turn::find(Setting::setting('current_turn')->first()->value); // current turn
-		$degreecourse = DegreeCourse::findOrFail(1);
+		$degreecourse = Degreecourse::findOrFail(1);
 		$this->setScheduleSession($turn->id, $degreecourse->id, 1);
 
 		return Redirect::route('overview.generate_schedule');
@@ -17,7 +17,7 @@ class ScheduleController extends \BaseController {
 	/**
 	* show schedule for a degree course
 	*/
-	public function getSpecificSchedule(Turn $turn, DegreeCourse $degreecourse, $semester)
+	public function getSpecificSchedule(Turn $turn, Degreecourse $degreecourse, $semester)
 	{
 		$this->setScheduleSession($turn->id, $degreecourse->id, $semester);
 
@@ -41,11 +41,13 @@ class ScheduleController extends \BaseController {
 	 */
 	public function generateSchedule()
 	{
-		$listofdegreecourses = DegreeCourse::getList();
+		$listofdegreecourses = Degreecourse::getList();
 		$listofturns = Turn::getList();
-		$output = $this->generate();
+		
 		$turn = Turn::findOrFail(Session::get('overview_schedule_turn'));
-		$degreecourse = DegreeCourse::findOrFail(Session::get('overview_schedule_degreecourse'));
+		$degreecourse = Degreecourse::findOrFail(Session::get('overview_schedule_degreecourse'));
+
+		$output = $this->generate();
 		$semester = Session::get('overview_schedule_semester');
 
 		$this->layout->content = View::make('overviews.schedule', compact('output','degreecourse', 'listofdegreecourses', 'listofturns', 'semester', 'turn'));
@@ -82,14 +84,14 @@ class ScheduleController extends \BaseController {
 			$events = DB::table('planning_room')
 					->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
-					->join('degree_course_module','degree_course_module.module_id','=','courses.module_id')
-					->join('modules', 'modules.id','=','degree_course_module.module_id')
+					->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
+					->join('modules', 'modules.id','=','degreecourse_module.module_id')
 					->join('rooms', 'rooms.id', '=','planning_room.room_id')
-					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.course_type_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degree_course_module.section')
+					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
 					->where('plannings.turn_id','=',$turnId)
-					->where('degree_course_module.degree_course_id','=', $degreecourseId)
-					->where('degree_course_module.semester','=', $semester)
-					->where('courses.course_type_id', '=', 1)
+					->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+					->where('degreecourse_module.semester','=', $semester)
+					->where('courses.coursetype_id', '=', 1)
 					->get();
 		}
 		else
@@ -98,13 +100,13 @@ class ScheduleController extends \BaseController {
 			$events = DB::table('planning_room')
 					->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
-					->join('degree_course_module','degree_course_module.module_id','=','courses.module_id')
-					->join('modules', 'modules.id','=','degree_course_module.module_id')
+					->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
+					->join('modules', 'modules.id','=','degreecourse_module.module_id')
 					->join('rooms', 'rooms.id', '=','planning_room.room_id')
-					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.course_type_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degree_course_module.section')
+					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
 					->where('plannings.turn_id','=',$turnId)
-					->where('degree_course_module.degree_course_id','=', $degreecourseId)
-					->where('courses.course_type_id', '=', 1)
+					->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+					->where('courses.coursetype_id', '=', 1)
 					->groupBy('planning_room.id') // Important
 					->get();
 		}
@@ -113,13 +115,13 @@ class ScheduleController extends \BaseController {
 		foreach ($events as $event)
 		{
 			$e = array();
-			$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->course_type_id].' '.$event->short.' ('.$event->rname.')';
+			$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->coursetype_id].' '.$event->short.' ('.$event->rname.')';
 			$day = $this->getWeekdayDate($event->weekday);
 			$e['start'] = $day.'T'.$event->start_time;
 			$e['end'] = $day.'T'.$event->end_time;
 			if ($event->section == 1)
 			{
-				if ($event->course_type_id == 1)
+				if ($event->coursetype_id == 1)
 				{
 					$e['backgroundColor'] = '#32CD32';
 					$e['borderColor'] = '#228B22';
@@ -139,15 +141,15 @@ class ScheduleController extends \BaseController {
 			$events = DB::table('planning_room')
 				->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 				->join('courses', 'courses.id', '=', 'plannings.course_id')
-				->join('degree_course_module','degree_course_module.module_id','=','courses.module_id')
-				->join('modules', 'modules.id','=','degree_course_module.module_id')
+				->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
+				->join('modules', 'modules.id','=','degreecourse_module.module_id')
 				->join('rooms', 'rooms.id', '=','planning_room.room_id')
-				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.course_type_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degree_course_module.section')
+				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
 				->where('plannings.turn_id','=',$turnId)
-				->where('degree_course_module.degree_course_id','=', $degreecourseId)
-				->where('degree_course_module.semester','=', $semester)
-				->whereNotIn('courses.course_type_id', array(1))
-				->orderBy('degree_course_module.module_id', 'ASC')
+				->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+				->where('degreecourse_module.semester','=', $semester)
+				->whereNotIn('courses.coursetype_id', array(1))
+				->orderBy('degreecourse_module.module_id', 'ASC')
 				->orderBy('plannings.course_number','ASC')
 				->orderBy('plannings.group_number','ASC')
 				->get();
@@ -158,14 +160,14 @@ class ScheduleController extends \BaseController {
 			$events = DB::table('planning_room')
 				->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 				->join('courses', 'courses.id', '=', 'plannings.course_id')
-				->join('degree_course_module','degree_course_module.module_id','=','courses.module_id')
-				->join('modules', 'modules.id','=','degree_course_module.module_id')
+				->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
+				->join('modules', 'modules.id','=','degreecourse_module.module_id')
 				->join('rooms', 'rooms.id', '=','planning_room.room_id')
-				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.course_type_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degree_course_module.section')
+				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
 				->where('plannings.turn_id','=',$turnId)
-				->where('degree_course_module.degree_course_id','=', $degreecourseId)
-				->whereNotIn('courses.course_type_id', array(1))
-				->orderBy('degree_course_module.module_id', 'ASC')
+				->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+				->whereNotIn('courses.coursetype_id', array(1))
+				->orderBy('degreecourse_module.module_id', 'ASC')
 				->orderBy('plannings.course_number','ASC')
 				->orderBy('plannings.group_number','ASC')
 				->get();
@@ -194,7 +196,7 @@ class ScheduleController extends \BaseController {
 				$starttime = $event->start_time;
 				$group_number = $event->group_number;
 				$e = array();
-				$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->course_type_id].'-'.$event->group_number.' '.$event->short.' '.$event->rname;
+				$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->coursetype_id].'-'.$event->group_number.' '.$event->short.' '.$event->rname;
 				$day = $this->getWeekdayDate($event->weekday);
 				$e['start'] = $day.'T'.$event->start_time;
 				$e['end'] = $day.'T'.$event->end_time;

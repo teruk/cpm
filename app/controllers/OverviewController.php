@@ -336,7 +336,7 @@ class OverviewController extends BaseController {
 						->select('rooms.id')
 						->where('plannings.turn_id', '=', Input::get('turn_id')) // Import to select ohne results from the same turn
 						->where('planning_room.weekday','=' ,Input::get('weekday'))
-						->where('rooms.room_type_id','=', Input::get('room_type_id'))
+						->where('rooms.roomtype_id','=', Input::get('room_type_id'))
 						->where(function($query) use ($starttime, $endtime)
 						{
 							$query->where(function($q1) use ($starttime){
@@ -373,7 +373,7 @@ class OverviewController extends BaseController {
 			$result = array();
 			if (sizeof($room_ids) > 0)
 			{
-				$result = Room::where('room_type_id','=', Input::get('room_type_id'))
+				$result = Room::where('roomtype_id','=', Input::get('room_type_id'))
 								->where('seats','>=', Input::get('min_seats'))
 								->where('seats', '<=', $maxseats)
 								->whereNotIn('id',$room_ids)
@@ -381,7 +381,7 @@ class OverviewController extends BaseController {
 			}
 			else
 			{
-				$result = Room::where('room_type_id','=', Input::get('room_type_id'))
+				$result = Room::where('roomtype_id','=', Input::get('room_type_id'))
 								->where('seats','>=', Input::get('min_seats'))
 								->where('seats', '<=', $maxseats)
 								->get();

@@ -18,6 +18,6 @@ class CourseTypesTableSeeder extends Seeder
 			['name' => 'Sonstiges', 'short' => 'Sonst', 'description' => ''],
 		);
 		
-		DB::table('course_types')->insert($coursetypes);
+		DB::table('coursetypes')->insert($coursetypes);
 	}
 }

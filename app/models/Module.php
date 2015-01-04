@@ -33,7 +33,7 @@ class Module extends Ardent {
 	
 	public function degreecourses()
 	{
-		return $this->belongsToMany('DegreeCourse')->withPivot('section','semester');
+		return $this->belongsToMany('Degreecourse')->withPivot('section','semester');
 	}
 	
 	public function mediumtermplannings()

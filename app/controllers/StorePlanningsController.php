@@ -56,11 +56,11 @@ class StorePlanningsController extends \BaseController {
 
 		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
 		// get the lecture
-		$result = Course::where('module_id','=',$module->id)->whereIn('course_type_id',array(1))->first();
+		$result = Course::where('module_id','=',$module->id)->whereIn('coursetype_id',array(1))->first();
 
 		foreach ($module->courses as $course) 
 		{
-			if ($listofcoursetypes[$course->course_type_id] == "Vorlesung" || $listofcoursetypes[$course->course_type_id] == "Vorlesung + Übung")
+			if ($listofcoursetypes[$course->coursetype_id] == "Vorlesung" || $listofcoursetypes[$course->coursetype_id] == "Vorlesung + Übung")
 			{
 				$planning = new Planning;
 				$input['group_number'] = 1;
@@ -131,7 +131,7 @@ class StorePlanningsController extends \BaseController {
 							->where('course_title', '=', $input['course_title'])
 							->get();
 
-		$courseType = CourseType::findOrFail($course->course_type_id);
+		$courseType = CourseType::findOrFail($course->coursetype_id);
 
 		if (sizeof($duplicate) == 0)
 		{

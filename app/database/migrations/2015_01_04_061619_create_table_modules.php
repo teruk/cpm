@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Courses extends Migration {
+class CreateTableModules extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,22 +12,22 @@ class Courses extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('courses', function (Blueprint $table)
+		Schema::create('modules', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('name');
+			$table->string('short')->unique();
 			$table->string('name_eng');
-			$table->string('course_number');
-			$table->integer('course_type_id')->unsigned()->index();
-			$table->foreign('course_type_id')->references('id')->on('course_types')->onDelete('cascade');
-			$table->integer('module_id')->unsigned()->index();
-			$table->foreign('module_id')->references('id')->on('modules')->onDelete('cascade');
-			$table->integer('participants');
+			$table->float('credits');
+			$table->integer('exam_type');
+			$table->integer('rotation_id')->unsigned()->index();
+			$table->foreign('rotation_id')->references('id')->on('rotations')->onDelete('cascade');
 			$table->integer('language');
-			$table->float('semester_periods_per_week');
+			$table->integer('degree_id')->unsigned()->index();
+			$table->foreign('degree_id')->references('id')->on('degrees')->onDelete('cascade');
 			$table->integer('department_id')->unsigned()->index();
 			$table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
-			$table->unique('course_number');
+			$table->boolean('individual_courses');
 			$table->timestamps();
 		});
 	}
@@ -39,7 +39,7 @@ class Courses extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('courses');
+		Schema::drop('modules');
 	}
 
 }

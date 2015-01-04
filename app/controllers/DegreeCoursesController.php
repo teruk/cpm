@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class DegreeCoursesController extends \BaseController {
+class DegreecoursesController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -11,7 +11,7 @@ class DegreeCoursesController extends \BaseController {
 	 */
 	public function index()
 	{
-		$degreecourses = DegreeCourse::all();
+		$degreecourses = Degreecourse::all();
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
 
@@ -38,7 +38,7 @@ class DegreeCoursesController extends \BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$degreecourse = new DegreeCourse($input);
+		$degreecourse = new Degreecourse($input);
 		
 		if ( $degreecourse->save() )
 		{
@@ -57,7 +57,7 @@ class DegreeCoursesController extends \BaseController {
 	 * @param  int  Degree_Course $degree_course
 	 * @return Response
 	 */
-	public function show(DegreeCourse $degreecourse)
+	public function show(Degreecourse $degreecourse)
 	{	
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
@@ -74,7 +74,7 @@ class DegreeCoursesController extends \BaseController {
 	 * @param  int  Degree_Course $degree_course
 	 * @return Response
 	 */
-	public function edit(DegreeCourse $degreecourse)
+	public function edit(Degreecourse $degreecourse)
 	{
 		$this->layout->content = View::make('degree_courses.index', compact('degreecourse'));
 	}
@@ -86,7 +86,7 @@ class DegreeCoursesController extends \BaseController {
 	 * @param  int  Degree_Course $degree_course
 	 * @return Response
 	 */
-	public function update(DegreeCourse $degreecourse)
+	public function update(Degreecourse $degreecourse)
 	{
 		$input = Input::all();
 		$degreecourse->fill($input);
@@ -108,7 +108,7 @@ class DegreeCoursesController extends \BaseController {
 	 * @param  int  Degree_Course $degree_course
 	 * @return Response
 	 */
-	public function destroy(DegreeCourse $degreecourse)
+	public function destroy(Degreecourse $degreecourse)
 	{
 		$degreecourse->delete();
 		Flash::success('Studiengang erfolgreich gelöscht.');

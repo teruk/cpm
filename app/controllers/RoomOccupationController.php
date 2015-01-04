@@ -69,8 +69,8 @@ class RoomOccupationController extends \BaseController {
 		$events = DB::table('planning_room')
 					->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
-					->join('course_types', 'course_types.id', '=','courses.course_type_id')
-					->select('plannings.group_number', 'courses.name', 'plannings.course_number', 'course_types.short', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time')
+					->join('coursetypes', 'coursetypes.id', '=','courses.coursetype_id')
+					->select('plannings.group_number', 'courses.name', 'plannings.course_number', 'coursetypes.short', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time')
 					->where('plannings.turn_id','=',$turn->id)
 					->where('planning_room.room_id','=', $room->id)
 					->get();
