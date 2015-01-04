@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class CourseTypesController extends BaseController {
+class CoursetypesController extends BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -11,7 +11,7 @@ class CourseTypesController extends BaseController {
 	 */
 	public function index()
 	{
-		$coursetypes = CourseType::all();
+		$coursetypes = Coursetype::all();
 
 		$this->layout->content = View::make('coursetypes.index', compact('coursetypes'));
 	}
@@ -25,7 +25,7 @@ class CourseTypesController extends BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$coursetype = new CourseType($input);
+		$coursetype = new Coursetype($input);
 		
 		if ( $coursetype->save() )
 		{
@@ -44,7 +44,7 @@ class CourseTypesController extends BaseController {
 	 * @param  int  CourseType $coursetype
 	 * @return Response
 	 */
-	public function show(CourseType $coursetype)
+	public function show(Coursetype $coursetype)
 	{	
 		$this->layout->content = View::make('coursetypes.show', compact('coursetype'));
 	}
@@ -56,7 +56,7 @@ class CourseTypesController extends BaseController {
 	 * @param  int  CourseType $coursetype
 	 * @return Response
 	 */
-	public function update(CourseType $coursetype)
+	public function update(Coursetype $coursetype)
 	{
 		$input = Input::all();
 		$coursetype->fill($input);
@@ -78,7 +78,7 @@ class CourseTypesController extends BaseController {
 	 * @param  int  CourseType $coursetype
 	 * @return Response
 	 */
-	public function destroy(CourseType $coursetype)
+	public function destroy(Coursetype $coursetype)
 	{
 		$coursetype->delete();
 		Flash::success('Kurstyp erfolgreich gelöscht.');

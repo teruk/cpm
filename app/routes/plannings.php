@@ -11,8 +11,10 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 	Route::get('{turn}/show/{planning}/edit', array('as' => 'plannings.edit', 'uses' => 'PlanningsController@edit'));
 	Route::delete('{turn}/delete/{planning}', array('as' => 'plannings.destroy', 'uses' => 'PlanningsController@destroy'));
 	Route::patch('{turn}/show/{planning}/update', array('as' => 'plannings.update', 'uses' => 'PlanningsController@update'));
-	Route::patch('{turn}/generateFromMediumtermplanning', array('as' => 'plannings.generateFromMediumtermplanning', 'uses' => 'PlanningsController@generatePlanningsFromMediumtermplanning'));
+	
 	Route::post('{turn}/update_status', array('as' => 'plannings.updateStatus', 'uses' => 'PlanningsController@updateStatus'));
+
+	Route::patch('{turn}/generateFromMediumtermplanning', array('as' => 'plannings.generateFromMediumtermplanning', 'uses' => 'GenerateMediumtermplanningsController@generatePlannings'));
 
 	Route::post('{turn}/save', array('as' => 'plannings.store', 'uses' => 'StorePlanningsController@store'));
 	Route::post('{turn}/save_module', array('as' => 'plannings.storeModule', 'uses' => 'StorePlanningsController@storeModule'));
@@ -33,5 +35,5 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 
 	Route::get('schedule/{turn}', array('as' => 'plannings.showSchedule', 'uses' => 'PlanningsController@showSchedule'));
 
-	Route::get('room_preference/{turn}', array('as' => 'plannings.showRoomPreference', 'uses' => 'PlanningsController@showRoomPreference'));
+	Route::get('room_preference/{turn}', array('as' => 'plannings.showRoomPreference', 'uses' => 'RoomPreferencesController@showRoomPreference'));
 });

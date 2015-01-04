@@ -18,12 +18,12 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	  	<li class="active">Prüfungen</li>
-	  	<li class="active">{{ $display_turn->name }} {{ $display_turn->year }}</li>
+	  	<li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Übersicht Prüfungsformen der angebotene Module {{ $display_turn->name }} {{ $display_turn->year }}</h4>
+	<h4>Übersicht Prüfungsformen der angebotene Module {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
 			@include('layouts.partials.nav-turn-selection', ['route' => 'overview.showExams'])
@@ -41,7 +41,7 @@
 	           			</tr>
 	           		</thead>
 	           		<tbody>
-							@foreach( $display_turn->modules as $module )
+							@foreach( $turnNav['displayTurn']->modules as $module )
 								@if ($module->individual_courses == 0)
 									<tr>
 				    					<td><a href="{{ route('overview.module',$module->id) }}">{{ $module->short }} {{ $module->name }}</a></td>

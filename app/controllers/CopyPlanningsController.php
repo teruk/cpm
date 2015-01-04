@@ -100,7 +100,7 @@ class CopyPlanningsController extends \BaseController {
 					da diese bereits im aktuellen Semester geplant wurden.<br> Folgende Veranstaltungen konnten nicht kopiert werden: ";
 		foreach ($plannings as $planning)
 		{
-			$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+			$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 
 			if (Planning::checkDuplicate($planning->course_id, $turn->id, $planning->group_number)->count() == 0)
 			{

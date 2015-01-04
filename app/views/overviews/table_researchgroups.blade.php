@@ -48,12 +48,12 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	    <li class="active">Aufstellung nach Arbeitsbereichen</li>
-	    <li class="active">{{ $display_turn->name }} {{ $display_turn->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Lehrveranstaltungsaufstellung sortiert nach Arbeitsbereichen {{ $display_turn->name }} {{ $display_turn->year }}</h4>
+	<h4>Lehrveranstaltungsaufstellung sortiert nach Arbeitsbereichen {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
 			@include('layouts.partials.nav-turn-selection',['route' => 'overview.tableResearchgroups'])
@@ -83,9 +83,9 @@
 			          			<td>{{ $o['name'] }} ({{ $o['short'] }})</td>
 			          			<td>
 			          				{{ $p->course_number }}<br>
-			          				{{ $listofcoursetypes[$p->course->coursetype_id] }}
+			          				{{ $p->course->coursetype->short }}
 			          			</td>
-			          			<td>{{ $p->course->semester_periods_per_week }}</td>
+			          			<td>{{ $p->semester_periods_per_week }}</td>
 			          			<td>{{ $p->group_number }}</td>
 			          			<td>
 			          				<a href="{{ route('overview.module', $p->course->module_id) }}">{{ $p->course->module->short }}</a><br>

@@ -44,19 +44,19 @@
 
 		@if ($currentUser->hasRole('Admin') || $currentUser->can('copy_planning') || $currentUser->can('copy_planning_all'))
 			<div class="btn-group">
-				{{HTML::decode(link_to_route('plannings.showall', '<i class="glyphicon glyphicon-repeat"></i> Einzelne LVs kopieren', array($display_turn->id) , array('class' => 'btn btn-xs btn-copy')))}}
+				{{HTML::decode(link_to_route('plannings.showall', '<i class="glyphicon glyphicon-repeat"></i> Einzelne LVs kopieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-copy')))}}
 			</div>
 
 			@if ( $pastcourses > 0 )
 			 	<div class="btn-group">
-					<a href="#" class="btn btn-info btn-xs" data-toggle="modal" data-target="#copylastturn"><i class="glyphicon glyphicon-repeat"></i> {{$display_turn->name}} {{ ($display_turn->year-1) }} alle kopieren</a>
+					<a href="#" class="btn btn-info btn-xs" data-toggle="modal" data-target="#copylastturn"><i class="glyphicon glyphicon-repeat"></i> {{$turnNav['displayTurn']->name}} {{ ($turnNav['displayTurn']->year-1) }} alle kopieren</a>
 				</div>
 			@endif
 		@endif
 
 		@if ($currentUser->hasRole('Admin') || $currentUser->can('change_planning_status'))
 			<div class="btn-group">
-				{{HTML::decode(link_to_route('plannings.statusOverview', '<i class="glyphicon glyphicon-refresh"></i> LV-Status aktualisieren', array($display_turn->id) , array('class' => 'btn btn-xs btn-primary')))}}
+				{{HTML::decode(link_to_route('plannings.statusOverview', '<i class="glyphicon glyphicon-refresh"></i> LV-Status aktualisieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-primary')))}}
 			</div>
 		@endif
 	</div>

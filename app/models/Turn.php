@@ -57,14 +57,6 @@ class Turn extends Ardent {
 	}
 
 	/**
-	* Scope to get turn afte the next turn
-	*/
-	public function scopeTurnAfterNext($query, Turn $current_turn)
-	{
-		return $query->where('year', '=', ($current_turn->year+1))->where('name', '=', $current_turn->name);
-	}
-
-	/**
 	* Scope to get the turns before a specific turn
 	*/
 	public function scopeBeforeTurns($query, Turn $current_turn)

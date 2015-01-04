@@ -16,14 +16,14 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	    <li class="active">SHK-Bedarf</li>
-	    <li class="active">{{ $display_turn->name }} {{ $display_turn->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
 	</ol>
 @stop
 
 @section('main')
 	<div class="row">
 		<div class="col-sm-12">
-			<h4>SHK-Bedarf {{ $display_turn->name }} {{ $display_turn->year }}</h4>	
+			<h4>SHK-Bedarf {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>	
 		</div>
 
 		<div class="col-sm-12" style="margin-bottom: 5px;">

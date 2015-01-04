@@ -16,23 +16,29 @@ class HomeController extends BaseController {
 	|
 	*/
 	
-	public function __construct()
-	{
-		//updated: prevents re-login.
-// 		$this->beforeFilter('guest',['only' => ['getIndex']]);
-// 		$this->beforeFilter('auth',['only' => ['getLogout']]);
-	}
 	
+	/**
+	 * home page
+	 * @return [type] [description]
+	 */
 	public function getIndex()
 	{
 		$this->layout->content = View::make('index');
 	}
 
+	/**
+	 * show log in form
+	 * @return [type] [description]
+	 */
 	public function showLogin()
 	{
 		$this->layout->content = View::make('login');
 	}
 
+	/**
+	 * check if credentials are correkt and then log in
+	 * @return [type] [description]
+	 */
 	public function doLogin()
 	{
 		$rules = array(
@@ -74,6 +80,10 @@ class HomeController extends BaseController {
 		}
 	}
 
+	/**
+	 * log user out
+	 * @return [type] [description]
+	 */
 	public function doLogout()
 	{
 		Auth::logout();

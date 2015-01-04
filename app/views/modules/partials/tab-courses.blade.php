@@ -25,18 +25,11 @@
             		<tbody>
             			@if ( sizeof($courses) > 0 )
 	            			@foreach ($courses as $course)
-	            				<!-- <tr>
-	            					<td>{{ $course->course_number }}</td>
-	            					<td><a href="{{ route('courses.show', [$course->id]) }}">{{ $lists['coursetypes'][$course->course_type_id]}} {{ $course->name }}</a></td>
-	            					<td>{{ $course->participants }}</td>
-	            					<td>{{ $course->semester_periods_per_week }}</td>
-	            					<td>X</td>
-	            				</tr> -->
 	            				<tr>
 									<td>{{ $course->course_number }}</td>
 									<td><a href="{{ route('courses.show', [$course->id]) }}">{{ $course->name }}</a></td>
 									<td>{{ $course->name_eng }}</td>
-									<td>{{ $lists['coursetypes'][$course->course_type_id] }}</td>
+									<td>{{ $course->coursetype->short }}</td>
 									<td>{{ $course->participants }}</td>
 									<td>{{ $course->semester_periods_per_week }}</td>
 									<td>{{ Config::get('constants.language')[$course->language] }}</td>

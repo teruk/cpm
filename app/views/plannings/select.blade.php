@@ -115,7 +115,7 @@
 								<td>{{ Form::checkbox('selected[]', $planning->id, false, array('class' => "selectCheckBox")) }}</td>
 								<td>{{ $planning->course_number }}</td>
 	        					<td>{{ $planning->course_title }}</td>
-	        					<td>{{ $listofcoursetypes[$planning->course->course_type_id] }}</td>
+	        					<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>
 	        					<td>{{ $planning->course->module->short }}</td>
 	        					<td>{{ $planning->turn->name }} {{ $planning->turn->year }}</td>
 	        					<td>{{ $planning->group_number }}</td>

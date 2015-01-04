@@ -23,29 +23,30 @@ class PlanningsController extends BaseController {
 	/**
 	*
 	*/
-	public function indexTurn(Turn $display_turn)
+	public function indexTurn(Turn $turn)
 	{
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || Entrust::user()->researchgroups->count() > 0)
 		{
-			$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-			$next_turn = Turn::nextTurn($current_turn)->first();
-			$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-			// set the turn which will be displayed
-			$before_turns = Turn::beforeTurns($display_turn)->get();
-			$planned_courses = $this->getPlannedCourses($display_turn);
+			// turn navigation
+			$turnNav = $this->getTurnNav($turn);
 
-			$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+			$planned_courses = $this->getPlannedCourses($turn);
+
+			$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
+
 			// checking if the predecessor turn contains planned courses
-			$predecessorturn = $display_turn->getPredecessor();
+			$predecessorturn = $turn->getPredecessor();
 			$pastcourses = 0;
 			if (!is_numeric($predecessorturn))
 				$pastcourses = Planning::where('turn_id', '=', $predecessorturn->id)->count();
-			$lists = $this->getCourseTypes($display_turn);
-			$this->layout->content = View::make('plannings.index', compact('current_turn','next_turn', 'afternext_turn','before_turns','planned_courses', 'display_turn', 'lists', 'pastcourses', 'listofcoursetypes'));
+			$lists = $this->getCoursetypes($turn);
+			$this->layout->content = View::make('plannings.index', compact('turnNav','planned_courses', 'lists', 'pastcourses', 'listofcoursetypes'));
 		}
-		
+		else
+		{
 		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
 		return Redirect::back();
+		}
 	}
 
 	/**
@@ -128,7 +129,7 @@ class PlanningsController extends BaseController {
 	 */
 	public function showall(Turn $turn)
 	{
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+		$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 		$listofturns = Turn::getList();
 		$plannings = array();
 		if (Entrust::hasRole('Admin') || Entrust::can('copy_planning_all'))
@@ -207,42 +208,14 @@ class PlanningsController extends BaseController {
 	*/
 	public function showSchedule(Turn $turn)
 	{
-		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
+		// turn navigation
+		$turnNav = $this->getTurnNav($turn);
+
 		$planned_courses = $this->getPlannedCourses($display_turn);
 
 		$output = $this->getSchedule($planned_courses);
 
-		$this->layout->content = View::make('plannings.schedule', compact('output', 'current_turn', 'next_turn', 'afternext_turn', 'display_turn','before_turns'));
-	}
-
-	/**
-	* show room preference
-	*/
-	public function roomPreference()
-	{
-		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('plannings.showRoomPreference',$current_turn->id);
-	}
-
-	/**
-	* show room preference
-	*/
-	public function showRoomPreference(Turn $turn)
-	{
-		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
-		
-		$plannings = Planning::where('turn_id','=', $turn->id)->orderBy('course_number','ASC')->groupBy('course_number')->get();
-		$this->layout->content = View::make('plannings.room_preferences', compact('plannings', 'current_turn', 'next_turn', 'afternext_turn', 'display_turn','before_turns'));
+		$this->layout->content = View::make('plannings.schedule', compact('output', 'turnNav'));
 	}
 
 	/**
@@ -250,7 +223,7 @@ class PlanningsController extends BaseController {
 	*/
 	public function getStatusOverview(Turn $turn)
 	{
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+		$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 		$plannings = Planning::where('turn_id','=',$turn->id)->orderBy('course_number')->get();
 		$this->layout->content = View::make('plannings.update_status', compact('plannings', 'turn','listofcoursetypes'));
 	}
@@ -294,8 +267,8 @@ class PlanningsController extends BaseController {
 				$tabindex = Session::get('tabindex');
 
 			$lists = array();
-			$lists['coursetypes'] = CourseType::orderBy('name', 'ASC')->lists('name','id');
-			$lists['coursetypesshort'] = CourseType::orderBy('short', 'ASC')->lists('short','id');
+			$lists['coursetypes'] = Coursetype::orderBy('name', 'ASC')->lists('name','id');
+			$lists['coursetypesshort'] = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 			$lists['departments'] = Department::orderBy('name','ASC')->lists('name','id');
 			$lists['researchgroups'] = Researchgroup::orderBy('short','ASC')->lists('short','id');
 	// 		$lists['rooms'] = $this->getListofrooms($course->participants);
@@ -406,9 +379,11 @@ class PlanningsController extends BaseController {
 			$output = $this->getConflictCourseSchedule($conflictcourses);
 			$this->layout->content = View::make('plannings.edit', compact('course', 'turn','planning', 'lists','tabindex', 'oldrooms','relatedplannings', 'oldplannings', 'conflictcourses', 'exam','output','planninglog'));
 		}
-		
-		Flash::error('Sie besitzen keine Rechte für diesen Bereich!');
-		return Redirect::route('home');
+		else
+		{
+			Flash::error('Sie besitzen keine Rechte für diesen Bereich!');
+			return Redirect::route('home');
+		}
 	}
 	
 	/**
@@ -475,7 +450,6 @@ class PlanningsController extends BaseController {
 
 		Flash::error('Es wurden keine Veranstaltungen ausgewählt.');
 		return Redirect::route('plannings.statusOverview', $turn->id);
-		}
 	}
 	
 	/**
@@ -531,220 +505,13 @@ class PlanningsController extends BaseController {
 		Flash::success('Modulabschluss erfolgreich aktualisiert.');
 		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('tabindex', Input::get('tabindex'));
 	}
-	
-	/**
-	* generates planning from medium term planning for a specific turn
-	* @param Turn $turn
-	*/
-	public function generatePlanningsFromMediumtermplanning(Turn $turn)
-	{
-		// nice midtermplannings scopeModules(Turn turn), but mediumterms have to be changed for that
-		if (Entrust::hasRole('Admin') || Entrust::can('generate_planning_midterm_all')) // role Lehrplanung has to be changed to a permission
-			$mediumtermplannings = Mediumtermplanning::specificTurn($turn)->get();
-		else
-		{
-			$rg_ids = Entrust::user()->researchgroupIds();
-			$mediumtermplannings = DB::table('mediumtermplannings')
-									->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
-									->join('employees','employees.id','=','employee_mediumtermplanning.employee_id')
-									->select('mediumtermplannings.id')
-									->where('mediumtermplannings.turn_id','=',$turn->id)
-									->whereIn('employees.researchgroup_id',$rg_ids)
-									->get();
-			$mtp_ids = array();
-			foreach ($mediumtermplannings as $mediumtermplanning) {
-				array_push($mtp_ids, $mediumtermplanning->id);
-			}
-			$mediumtermplannings = Mediumtermplanning::whereIn('id',$mtp_ids)->get();
-		}
-		$warnmessage = "Es konnten nicht alle Veranstaltungen aus der mittelfristige Lehrplanung kopiert werden,
-					da diese bereits im aktuellen Semester geplant wurden.<br> Folgende Veranstaltungen konnten nicht kopiert werden: ";
-		$module = "";
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
-		if (sizeof($mediumtermplannings) > 0)
-		{
-			foreach ($mediumtermplannings as $mtp)
-			{
-				// check if courses are already planned for this turn
-				foreach ($mtp->module->courses as $course)
-				{
-					if ($listofcoursetypes[$course->coursetype_id] == "Vorlesung")
-					{
-						$plannings = Planning::courseTurn($course,$turn)->get();					
-						if (sizeof($plannings) == 0)
-						{
-							// the course isn't planned yet for this turn
-							$planning = new Planning;
-							$planning->turn_id = $turn->id;
-							$planning->course_id = $course->id;
-							$planning->researchgroup_status = 0;
-							$planning->board_status = 0;
-							$planning->comment = "";
-							$planning->room_preference = "Information fehlt!";
-							$planning->group_number = 1;
-							$planning->language = $course->language;
-							$planning->course_title = $course->name;
-							$planning->course_title_eng = $course->name_eng;
-							$planning->course_number = $course->course_number;
-							$planning->user_id = Entrust::user()->id;
-							// saving the planning
-							$planning->save();
-
-							// log
-							$action = "Planung generiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-							$planning->course_title."; Gruppen-Nr. ".$planning->group_number;
-							$planninglog = new Planninglog();
-							$planninglog->add($planning, 0, $action, 0);
-
-							$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
-							$turn->saveExam($planning->course->module);
-							// check if there employees assigned to the module
-							if ($mtp->employees->count() > 0)
-							{
-								foreach ($mtp->employees as $employee)
-								{
-									// if the employee is annulled, he/she can be left out
-									if ($employee->pivot->annulled == 0)
-									{
-										$planning->employees()->attach($employee->id,array(
-												'semester_periods_per_week' => 0,
-										));
-										$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name.' (0 SWS)';
-										$planninglog = new Planninglog();
-										$planninglog->add($planning, 1, $action, 0);
-									}
-								}
-							}
-						}
-						else
-							$module .= $course->course_number.' ('.$mtp->module->short.');';
-					}
-					
-					else
-					{
-						// generate the number of courses that are needed to match the participant number of the lecture
-						$result = DB::table('courses')
-											->join('course_types','course_types.id','=','courses.coursetype_id')
-											->select('courses.participants')
-											->where('courses.module_id','=',$course->module_id)
-											->where('course_types.name','=','Vorlesung')
-											->first();
-						if (sizeof($result) > 0) 
-						{
-							$number_of_groups = ceil($result->participants/$course->participants);
-							for ($i=1; $i <= $number_of_groups; $i++) 
-							{ 
-								$plannings = Planning::courseTurnGroup($course,$turn,$i)->get();					
-								if (sizeof($plannings) == 0)
-								{
-									// the course isn't planned yet for this turn
-									$planning = new Planning;
-									$planning->turn_id = $turn->id;
-									$planning->course_id = $course->id;
-									$planning->researchgroup_status = 0;
-									$planning->board_status = 0;
-									$planning->comment = "";
-									$planning->room_preference = "";
-									$planning->group_number = $i;
-									$planning->language = $course->language;
-									$planning->course_title = $course->name;
-									$planning->course_title_eng = $course->name_eng;
-									$planning->course_number = $course->course_number;
-									$planning->user_id = Entrust::user()->id;
-									// saving the planning
-									$planning->save();
-
-									// log
-									$action = "Planung generiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-									$planning->course_title."; Gruppen-Nr. ".$planning->group_number;
-									$planninglog = new Planninglog();
-									$planninglog->add($planning, 0, $action, 0);
-
-									$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
-									$turn->saveExam($planning->course->module);
-									$planninglog = new Planninglog();
-								}
-								else
-									$module .= $course->course_number.' ('.$mtp->module->short.');';
-							}
-						}
-						else
-						{
-							$plannings = Planning::courseTurn($course,$turn)->get();					
-							if (sizeof($plannings) == 0)
-							{
-								// the course isn't planned yet for this turn
-								$planning = new Planning;
-								$planning->turn_id = $turn->id;
-								$planning->course_id = $course->id;
-								$planning->researchgroup_status = 0;
-								$planning->board_status = 0;
-								$planning->comment = "";
-								$planning->room_preference = "";
-								$planning->group_number = 1;
-								$planning->language = $course->language;
-								$planning->course_title = $course->name;
-								$planning->course_title_eng = $course->name_eng;
-								$planning->course_number = $course->course_number;
-								$planning->user_id = Entrust::user()->id;
-								// saving the planning
-								$planning->save();
-
-								// log
-								$action = "Planung generiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
-								$planning->course_title."; Gruppen-Nr. ".$planning->group_number;
-								$planninglog = new Planninglog();
-								$planninglog->add($planning, 0, $action, 0);
-
-								$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
-								$turn->saveExam($planning->course->module);
-								// check if there employees assigned to the module
-								if (sizeof($mtp->employees) > 0)
-								{
-									foreach ($mtp->employees as $employee)
-									{
-										// if the employee is annulled, he/she can be left out
-										if ($employee->pivot->annulled == 0)
-										{
-											$planning->employees()->attach($employee->id,array(
-													'semester_periods_per_week' => 0,
-											));
-											$action = "Mitarbeiter zugeordnet (".$turn->name." ".$turn->year."): ".$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".$planning->group_number." ".$employee->firstname.' '.$employee->name.' (0 SWS)';
-											$planninglog = new Planninglog();
-											$planninglog->add($planning, 1, $action, 0);
-										}
-									}
-								}
-							}
-							else
-								$module .= $course->course_number.' ('.$mtp->module->short.');';
-						}
-					}
-				}
-			}
-			if ($module == "")
-			{
-				Flash::success('Lehrveranstaltungen erfolgreich aus der mittelfristigen Lehrplanung generiert.');
-				return Redirect::back();
-			}
-			
-			Flash::error($warnmessage.''.$module);
-			return Redirect::back();
-		}
-		
-		Flash::error('Es existiert keine mittelfristige Planung für dieses Semester.');
-		return Redirect::back();
-		
-	}
-	
-	
 
 	/**
 	* generate lists seperated by course types
 	*/
-	private function getCourseTypes(Turn $turn)
+	private function getCoursetypes(Turn $turn)
 	{
-		// getting planed modules
+		// getting planed modules grouped by module
 		$planned_modules = Planning::with(array('course' => function($query)
 			{
 				$query->groupBy('module_id');
@@ -847,12 +614,11 @@ class PlanningsController extends BaseController {
 	*/
 	private function getConflictCourseSchedule($plannings)
 	{
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
 		$output = array();
 		foreach ($plannings as $p) {
 			foreach ($p->rooms as $room) {
 				$e = array();
-				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->coursetype_id].' '.$p->course_title.' Gruppe: '.$p->group_number;
+				$e['title'] = $p->course_number. ' '.$p->course->coursetype->short.' '.$p->course_title.' Gruppe: '.$p->group_number;
 				$day = $this->getWeekdayDate($room->pivot->weekday);
 					
 				$e['start'] = $day.'T'.$room->pivot->start_time;
@@ -871,12 +637,11 @@ class PlanningsController extends BaseController {
 	*/
 	private function getSchedule($plannings)
 	{
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
 		$output = array();
 		foreach ($plannings as $p) {
 			foreach ($p->rooms as $room) {
 				$e = array();
-				$e['title'] = $p->course_number. ' '.$listofcoursetypes[$p->course->coursetype_id].' '.$p->course->module->short.' ';
+				$e['title'] = $p->course_number. ' '.$p->course->coursetype->short.' '.$p->course->module->short.' ';
 				foreach ($p->employees as $employee) {
 					$e['title'] .= $employee->name.'; ';
 				}

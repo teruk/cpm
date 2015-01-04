@@ -95,7 +95,7 @@
 													<td>{{ $p->course_number }}</td>
 													<td>{{ $p->course_title }}</td>
 													<td>{{ $p->course->module->short }}</td>
-													<td>{{ $lists['coursetypes'][$p->course->course_type_id] }}</td>
+													<td>{{ $lists['coursetypes'][$p->course->coursetype_id] }}</td>
 													<td>
 														@if (sizeof($p->employees) > 0)
 															@foreach($p->employees as $e)
@@ -131,7 +131,7 @@
 						        	</a>
 						      	</h4>
 						    </div>
-						    <div id="collapseTwoLecturer" class="panel-collapse collapse">
+						    <div id="collapseTwoLecturer" class="panel-collapse collapse in">
 						      	<div class="panel-body">
 						      		<table class="table table-striped table-condensed">
 										<thead>
@@ -152,7 +152,7 @@
 													<td>{{ $p->course_number }}</td>
 													<!-- <td>{{ $p->course_title }}</td> -->
 													<td>{{ $p->course->module->short }}</td>
-													<td>{{ $lists['coursetypes'][$p->course->course_type_id] }}</td>
+													<td>{{ $lists['coursetypes'][$p->course->coursetype_id] }}</td>
 													<td>{{ $p->group_number }}</td>
 													<td>
 														@if (sizeof($p->employees) > 0)
@@ -204,7 +204,7 @@
             			</tr>
             			<tr>
             				<td colspan=2>Typ:</td>
-            				<td colspan=2>{{ $lists['coursetypes'][$course->course_type_id] }}</td>		            				
+            				<td colspan=2>{{ $lists['coursetypes'][$course->coursetype_id] }}</td>		            				
             			</tr>
             			<!-- <tr>
             				<td colspan=2>Teilnehmer:</td>

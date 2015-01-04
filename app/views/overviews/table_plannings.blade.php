@@ -48,12 +48,12 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	    <li class="active">Aufstellung Lehrveranstaltungen</li>
-	    <li class="active">{{ $display_turn->name }} {{ $display_turn->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Lehrveranstaltungsaufstellung sortiert nach LV-Nummern {{ $display_turn->name }} {{ $display_turn->year }}</h4>
+	<h4>Lehrveranstaltungsaufstellung sortiert nach LV-Nummern {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
 			@include('layouts.partials.nav-turn-selection', ['route' => 'overview.tablePlannings'])
@@ -80,7 +80,7 @@
 		          				<td>{{ $p->course->module->short }} {{ $p->course->module->name }}</td>
 		          				<td>
 		          					{{ $p->course_number }}<br>
-		          					{{ $listofcoursetypes[$p->course->coursetype_id] }}
+		          					{{ $p->course->coursetype->short }}
 		          				</td>
 		          				<td>{{ $plannings_data[$p->course_id]['groups'] }} * {{ $p->course->semester_periods_per_week }}</td>
 		          				<td>

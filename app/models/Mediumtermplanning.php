@@ -62,4 +62,20 @@ class Mediumtermplanning extends Ardent {
 		}
 		return $ids;
 	}
+
+	/**
+	 * scope that returns the medium term planning for a specific turn and specific researchgroups
+	 * @param  [type] $query            [description]
+	 * @param  Turn   $turn             [description]
+	 * @param  [type] $researchgroupIds [description]
+	 * @return [type]                   [description]
+	 */
+	public function scopeForSpecificResearchGroups($query, Turn $turn, $researchgroupIds)
+	{
+		return $query->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
+					->join('employees','employees.id','=','employee_mediumtermplanning.employee_id')
+					->select('mediumtermplannings.id')
+					->where('mediumtermplannings.turn_id','=',$turn->id)
+					->whereIn('employees.researchgroup_id',$researchgroupIds);
+	}
 }

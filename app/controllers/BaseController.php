@@ -27,35 +27,34 @@ class BaseController extends Controller {
 	*/
 	public function getWeekdayDate($weekday)
 	{
-		$mon = date("Y-m-d",strtotime('monday this week'));
-		$tue = date("Y-m-d",strtotime('tuesday this week'));
-		$wed = date("Y-m-d",strtotime('wednesday this week'));
-		$thu = date("Y-m-d",strtotime('thursday this week'));
-		$fri = date("Y-m-d",strtotime('friday this week'));
-		$sat = date("Y-m-d",strtotime('saturday this week'));
-		$sun = date("Y-m-d",strtotime('last sunday'));
+		$todaySunday = false;
+	
+		// check if today is sunday
+		if (date('w', time()) == 0)
+			$todaySunday = true;
+
 		switch ($weekday)
 		{
 			case 0:
-				$day = $mon;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last monday'):strtotime('monday this week')));
 				break;
 			case 1:
-				$day = $tue;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last tuesday'):strtotime('tuesday this week')));
 				break;
 			case 2:
-				$day = $wed;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last wednesday'):strtotime('wednesday this week')));
 				break;
 			case 3:
-				$day = $thu;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last thursday'):strtotime('thursday this week')));
 				break;
 			case 4:
-				$day = $fri;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last friday'):strtotime('friday this week')));
 				break;
 			case 5:
-				$day = $sat;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last saturday'):strtotime('saturday this week')));
 				break;
 			case 6:
-				$day = $sun;
+				$day = date("Y-m-d", (($todaySunday == true)? strtotime('sunday this week'):strtotime('next sunday')));
 				break;
 		}
 		return $day;
@@ -74,5 +73,26 @@ class BaseController extends Controller {
 			array_push($ids, $key->id);
 		}
 		return $ids;
+	}
+
+	/**
+	 * fetch array of turns for turn navigation
+	 * @param  Turn   $displayTurn [description]
+	 * @return [type]              [description]
+	 */
+	public function getTurnNav(Turn $displayTurn)
+	{
+		// turn settings
+		$currentTurn = Turn::find(Setting::setting('current_turn')->first()->value);
+		$nextTurn = Turn::nextTurn($currentTurn)->first();
+		$turns = [
+			'currentTurn' => $currentTurn,
+			'nextTurn' => $nextTurn,
+			'afterNextTurn' => Turn::nextTurn($nextTurn)->first(),
+			'displayTurn' => $displayTurn,
+			'beforeTurns' => Turn::beforeTurns($currentTurn)->get()
+		];
+
+		return $turns;
 	}
 }

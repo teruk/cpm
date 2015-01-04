@@ -1,13 +1,13 @@
 <div class="modal-dialog">
 	<div class="modal-content">
   		<div class="modal-body">
-    		{{ Form::model(new Planning, ['route' => ['plannings.copy',$display_turn->id], 'class' => "form-horizontal"])}}
+    		{{ Form::model(new Planning, ['route' => ['plannings.copy',$turnNav['displayTurn']->id], 'class' => "form-horizontal"])}}
     		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     		<fieldset>
-    			<legend>{{ $display_turn->name }} {{ ($display_turn->year-1) }} kopieren</legend>
+    			<legend>{{ $turnNav['displayTurn']->name }} {{ ($turnNav['displayTurn']->year-1) }} kopieren</legend>
 
                 <div class="form-group col-lg-12  col-lg-offset-1">
-                    Wollen Sie alle Lehrveranstaltungen aus dem {{ $display_turn->name }} {{ ($display_turn->year-1) }} kopieren? Sollten Lehrveranstaltungen aus dem {{ $display_turn->name }} {{ ($display_turn->year-1) }} schon im aktuellen Semester geplant worden sein, so werden diese nicht kopiert!<br><br> Folgende Optionen können übernommen werden:
+                    Wollen Sie alle Lehrveranstaltungen aus dem {{ $turnNav['displayTurn']->name }} {{ ($turnNav['displayTurn']->year-1) }} kopieren? Sollten Lehrveranstaltungen aus dem {{ $turnNav['displayTurn']->name }} {{ ($turnNav['displayTurn']->year-1) }} schon im aktuellen Semester geplant worden sein, so werden diese nicht kopiert!<br><br> Folgende Optionen können übernommen werden:
                 </div>
 
                 <div class="form-group">

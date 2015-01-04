@@ -6,7 +6,7 @@
 @stop
 
 @section('main')
-	<h3>{{ $course->course_number }} {{ $listofcoursetypes[$course->course_type_id] }} {{ $course->name }} (<a href="{{ route('modules.show', $course->module_id) }}">{{ $course->module->short }}</a>) </h3>
+	<h3>{{ $course->course_number }} {{ $course->coursetype->name }} {{ $course->name }} (<a href="{{ route('modules.show', $course->module_id) }}">{{ $course->module->short }}</a>) </h3>
 	
 	<ul class="nav nav-tabs" style="margin-bottom: 15px;">
 		@if ( $tabindex == 0 )
@@ -52,8 +52,8 @@
 									<td align="right">{{ Form::input('text', 'course_number', $course->course_number, array('id' => "course_number", 'min' => 3, 'required' => true, 'class' => "form-control input-sm")) }}</td>
 								</tr>
 								<tr>
-									<td>{{ Form::label('course_type_id', 'LV-Typ*:') }}</td>
-									<td align="right">{{ Form::select('course_type_id', $listofcoursetypes, $course->course_type_id, array('id' => "course_type_id", 'class' => "form-control input-sm")) }}</td>
+									<td>{{ Form::label('coursetype_id', 'LV-Typ*:') }}</td>
+									<td align="right">{{ Form::select('coursetype_id', $listofcoursetypes, $course->coursetype_id, array('id' => "coursetype_id", 'class' => "form-control input-sm")) }}</td>
 								</tr>
 								<tr>
 									<td>{{ Form::label('participants', 'Teilnehmer*:') }}</td>

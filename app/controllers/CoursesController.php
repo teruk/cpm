@@ -12,8 +12,8 @@ class CoursesController extends BaseController {
 	 */
 	public function index()
 	{
-		$courses = Course::all();
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
+		$courses = Course::with('coursetype')->get();
+		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$listofmodules = Module::orderBy('name','ASC')->lists('name','id'); // list is different from Module::lists
 
 		$this->layout->content = View::make('courses.index', compact('courses','listofcoursetypes', 'listofmodules'));
@@ -69,7 +69,7 @@ class CoursesController extends BaseController {
 	 */
 	public function show(Course $course)
 	{	
-		$listofcoursetypes = CourseType::lists('name','id');
+		$listofcoursetypes = Coursetype::lists('name','id');
 		$listofmodules = Module::orderBy('name','ASC')->lists('name','id');
 		if (sizeof(Session::get('tabindex')) == "")
 			$tabindex = 0;

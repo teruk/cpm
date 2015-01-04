@@ -31,7 +31,7 @@ class OverviewController extends BaseController {
 	public function getCourses()
 	{
 		$courses = Course::orderBy('course_number','ASC')->get();
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
+		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.courses', compact('courses','listofcoursetypes'));
 	}
 
@@ -42,7 +42,7 @@ class OverviewController extends BaseController {
 	 */
 	public function getCourse(Course $course)
 	{
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
+		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.course', compact('course','listofcoursetypes'));
 	}
 
@@ -63,7 +63,7 @@ class OverviewController extends BaseController {
 	 */
 	public function getEmployee(Employee $employee)
 	{
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
+		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.employee', compact('employee','listofcoursetypes'));
 	}
 
@@ -85,7 +85,7 @@ class OverviewController extends BaseController {
 	public function getModule(Module $module)
 	{
 		$listofsections = Section::orderBy('name', 'ASC')->lists('name','id');
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('name','id');
+		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.module', compact('module','listofsections','listofcoursetypes'));
 	}
 
@@ -106,15 +106,8 @@ class OverviewController extends BaseController {
 	 */
 	public function getTableResearchgroups(Turn $turn)
 	{
-		// turn settings
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
-
-		$listofcoursetypes = CourseType::orderBy('short', 'ASC')->lists('short','id');
+		// turn navigation
+		$turnNav = $this->getTurnNav($turn);
 
 		// researchgroups
 		$researchgroups = Researchgroup::orderBy('short','ASC')->get();
@@ -137,7 +130,7 @@ class OverviewController extends BaseController {
 			}
 
 			if (sizeof($rg_pl_ids) > 0)
-				$plannings = Planning::whereIn('id',$rg_pl_ids)->orderBy('course_number','ASC')->get();
+				$plannings = Planning::with('course')->whereIn('id',$rg_pl_ids)->orderBy('course_number','ASC')->get();
 			else
 				$plannings = array();
 
@@ -150,7 +143,7 @@ class OverviewController extends BaseController {
 				array_push($output, $rg);
 			}
 		}
-		$this->layout->content = View::make('overviews.table_researchgroups', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn', 'listofcoursetypes','output'));
+		$this->layout->content = View::make('overviews.table_researchgroups', compact('turnNav','output'));
 	}
 
 	/**
@@ -170,17 +163,11 @@ class OverviewController extends BaseController {
 	 */
 	public function getTablePlannings(Turn $turn)
 	{
-		// turn settings
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
+		// turn navigation
+		$turnNav = $this->getTurnNav($turn);
 
-		$listofcoursetypes = CourseType::orderBy('name', 'ASC')->lists('short','id');
 		// plannings
-		$plannings = Planning::where('turn_id','=', $turn->id)->orderBy('course_number','ASC')->groupBy('course_id')->get();
+		$plannings = Planning::with('course')->where('turn_id','=', $turn->id)->orderBy('course_number','ASC')->groupBy('course_id')->get();
 		$plannings_data = array();
 		$result = DB::table('plannings')
 								->select(DB::raw('count(*) as groups, course_id'))
@@ -213,7 +200,7 @@ class OverviewController extends BaseController {
 		}
 		// print_r($employees);
 		
-		$this->layout->content = View::make('overviews.table_plannings', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn', 'listofcoursetypes','plannings','plannings_data'));
+		$this->layout->content = View::make('overviews.table_plannings', compact('turnNav', 'plannings','plannings_data'));
 	}
 
 	/**
@@ -223,15 +210,10 @@ class OverviewController extends BaseController {
 	 */
 	public function showExams(Turn $turn)
 	{
-		// turn settings
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
+		// turn navigation
+		$turnNav = $this->getTurnNav($turn);
 
-		$this->layout->content = View::make('overviews.exams', compact('current_turn','next_turn', 'afternext_turn','before_turns', 'display_turn'));
+		$this->layout->content = View::make('overviews.exams', compact('turnNav'));
 	}
 
 	/**
@@ -261,12 +243,8 @@ class OverviewController extends BaseController {
 	 */
 	public function showShk(Turn $turn)
 	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		$next_turn = Turn::nextTurn($current_turn)->first();
-		$afternext_turn = Turn::turnAfterNext($current_turn)->first();
-		// set the turn which will be displayed
-		$display_turn = $turn;
-		$before_turns = Turn::beforeTurns($display_turn)->get();
+		// turn navigation
+		$turnNav = $this->getTurnNav($turn);
 		
 		$shkplannings = DB::table('plannings')
 							->join('employee_planning','employee_planning.planning_id','=','plannings.id')
@@ -290,8 +268,7 @@ class OverviewController extends BaseController {
 		{
 			$plannings = array();
 		}
-		$this->layout->content = View::make('overviews.shk', compact('plannings', 'current_turn', 'next_turn', 'afternext_turn', 'display_turn','before_turns',
-			'semester_periods_per_week_total'));
+		$this->layout->content = View::make('overviews.shk', compact('plannings', 'turnNav', 'semester_periods_per_week_total'));
 	}
 
 	/**

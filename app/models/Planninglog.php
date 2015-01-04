@@ -102,6 +102,20 @@ class Planninglog extends Ardent {
 	}
 
 	/**
+	 * create log entry for generated planning
+	 * @param  Planning $planning [description]
+	 * @param  Turn     $turn     [description]
+	 * @return [type]             [description]
+	 */
+	public function logGeneratedPlanning(Planning $planning, Turn $turn)
+	{
+		$action = "Planung generiert (".$turn->name." ".$turn->year."): ".$planning->course_number." ".
+					$planning->course_title."; Gruppen-Nr. ".$planning->group_number;
+
+		$this->saveLog($planning, CATEGORY_PLANNING, $action, ACTION_TYPE_ADDING);
+	}
+
+	/**
 	 * create log entry for updated exam type
 	 * @param  Planning $planning    [description]
 	 * @param  Turn     $turn        [description]

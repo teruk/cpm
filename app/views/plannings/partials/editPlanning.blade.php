@@ -20,20 +20,20 @@
 								<th>SWS:</th>
 								<td colspan=2 align="right">{{ $planning->semester_periods_per_week }}</td>
 								<th>Typ:</th>
-								<td align="right">{{ $lists['coursetypes'][$course->course_type_id] }}</td>
+								<td align="right">{{ $lists['coursetypes'][$course->coursetype_id] }}</td>
 							</tr>
 							<tr>
 								<th>Titel:</th>
 								<td colspan=5>
-									@if (($course->course_type_id == 1 || $course->course_type_id == 4 || $course->course_type_id == 8 || $course->course_type_id == 9))
-										{{ $planning->course_title }}
-										{{ Form::hidden('course_title', $planning->course_title) }}
+									@if (($course->coursetype_id == 1 || $course->coursetype_id == 4 || $course->coursetype_id == 8 || $course->coursetype_id == 9))
+										{{ $planning->coursetitle }}
+										{{ Form::hidden('coursetitle', $planning->coursetitle) }}
 									@else
 										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
-											{{ Form::input('text', 'course_title', $planning->course_title, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
+											{{ Form::input('text', 'coursetitle', $planning->coursetitle, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ $planning->course_title }}
-											{{ Form::hidden('course_title', $planning->course_title) }}
+											{{ $planning->coursetitle }}
+											{{ Form::hidden('coursetitle', $planning->coursetitle) }}
 										@endif
 									@endif
 								</td>
@@ -43,15 +43,15 @@
 							<tr>
 								<td><strong>EngTitel:</strong></td>
 								<td colspan=5>
-									@if (($course->course_type_id == 1 || $course->course_type_id == 4 || $course->course_type_id == 8 || $course->course_type_id == 9))
-										{{ $planning->course_title_eng }}
-										{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
+									@if (($course->coursetype_id == 1 || $course->coursetype_id == 4 || $course->coursetype_id == 8 || $course->coursetype_id == 9))
+										{{ $planning->coursetitle_eng }}
+										{{ Form::hidden('coursetitle_eng', $planning->coursetitle_eng) }}
 									@else
 										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
-											{{ Form::input('text', 'course_title_eng', $planning->course_title_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
+											{{ Form::input('text', 'coursetitle_eng', $planning->coursetitle_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ $planning->course_title_eng }}
-											{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
+											{{ $planning->coursetitle_eng }}
+											{{ Form::hidden('coursetitle_eng', $planning->coursetitle_eng) }}
 										@endif
 									@endif
 								</td>
@@ -120,7 +120,6 @@
 											<tr>
 												<th>Semester</th>
 												<th>Nummer</th>
-												<th>Titel</th>
 												<th>Modul</th>
 												<th>Typ</th>
 												<th>Bemerkung</th>
@@ -132,9 +131,8 @@
 												<tr>
 													<td>{{ $p->turn->name }} {{$p->turn->year}}</td>
 													<td>{{ $p->course_number }}</td>
-													<td>{{ $p->course_title }}</td>
 													<td>{{ $p->course->module->short }}</td>
-													<td>{{ $lists['coursetypesshort'][$p->course->course_type_id] }}</td>
+													<td>{{ $lists['coursetypesshort'][$p->course->coursetype_id] }}</td>
 													<td>{{ $p->comment }}</td>
 													<td>{{ HTML::decode(link_to_route('plannings.edit', '<i class="glyphicon glyphicon-edit"></i>', array($p->turn_id, $p->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zur Veranstaltung wechseln'))) }}</td>
 												</tr>
@@ -154,13 +152,12 @@
 						        </a>
 						      </h4>
 						    </div>
-						    <div id="collapseTwoCourse" class="panel-collapse collapse">
+						    <div id="collapseTwoCourse" class="panel-collapse collapse in">
 						    	<div class="panel-body">
 						    		<table class="table table-striped table-condensed">
 										<thead>
 											<tr>
 												<th>Nummer</th>
-												<th>Titel</th>
 												<th>Modul</th>
 												<th>Typ</th>
 												<th>Grp.</th>
@@ -172,9 +169,8 @@
 											@foreach($relatedplannings as $p)								
 												<tr>
 													<td>{{ $p->course_number }}</td>
-													<td>{{ $p->course_title }}</td>
 													<td>{{ $p->course->module->short }}</td>
-													<td>{{ $lists['coursetypesshort'][$p->course->course_type_id] }}</td>
+													<td>{{ $lists['coursetypesshort'][$p->course->coursetype_id] }}</td>
 													<td>{{ $p->group_number }}</td>
 													<td>{{ $p->comment }}</td>
 													<td>{{ HTML::decode(link_to_route('plannings.edit', '<i class="glyphicon glyphicon-edit"></i>', array($turn->id, $p->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zur Veranstaltung wechseln'))) }}</td>

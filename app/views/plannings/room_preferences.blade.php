@@ -16,12 +16,12 @@
 	<ol class="breadcrumb">
 		<li class="active">Semesterplanung</li>
 	    <li class="active">Übersicht Raumwünsche</li>
-	    <li class="active">{{ $display_turn->name }} {{ $display_turn->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Semesterplanung {{ $display_turn->name }} {{ $display_turn->year }} - Übersicht Raumwünsche</h4>
+	<h4>Semesterplanung {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }} - Übersicht Raumwünsche</h4>
 	
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
@@ -43,7 +43,7 @@
 		          		@foreach ($plannings as $pl)
 			          		<tr>
 			                  	<td>{{ $pl->user->name }}</td>
-			                  	<td><a href="{{ route('plannings.edit', array($display_turn->id,$pl->id)) }}">{{ $pl->course_number }} {{ $pl->course_title}} ({{ $pl->course->module->short }})</a></td>
+			                  	<td><a href="{{ route('plannings.edit', array($turnNav['displayTurn']->id,$pl->id)) }}">{{ $pl->course_number }} {{ $pl->course_title}} ({{ $pl->course->module->short }})</a></td>
 			                  	<td>{{ $pl->course->semester_periods_per_week }}</td>
 			                  	<td>{{ nl2br($pl->room_preference) }}</td>
 			                </tr>

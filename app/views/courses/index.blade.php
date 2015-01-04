@@ -86,7 +86,7 @@
     						<td>{{ $course->course_number }}</td>
           					<td><a href="{{ route('courses.show', $course->id) }}">{{ $course->name }}</a></td>
           					<td>{{ $course->name_eng }}</td>
-          					<td>{{ $listofcoursetypes[$course->course_type_id] }}</td>
+          					<td>{{ $course->coursetype->name }}</td>
           					<td>{{ $course->module->short }}</td>
           					<td>{{ $course->participants }}</td>
           					<td>{{ $course->semester_periods_per_week }}</td>

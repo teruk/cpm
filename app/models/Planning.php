@@ -267,7 +267,7 @@ class Planning extends Ardent {
 		$conflictplannings = array();
 		$degreecourses = DB::table('degreecourse_module')
 							->join('sections', 'sections.id','=', 'degreecourse_module.section') 
-							->select('degreecourse_module.degree_course_id', 'degreecourse_module.semester')
+							->select('degreecourse_module.degreecourse_id', 'degreecourse_module.semester')
 							->where('sections.name','=', 'Pflicht')
 							->where('degreecourse_module.module_id','=',$this->course->module_id) // TODO it needs to be checked, if the course belongs to a module
 							->get();
@@ -394,6 +394,22 @@ class Planning extends Ardent {
 
 		if ($this->save())
 			return true;
+	}
+
+	public function generatePlanning(Turn $turn, Course $course, $groupNumber)
+	{
+		$this->turn_id = $turn->id;
+		$this->course_id = $course->id;
+		$this->researchgroup_status = 0;
+		$this->board_status = 0;
+		$this->comment = "";
+		$this->room_preference = "Angaben fehlen!";
+		$this->group_number = $groupNumber;
+		$this->language = $course->language;
+		$this->course_title = $course->name;
+		$this->course_title_eng = $course->name_eng;
+		$this->course_number = $course->course_number;
+		$this->user_id = Entrust::user()->id;
 	}
 
 	/**

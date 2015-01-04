@@ -28,7 +28,7 @@
 	</h2> -->
 
 	@if (Entrust::hasRole('Admin') || Entrust::can('add_degree'))
-		@include('partials.add-button-modal', ['buttonLabel' => 'Abschluss hinzufügen'])
+		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Abschluss hinzufügen'])
 	@endif
 	        	
 	<div class="row">

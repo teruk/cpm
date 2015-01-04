@@ -72,7 +72,7 @@ class ModulesController extends \BaseController {
 		$lists['rotations'] 	= Rotation::orderBy('name','ASC')->lists('name','id');
 		$lists['degrees'] 		= Degree::orderBy('name','ASC')->lists('name','id');
 		$lists['sections'] 		= Section::orderBy('name','ASC')->lists('name','id');
-		$lists['coursetypes'] 	= CourseType::orderBy('name','ASC')->lists('name','id');
+		$lists['coursetypes'] 	= Coursetype::orderBy('name','ASC')->lists('name','id');
 		$lists['degreecourses'] = Degreecourse::getList();
 		// get courses
 // 		$courses = DB::table('courses')->where('module_id','=',$module->id)->get();
@@ -152,6 +152,12 @@ class ModulesController extends \BaseController {
 		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
 	}
 	
+	/**
+	 * update a degree course relationship
+	 * 
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
 	public function updateDegreecourse(Module $module)
 	{
 		$module->degreecourses()

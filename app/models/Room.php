@@ -4,20 +4,31 @@ use LaravelBook\Ardent\Ardent;
 class Room extends Ardent {
 	
 	protected $fillable = ['name','location', 'seats', 'roomtype_id', 'beamer', 'blackboard', 'overheadprojector','accessible'];
+	
 	public static $rules = array(
 			'name' => 'required|unique:rooms',
 			'location' => 'required',
 			'seats' => 'required|min:1',
 			'roomtype_id' => 'required',
 	);
+
 	public $timestamps = false;
+
 	protected $table = 'rooms';
 	
+	/**
+	 * [roomtype description]
+	 * @return [type] [description]
+	 */
 	public function roomtype()
 	{
-		return $this->belongsTo('RoomType');
+		return $this->belongsTo('Roomtype');
 	}
 	
+	/**
+	 * [plannings description]
+	 * @return [type] [description]
+	 */
 	public function plannings()
 	{
 		return $this->belongsToMany('Planning')->withPivot('weekday','start_time','end_time','created_at','updated_at');
