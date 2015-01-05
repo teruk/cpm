@@ -48,17 +48,20 @@ class HomeController extends BaseController {
 
 		$validator = Validator::make(Input::all(),$rules);
 
-		if ($validator->fails()) {
-			return Redirect::to('login')
-				->withErrors($validator)
-				->withInput(Input::except('password'));
-		} else {
+		if ($validator->fails()) 
+		{
+			Flash::error($validator);
+			return Redirect::to('login')->withInput(Input::except('password'));
+		} 
+		else 
+		{
 			$userdata = array(
 				'email' => Input::get('email'),
 				'password' => Input::get('password')
 			);
 
-			if (Auth::attempt($userdata)) {
+			if (Auth::attempt($userdata)) 
+			{
 				if (Entrust::user()->inactive == 0)
 				{
 					$user = Entrust::user();
@@ -73,7 +76,7 @@ class HomeController extends BaseController {
 					Flash::error('Dieser Account wurde deaktiviert! Bitte kontaktieren Sie den Administrator.');
 					return Redirect::to('login');
 				}
-			} else
+			}
 
 			Flash::error('Login fehlgeschlagen! E-Mail-Adresse oder Passwort ungültig!');
 			return Redirect::to('login');

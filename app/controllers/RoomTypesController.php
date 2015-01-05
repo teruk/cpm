@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class RoomTypesController extends BaseController {
+class RoomtypesController extends BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -11,7 +11,7 @@ class RoomTypesController extends BaseController {
 	 */
 	public function index()
 	{
-		$roomtypes = RoomType::all();
+		$roomtypes = Roomtype::all();
 		$this->layout->content = View::make('roomtypes.index', compact('roomtypes'));
 	}
 
@@ -24,7 +24,7 @@ class RoomTypesController extends BaseController {
 	public function store()
 	{
 		$input = Input::all();
-		$roomtype = new RoomType($input);
+		$roomtype = new Roomtype($input);
 		
 		if ( $roomtype->save() )
 		{
@@ -40,10 +40,10 @@ class RoomTypesController extends BaseController {
 	 * Display the specified resource.
 	 * GET /roomtypes/{id}
 	 *
-	 * @param  int  RoomType $roomtype
+	 * @param  int  Roomtype $roomtype
 	 * @return Response
 	 */
-	public function show(RoomType $roomtype)
+	public function show(Roomtype $roomtype)
 	{	
 		$this->layout->content = View::make('roomtypes.show', compact('roomtype'));
 	}
@@ -52,10 +52,10 @@ class RoomTypesController extends BaseController {
 	 * Update the specified resource in storage.
 	 * PUT /roomtypes/{id}
 	 *
-	 * @param  int  RoomType $roomtype
+	 * @param  int  Roomtype $roomtype
 	 * @return Response
 	 */
-	public function update(RoomType $roomtype)
+	public function update(Roomtype $roomtype)
 	{
 		$input = Input::all();
 		$roomtype->fill($input);
@@ -74,10 +74,10 @@ class RoomTypesController extends BaseController {
 	 * Remove the specified resource from storage.
 	 * DELETE /roomtypes/{id}
 	 *
-	 * @param  int  RoomType $roomtype
+	 * @param  int  Roomtype $roomtype
 	 * @return Response
 	 */
-	public function destroy(RoomType $roomtype)
+	public function destroy(Roomtype $roomtype)
 	{
 		$roomtype->delete();
 		Flash::success('Raumtyp erfolgreich gelöscht.');

@@ -144,7 +144,7 @@ class GenerateMediumtermplanningsController extends \BaseController {
 			{
 				Flash::success('Lehrveranstaltungen erfolgreich aus der mittelfristigen Lehrplanung generiert.');
 				return Redirect::back();
-			}
+			}	
 			
 			Flash::error($warnmessage.''.$module);
 			return Redirect::back();

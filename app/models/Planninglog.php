@@ -179,7 +179,7 @@ class Planninglog extends Ardent {
 	{
 		$action = "Mitarbeiter aktualisiert (".$turn->name." ".$turn->year."): ".
 				$planning->course_number." ".$planning->course_title." Gruppen-Nr. ".
-				$planning->group_number." ".$employee->firstname.' '.$employee->name.' ('.$e->pivot->semester_periods_per_week.' SWS -> '.
+				$planning->group_number." ".$employee->firstname.' '.$employee->name.' ('.$employee->pivot->semester_periods_per_week.' SWS -> '.
 				$semesterPeriodsPerWeek.' SWS)';
 
 		$this->saveLog($planning, CATEGORY_PLANNING_EMPLOYEE, $action, ACTION_TYPE_UPDATING);

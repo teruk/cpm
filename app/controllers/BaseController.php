@@ -95,4 +95,36 @@ class BaseController extends Controller {
 
 		return $turns;
 	}
+
+	public function checkPlanningResponsibility(Turn $turn, Planning $planning)
+	{
+		// check if user is responsible for this course or has the role room planer, admin or course planer
+		$responsible = false;
+
+		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || $planning->user_id == Entrust::user()->id)
+			$responsible = true;
+
+		if (!Entrust::hasRole('Admin') && !Entrust::can('view_planning') && $planning->user_id != Entrust::user()->id && !$responsible)
+		{
+			foreach (Entrust::user()->researchgroups as $rg) {
+				foreach ($planning->employees as $e) {
+					if ($e->researchgroup_id == $rg->id)
+						$responsible = true;
+				}
+			}
+			// medium-term planning check
+			$mediumtermplanning = Mediumtermplanning::where('turn_id','=',$turn->id)->where('module_id','=',$planning->course->module_id)->first();
+			if (sizeof($mediumtermplanning) > 0)
+			{
+				foreach ($mediumtermplanning->employees as $e) {
+					foreach (Entrust::user()->researchgroups as $rg) {
+						if ($e->researchgroup_id == $rg->id)
+							$responsible = true;
+					}
+				}
+			}
+		}
+
+		return $responsible;
+	}
 }

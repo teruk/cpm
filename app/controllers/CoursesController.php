@@ -32,32 +32,31 @@ class CoursesController extends BaseController {
 		$course->semester_periods_per_week = Input::get('semester_periods_per_week');
 		$course->department_id = 1;
 		if ( $course->save() )
+		{
 			// check the origin of the save request
 			if (Input::get('tabindex') == "")
 			{
 				Flash::success('Lehrveranstaltung erfolgreich erstellt!');
 				return Redirect::back();
 			}
-			else 
-			{
-				// back to module show
-				$module = Module::find($course->module_id);
-				Flash::success('Lehrveranstaltung erfolgreich erstellt!');
-				return Redirect::route('modules.show',$module->id)->with('tabindex', Input::get('tabindex'));
-			}
-		else
-			if (Input::get('tabindex') == "")
-			{
-				Flash::error($course->errors());
-				return Redirect::back()->withInput();
-			}
-			else
-			{
-				// back to module show
-				$module = Module::find($course->module_id);
-				Flash::error($course->errors());
-				return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex', Input::get('tabindex'));
-			}
+
+			// back to module show
+			$module = Module::find($course->module_id);
+			Flash::success('Lehrveranstaltung erfolgreich erstellt!');
+			return Redirect::route('modules.show',$module->id)->with('tabindex', Input::get('tabindex'));
+		}
+
+		if (Input::get('tabindex') == "")
+		{
+			Flash::error($course->errors());
+			return Redirect::back()->withInput();
+		}
+
+		// back to module show
+		$module = Module::find($course->module_id);
+		Flash::error($course->errors());
+		return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex', Input::get('tabindex'));
+			
 	}
 
 	/**

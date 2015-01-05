@@ -211,7 +211,7 @@ class PlanningsController extends BaseController {
 		// turn navigation
 		$turnNav = $this->getTurnNav($turn);
 
-		$planned_courses = $this->getPlannedCourses($display_turn);
+		$planned_courses = $this->getPlannedCourses($turn);
 
 		$output = $this->getSchedule($planned_courses);
 
@@ -290,61 +290,22 @@ class PlanningsController extends BaseController {
 				}
 			}			
 
-
-			$oldplannings = DB::table('plannings')
-								->join('turns','turns.id','=','plannings.turn_id')
-								->select('plannings.id')
-								->where('plannings.course_id','=',$planning->course_id)
-								->where('plannings.group_number','=',$planning->group_number)
-								->where('turns.year','<=',$turn->year)
-								->where('plannings.id','!=',$planning->id)
-								->orderBy('turns.year','DESC')
-								->orderBy('turns.name','DESC')
-								->get();
-			if (sizeof($oldplannings) > 0)
-			{
-				$planningids = array();
-				foreach ($oldplannings as $rp)
-				{
-					array_push($planningids, $rp->id);
-				}
-				$oldplannings = Planning::related($planningids)->get();
-			}
-			else
+			// get old plannings
+			$oldplannings = Planning::oldPlannings($planning, $turn)->get();
+			if (sizeof($oldplannings) == 0)
 				$oldplannings = array();
 			
-			$relatedplannings = DB::table('plannings')
-									->join('courses','courses.id','=','plannings.course_id')
-									->select('plannings.id')
-									->where('courses.module_id','=',$course->module->id)
-									->where('plannings.turn_id','=',$planning->turn_id)
-									->whereNotIn('plannings.id', array($planning->id))
-									->orderBy('plannings.group_number', 'ASC')
-									->get();
-			if (sizeof($relatedplannings) > 0)
-			{
-				$planningids = array();
-				foreach ($relatedplannings as $rp)
-				{
-					array_push($planningids, $rp->id);
-				}
-				$relatedplannings = Planning::related($planningids)->get();
-			}
-			else 
+			// get related plannings
+			$relatedplannings = Planning::relatedPlannings($planning, $course)->get();
+
+			if (sizeof($relatedplannings) == 0)
 				$relatedplannings = array();
 			
-			$oldrooms = DB::table('planning_room')
-							->join('plannings','plannings.id', '=', 'planning_room.planning_id')
-							->join('turns', 'plannings.turn_id', '=', 'turns.id')
-							->select('planning_room.room_id','planning_room.id', 'planning_room.weekday','planning_room.start_time','planning_room.end_time', 'plannings.turn_id')
-							->where('plannings.course_id', '=', $planning->course_id)
-							->where('plannings.id', '!=', $planning->id)
-							->where('plannings.group_number','=', $planning->group_number)
-							->where('turns.year', '<=', $turn->year)
-							->orderBy('turns.year', 'DESC')
-							->orderBy('turns.name', 'DESC')
-							->take(6)
-							->get();
+			// get old rooms
+			$oldrooms = Planning::oldRooms($turn, $planning)->take(6)->get();
+
+			if (sizeof($oldrooms) == 0)
+				$oldrooms = array();
 			
 			//
 			// TODO moving possibleemployees to basecontroller
@@ -374,6 +335,7 @@ class PlanningsController extends BaseController {
 
 			// get the planning logs for this planning
 			$planninglog = Planninglog::where('planning_id','=', $planning->id)->orderBy('created_at', 'DESC')->get();
+
 			// get courses with possible schedule conflicts
 			$conflictcourses = $planning->getConflictCourses();
 			$output = $this->getConflictCourseSchedule($conflictcourses);

@@ -26,14 +26,14 @@
 								<th>Titel:</th>
 								<td colspan=5>
 									@if (($course->coursetype_id == 1 || $course->coursetype_id == 4 || $course->coursetype_id == 8 || $course->coursetype_id == 9))
-										{{ $planning->coursetitle }}
-										{{ Form::hidden('coursetitle', $planning->coursetitle) }}
+										{{ $planning->course_title }}
+										{{ Form::hidden('course_title', $planning->course_title) }}
 									@else
 										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
-											{{ Form::input('text', 'coursetitle', $planning->coursetitle, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
+											{{ Form::input('text', 'course_title', $planning->course_title, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ $planning->coursetitle }}
-											{{ Form::hidden('coursetitle', $planning->coursetitle) }}
+											{{ $planning->course_title }}
+											{{ Form::hidden('course_title', $planning->course_title) }}
 										@endif
 									@endif
 								</td>
@@ -44,14 +44,14 @@
 								<td><strong>EngTitel:</strong></td>
 								<td colspan=5>
 									@if (($course->coursetype_id == 1 || $course->coursetype_id == 4 || $course->coursetype_id == 8 || $course->coursetype_id == 9))
-										{{ $planning->coursetitle_eng }}
-										{{ Form::hidden('coursetitle_eng', $planning->coursetitle_eng) }}
+										{{ $planning->course_title_eng }}
+										{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
 									@else
 										@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_planning'))
-											{{ Form::input('text', 'coursetitle_eng', $planning->coursetitle_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
+											{{ Form::input('text', 'course_title_eng', $planning->course_title_eng, array('min' => 3, 'required'=>true, 'class' => 'form-control input-sm')) }}
 										@else
-											{{ $planning->coursetitle_eng }}
-											{{ Form::hidden('coursetitle_eng', $planning->coursetitle_eng) }}
+											{{ $planning->course_title_eng }}
+											{{ Form::hidden('course_title_eng', $planning->course_title_eng) }}
 										@endif
 									@endif
 								</td>

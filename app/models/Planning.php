@@ -77,6 +77,35 @@ class Planning extends Ardent {
 	{
 		return $query->whereIn('id',$plannings);
 	}
+
+	/**
+	 * scope to get plannings with the same course_id in the same turn
+	 * @param  [type]   $query    [description]
+	 * @param  Planning $planning [description]
+	 * @param  Course   $course   [description]
+	 * @return [type]             [description]
+	 */
+	public function scopeRelatedPlannings($query, Planning $planning, Course $course)
+	{
+		return $query->join('courses','courses.id','=','plannings.course_id')
+						->select('plannings.*')
+						->where('courses.module_id','=',$course->module->id)
+						->where('plannings.turn_id','=',$planning->turn_id)
+						->whereNotIn('plannings.id', [$planning->id])
+						->orderBy('plannings.group_number', 'ASC');
+	}
+
+	public function scopeOldPlannings($query, Planning $planning, Turn $turn)
+	{
+		return $query->join('turns','turns.id','=','plannings.turn_id')
+						->select('plannings.*')
+						->where('plannings.course_id','=',$planning->course_id)
+						->where('plannings.group_number','=',$planning->group_number)
+						->where('turns.year','<=',$turn->year)
+						->where('plannings.id','!=',$planning->id)
+						->orderBy('turns.year','DESC')
+						->orderBy('turns.name','DESC');
+	}
 	
 	/**
 	* Scope to get plannings with the same course id and turn id
@@ -257,6 +286,25 @@ class Planning extends Ardent {
 	}
 
 	/**
+	 * scope to get oldrooms for specific planning
+	 * @param  [type]   $query    [description]
+	 * @param  Turn     $turn     [description]
+	 * @param  Planning $planning [description]
+	 * @return [type]             [description]
+	 */
+	public function scopeOldRooms($query, Turn $turn, Planning $planning)
+	{
+		return $query->join('planning_room','planning_room.id', '=', 'plannings.id')
+					->join('turns', 'plannings.turn_id', '=', 'turns.id')
+					->where('plannings.course_id', '=', $planning->course_id)
+					->where('plannings.id', '!=', $planning->id)
+					->where('plannings.group_number','=', $planning->group_number)
+					->where('turns.year', '<=', $turn->year)
+					->orderBy('turns.year', 'DESC')
+					->orderBy('turns.name', 'DESC');
+	}
+
+	/**
 	 * Returns the courses which could be in conflikt with the current planning
 	 * but only lectures will be returned
 	 * @return array of plannings
@@ -383,14 +431,14 @@ class Planning extends Ardent {
 		
 		// check the options
 		if (array_key_exists('comments', $options))
-			$this->comment = 1;
+			$this->comment = $planning->comment;
 		else
-			$this->comment = 0;
+			$this->comment = "";
 
 		if (array_key_exists('room_preferences', $options))
-			$this->room_preference = 1;
+			$this->room_preference = $planning->room_preference;
 		else
-			$this->room_preference = 0;
+			$this->room_preference = "";
 
 		if ($this->save())
 			return true;

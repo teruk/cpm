@@ -6,6 +6,7 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"laravelbook/ardent": "2.4.*",
+		"zizaco/entrust": "1.2.*",
 		"laracasts/flash": "~1.0",
 		"cviebrock/eloquent-sluggable": "1.0.*"
 	},
@@ -39,6 +40,6 @@
 	"require-dev": {
 		"way/generators": "2.*",
 		"barryvdh/laravel-ide-helper": "~1.9",
-		"zizaco/entrust": "1.2.*"
+        "fzaninotto/faker": "v1.4.0"
 	}
 }

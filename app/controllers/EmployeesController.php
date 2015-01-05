@@ -101,9 +101,11 @@ class EmployeesController extends BaseController {
 			}
 			$this->layout->content = View::make('employees.show', compact('employee', 'listofresearchgroups', 'plannings'));
 		}
-		
-		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
-		return Redirect::route('home');
+		else
+		{
+			Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
+			return Redirect::route('home');
+		}
 	}
 	
 	/**
