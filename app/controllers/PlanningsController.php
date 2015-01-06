@@ -9,28 +9,16 @@ use Illuminate\Support\Facades\Input;
 class PlanningsController extends BaseController {
 
 	/**
-	 * Display a listing of the resource.
-	 * GET /plannings
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('plannings.indexTurn', $current_turn->id);
-	}
-
-	/**
 	*
 	*/
-	public function indexTurn(Turn $turn)
+	public function index(Turn $turn)
 	{
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || Entrust::user()->researchgroups->count() > 0)
 		{
 			// turn navigation
 			$turnNav = $this->getTurnNav($turn);
 
-			$planned_courses = $this->getPlannedCourses($turn);
+			$planned_courses = $turn->getMyPlannings();
 
 			$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 
@@ -47,78 +35,6 @@ class PlanningsController extends BaseController {
 		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
 		return Redirect::back();
 		}
-	}
-
-	/**
-	* 
-	* @param Turn $turn
-	*/
-	private function getPlannedCourses(Turn $turn)
-	{
-		// get the planned courses for the current turn
-		if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
-			$planned_courses = Planning::turnCourses($turn)->get();
-		else
-		{
-			$rg_ids = $this->getIds(Entrust::user()->researchgroups);
-			// plannings with employees of the specific research groups
-			$planned_courses = DB::table('plannings')
-				->join('employee_planning','employee_planning.planning_id', '=', 'plannings.id')
-				->join('employees', 'employees.id','=','employee_planning.employee_id')
-				->join('researchgroups', 'researchgroups.id', '=', 'employees.researchgroup_id')
-				->select('plannings.id')
-				->whereIn('researchgroups.id',$rg_ids)
-				->where('plannings.turn_id','=', $turn->id)
-				->groupBy('plannings.id')
-				->get();
-			$planning_ids = array();
-			if (sizeof($planned_courses) > 0)
-			{
-				foreach ($planned_courses as $p) {
-					array_push($planning_ids, $p->id);
-				}
-			}
-			else 
-				$planned_courses = array();
-
-			// plannings which were created the current user
-			$planned_courses_user = Planning::where('user_id','=',Entrust::user()->id)
-								->where('turn_id','=',$turn->id)
-								->groupBy('id')
-								->get();
-			if (sizeof($planned_courses_user) > 0)
-			{
-				foreach ($planned_courses_user as $p) {
-					if (!in_array($p->id, $planning_ids))
-						array_push($planning_ids, $p->id);
-				}
-			}
-			// plannings by medium-term planning
-			// the target is to find plannings, where two pr more research groups are involved
-			// if one of the research groups creates the planning, the other ones have to see it
-			$planned_courses_mediumtermplanning = DB::table('plannings')
-													->join('courses','courses.id','=','plannings.course_id')
-													->join('mediumtermplannings','mediumtermplannings.module_id','=','courses.module_id')
-													->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
-													->join('employees','employee_mediumtermplanning.employee_id','=','employees.id')
-													->select('plannings.id')
-													->where('plannings.turn_id','=',$turn->id)
-													->where('user_id','!=', Entrust::user()->id)
-													->whereIn('employees.researchgroup_id',$rg_ids)
-													->groupBy('plannings.id')
-													->get();
-			if (sizeof($planned_courses_mediumtermplanning) > 0)
-			{
-				foreach ($planned_courses_mediumtermplanning as $p) {
-					if (!in_array($p->id, $planning_ids))
-						array_push($planning_ids, $p->id);
-				}
-			}
-
-			if (sizeof($planning_ids) > 0)
-				$planned_courses = Planning::related($planning_ids)->get();
-		}
-		return $planned_courses;
 	}
 	
 	/**
@@ -194,31 +110,6 @@ class PlanningsController extends BaseController {
 	}
 
 	/**
-	* default show week schedule
-	*/
-	public function schedule()
-	{
-		$current_turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('plannings.showSchedule',$current_turn->id);
-	}
-
-	/**
-	* show week schedule
-	* @param Turn $turn
-	*/
-	public function showSchedule(Turn $turn)
-	{
-		// turn navigation
-		$turnNav = $this->getTurnNav($turn);
-
-		$planned_courses = $this->getPlannedCourses($turn);
-
-		$output = $this->getSchedule($planned_courses);
-
-		$this->layout->content = View::make('plannings.schedule', compact('output', 'turnNav'));
-	}
-
-	/**
 	* show status overview
 	*/
 	public function getStatusOverview(Turn $turn)
@@ -226,164 +117,6 @@ class PlanningsController extends BaseController {
 		$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 		$plannings = Planning::where('turn_id','=',$turn->id)->orderBy('course_number')->get();
 		$this->layout->content = View::make('plannings.update_status', compact('plannings', 'turn','listofcoursetypes'));
-	}
-	
-	/**
-	* edit planning
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function edit(Turn $turn, Planning $planning)
-	{
-		// check if user is responsible for this course or has the role room planer, admin or course planer
-		$responsible = false;
-		if (!Entrust::hasRole('Admin') && !Entrust::can('view_planning') && $planning->user_id != Entrust::user()->id)
-		{
-			foreach (Entrust::user()->researchgroups as $rg) {
-				foreach ($planning->employees as $e) {
-					if ($e->researchgroup_id == $rg->id)
-						$responsible = true;
-				}
-			}
-			// medium-term planning check
-			$mediumtermplanning = Mediumtermplanning::where('turn_id','=',$turn->id)->where('module_id','=',$planning->course->module_id)->first();
-			if (sizeof($mediumtermplanning) > 0)
-			{
-				foreach ($mediumtermplanning->employees as $e) {
-					foreach (Entrust::user()->researchgroups as $rg) {
-						if ($e->researchgroup_id == $rg->id)
-							$responsible = true;
-					}
-				}
-			}
-		}
-		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || $planning->user_id == Entrust::user()->id || $responsible)
-		{
-			$employees = Employee::all();
-			$course = Course::findOrFail($planning->course_id); // TODO checking if it's a problem, when a course doesn't belong to a module
-			if (sizeof(Session::get('tabindex')) == "")
-				$tabindex = 0;
-			else 
-				$tabindex = Session::get('tabindex');
-
-			$lists = array();
-			$lists['coursetypes'] = Coursetype::orderBy('name', 'ASC')->lists('name','id');
-			$lists['coursetypesshort'] = Coursetype::orderBy('short', 'ASC')->lists('short','id');
-			$lists['departments'] = Department::orderBy('name','ASC')->lists('name','id');
-			$lists['researchgroups'] = Researchgroup::orderBy('short','ASC')->lists('short','id');
-	// 		$lists['rooms'] = $this->getListofrooms($course->participants);
-			$lists['rooms'] = Room::getList(); // TODO find another way to suggest suitable rooms
-			$lists['turns'] = Turn::getList();
-			$lists['employees'] = array();
-			// get only employee which belong to the assigned research groups
-			if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
-				$lists['employees'] = Employee::getList();
-			else 
-			{
-				$rg_ids = Entrust::user()->researchgroupIds();
-				$employees = Employee::whereIn('researchgroup_id',$rg_ids)
-									->orderBy('researchgroup_id', 'ASC')
-									->orderBy('name', 'ASC')
-									->get();
-				foreach ($employees as $e) {
-					$lists['employees'] = array_add($lists['employees'],$e->id, $e->title.' '.$e->firstname.' '.$e->name);
-				}
-			}			
-
-			// get old plannings
-			$oldplannings = Planning::oldPlannings($planning, $turn)->get();
-			if (sizeof($oldplannings) == 0)
-				$oldplannings = array();
-			
-			// get related plannings
-			$relatedplannings = Planning::relatedPlannings($planning, $course)->get();
-
-			if (sizeof($relatedplannings) == 0)
-				$relatedplannings = array();
-			
-			// get old rooms
-			$oldrooms = Planning::oldRooms($turn, $planning)->take(6)->get();
-
-			if (sizeof($oldrooms) == 0)
-				$oldrooms = array();
-			
-			//
-			// TODO moving possibleemployees to basecontroller
-			//
-			
-			// possible list of employees to add, employees who are already assigned to the courseturn shouldn't be included in that list
-			$planningemployees = $planning->employees;
-			$lists['possibleemployees'] = $lists['employees'];
-			if (sizeof($planningemployees) > 0)
-			{
-				foreach ($planningemployees as $ccte)
-				{
-					if (array_key_exists($ccte->id, $lists['possibleemployees']))
-						unset($lists['possibleemployees'][$ccte->id]);
-				}
-			}
-			//
-			// TODO END
-			//
-			
-			// get exam type for this semester
-			$exam = DB::table('module_turn')
-						->select('exam')
-						->where('turn_id', '=', $turn->id)
-						->where('module_id', '=', $course->module->id)
-						->first();
-
-			// get the planning logs for this planning
-			$planninglog = Planninglog::where('planning_id','=', $planning->id)->orderBy('created_at', 'DESC')->get();
-
-			// get courses with possible schedule conflicts
-			$conflictcourses = $planning->getConflictCourses();
-			$output = $this->getConflictCourseSchedule($conflictcourses);
-			$this->layout->content = View::make('plannings.edit', compact('course', 'turn','planning', 'lists','tabindex', 'oldrooms','relatedplannings', 'oldplannings', 'conflictcourses', 'exam','output','planninglog'));
-		}
-		else
-		{
-			Flash::error('Sie besitzen keine Rechte für diesen Bereich!');
-			return Redirect::route('home');
-		}
-	}
-	
-	/**
-	* update a specific planning
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function update(Turn $turn, Planning $planning)
-	{
-		$duplicate = false;
-		$input = Input::all();
-		// check if the group number has changed
-		if ($input['group_number'] != $planning->group_number)
-		{
-			// number has changed, check for a duplicate
-			if (Planning::checkDuplicate($planning->course_id, $turn->id, $input['group_number'])->count() == 0)
-				$planning->group_number = $input['group_number'];
-			else
-				$duplicate = true;
-		}
-		if ($planning->updateInformation($input))
-		{
-			// updating comment and room preferences
-			Planning::where('turn_id','=',$turn->id)->where('course_number','=',$planning->course_number)->update(array(
-				'comment' => $planning->comment, 'room_preference' => $planning->room_preference));
-			// log
-			$planninglog = new Planninglog();
-			$planninglog->logUpdatedPlanning($planning, $turn);
-
-			if (!$duplicate)
-				return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.');
-			
-			return Redirect::back()->with('message', 'Veranstaltung erfolgreich aktualisiert.')
-										->with('error', 'Die Gruppen-Nr konnte nicht aktualisiert werden, da schon eine Gruppe mit der selben Nummer existiert!');
-		}
-
-		Flash::error($planning->errors());
-		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -395,23 +128,23 @@ class PlanningsController extends BaseController {
 		if (sizeof(Input::get('selected')) > 0)
 		{
 			$plannings = Planning::whereIn('id',Input::get('selected'))->get();
-			foreach ($plannings as $p) {
-				$oldResearchGroupStatus = $p->researchgroup_status;
-				$oldBoardStatus = $p->board_status;
+			foreach ($plannings as $planning) {
+				$oldResearchGroupStatus = $planning->researchgroup_status;
+				$oldBoardStatus = $planning->board_status;
 
-				$p->board_status = Input::get('board_status');
-				$p->researchgroup_status = Input::get('researchgroup_status');
-				$p->save();
+				$planning->board_status = Input::get('board_status');
+				$planning->researchgroup_status = Input::get('researchgroup_status');
+				$planning->save();
 
 				$planninglog = new Planninglog();
 				$planninglog->logUpdatedPlanningStatus($planning, $turn, $oldBoardStatus, $oldResearchGroupStatus);
 			}
 			Flash::success('Die Status wurden erfolgreich aktualisiert.');
-			return Redirect::route('plannings.statusOverview', $turn->id);
+			return Redirect::route('showAllPlanningsStats_path', $turn->id);
 		}
 
 		Flash::error('Es wurden keine Veranstaltungen ausgewählt.');
-		return Redirect::route('plannings.statusOverview', $turn->id);
+		return Redirect::route('showAllPlanningsStats_path', $turn->id);
 	}
 	
 	/**
@@ -443,29 +176,7 @@ class PlanningsController extends BaseController {
 		$planning->delete();
 
 		Flash::success('Veranstaltung erfolgreich gelöscht.');
-		return Redirect::route('plannings.indexTurn', $turn->id);
-	}
-
-	/**
-	* updates the exam type for a module
-	* @param Turn $turn
-	* @param Planning $planning
-	*/
-	public function updateExamType(Turn $turn, Planning $planning)
-	{
-		foreach ($turn->modules as $m) {
-			if ($m->id == Input::get('module_id'))
-			{
-				$old_exam_type = $m->pivot->exam;
-			}
-		}
-		$turn->modules()->updateExistingPivot(Input::get('module_id'), array('exam' => Input::get('exam_type'), 'updated_at' => new Datetime));
-		// log
-		$planninglog = new Planninglog();
-		$planninglog->logUpdatedPlanningExam($planning, $turn);
-
-		Flash::success('Modulabschluss erfolgreich aktualisiert.');
-		return Redirect::route('plannings.edit', array($turn->id, $planning->id))->with('tabindex', Input::get('tabindex'));
+		return Redirect::route('showTurnPlannings_path', $turn->id);
 	}
 
 	/**
@@ -570,52 +281,4 @@ class PlanningsController extends BaseController {
 	// 	$module_turn = DB::table('module_turn')->select('*')->get();
 	// 	$this->layout->content = View::make('plannings.export', compact('plannings','employee_planning', 'planning_room', 'planninglogs', 'module_turn'));
 	// }
-
-	/**
-	* generate output for the conflict courses
-	*/
-	private function getConflictCourseSchedule($plannings)
-	{
-		$output = array();
-		foreach ($plannings as $p) {
-			foreach ($p->rooms as $room) {
-				$e = array();
-				$e['title'] = $p->course_number. ' '.$p->course->coursetype->short.' '.$p->course_title.' Gruppe: '.$p->group_number;
-				$day = $this->getWeekdayDate($room->pivot->weekday);
-					
-				$e['start'] = $day.'T'.$room->pivot->start_time;
-				$e['end'] = $day.'T'.$room->pivot->end_time;
-				$e['backgroundColor'] = '#32CD32';
-				$e['borderColor'] = '#228B22';
-				array_push($output, $e);
-			}
-		}
-		return $output;
-	}
-
-	/**
-	* generate output for the conflict courses
-	* @param array<Planning>
-	*/
-	private function getSchedule($plannings)
-	{
-		$output = array();
-		foreach ($plannings as $p) {
-			foreach ($p->rooms as $room) {
-				$e = array();
-				$e['title'] = $p->course_number. ' '.$p->course->coursetype->short.' '.$p->course->module->short.' ';
-				foreach ($p->employees as $employee) {
-					$e['title'] .= $employee->name.'; ';
-				}
-				$day = $this->getWeekdayDate($room->pivot->weekday);
-					
-				$e['start'] = $day.'T'.$room->pivot->start_time;
-				$e['end'] = $day.'T'.$room->pivot->end_time;
-				// $e['backgroundColor'] = '#32CD32';
-				// $e['borderColor'] = '#228B22';
-				array_push($output, $e);
-			}
-		}
-		return $output;
-	}
 }

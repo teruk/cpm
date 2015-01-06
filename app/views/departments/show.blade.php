@@ -73,7 +73,7 @@
 								@if ( sizeof($degreecourses) > 0 )
 									@foreach($degreecourses as $degreecourse)
 									<tr>
-										<td><a href="{{ route('degree_courses.show', [$degreecourse->id]) }}">{{$listofdegrees[$degreecourse->degree_id]}} {{$degreecourse->name}}</a></td>
+										<td><a href="{{ route('degree_courses.show', [$degreecourse->id]) }}">{{ $degreecourse->degree->name }} {{$degreecourse->name}}</a></td>
 									</tr>
 									@endforeach
 								@else

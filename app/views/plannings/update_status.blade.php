@@ -48,15 +48,15 @@
 
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('plannings')}}">Semesterplanung</a></li>
-	  <li><a href="{{ URL::route('plannings.indexTurn', $turn->id)}}">{{ $turn->name }} {{ $turn->year }}</a></li>
+	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">Semesterplanung</a></li>
+	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">{{ $turn->present() }}</a></li>
 	  <li class="active">Status aktualisieren</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Semesterplanung {{ $turn->name }} {{ $turn->year }} - Status ändern</h4>
-	{{ Form::model(new Planning, ['route' => ['plannings.updateStatus', $turn->id]])}}
+	<h4>Semesterplanung {{ $turn->present() }} - Status ändern</h4>
+	{{ Form::model(new Planning, ['route' => ['updateSelectedPlanningsStats_path', $turn->id]])}}
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="col-sm-12 well well-sm">
@@ -111,7 +111,7 @@
 							<tr>
 								<td>{{ Form::checkbox('selected[]', $planning->id, false, array('class' => "selectCheckBox")) }}</td>
 								<td>{{ $planning->course_number }}</td>
-	        					<td>{{ $planning->course_title }}</td>
+	        					<td>{{ link_to_route('editPlanningInformation_path', $planning->course_title, [$planning->turn_id, $planning->id]) }}</td>
 	        					<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>
 	        					<td>{{ $planning->course->module->short }}</td>
 	        					<td>{{ $planning->course->participants }}</td>

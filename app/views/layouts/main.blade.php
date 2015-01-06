@@ -24,22 +24,15 @@
 
 	    <div class="container">
 	    	<!-- Main Body -->
-			<div class="bs-docs-section clearfix">
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="bs-component">
-							@include('flash::message')
-							@yield('breadcrumbs')
-			    			@yield('main')
-						</div>
-		    		</div>
-		    	</div>
-			</div>
+	    	@yield('breadcrumbs')
+	    	@include('flash::message')
+			@yield('main')
 		    
 			<!-- Footer -->
-	      	@include('layouts.partials.footer')
+	    	@include('layouts.partials.footer')
 	    </div> <!-- /container -->
 
+	    
 
 	    <!-- Bootstrap core JavaScript
 	    ================================================== -->

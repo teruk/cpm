@@ -39,9 +39,8 @@ class DepartmentsController extends BaseController {
 	{
 		$researchgroups = $department->researchgroups;
 		$degreecourses = $department->degreecourses;
-		$listofdegrees = $this->getListofdegrees();
 
-		$this->layout->content = View::make('departments.show', compact('department','researchgroups','degreecourses','listofdegrees'));
+		$this->layout->content = View::make('departments.show', compact('department','researchgroups','degreecourses'));
 	}
 	
 	/**

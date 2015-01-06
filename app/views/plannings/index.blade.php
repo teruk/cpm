@@ -47,16 +47,16 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
 	  <li class="active">Semesterplanung</li>
-	  <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
+	  <li class="active">{{ $turnNav['displayTurn']->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			<h4>Semesterplanung {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
+			<h4>Semesterplanung {{ $turnNav['displayTurn']->present() }}</h4>
 
-			@include('layouts.partials.nav-turn-selection', ['route' => 'plannings.indexTurn'])
+			@include('layouts.partials.nav-turn-selection', ['route' => 'showTurnPlannings_path'])
 		</div>
 
 		@include('plannings.partials.nav-options')
@@ -87,7 +87,7 @@
 								<tr>
 									<td>{{ $planning->course_number }}</td>
 									<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>
-		        					<td><a href="{{ route('plannings.edit', array($turnNav['displayTurn']->id,$planning->id)) }}">{{$planning->course_title }}</a></td>
+		        					<td><a href="{{ route('editPlanningInformation_path', array($turnNav['displayTurn']->id,$planning->id)) }}">{{$planning->course_title }}</a></td>
 		        					<td>{{ $planning->course->module->short }}</td>
 		        					<!-- <td>{{ $planning->course->participants }}</td> -->
 		        					<td>{{ $planning->group_number }}</td>
@@ -97,8 +97,8 @@
 		        					<td>{{ $planning->comment }}</td>
 		        					
 		        					<td>
-		        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('plannings.destroy', $turnNav['displayTurn']->id, $planning->id))) }}
-		        						{{ HTML::decode(link_to_route('plannings.edit', '<i class="glyphicon glyphicon-edit"></i>', array($turnNav['displayTurn']->id, $planning->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Planung bearbeiten'))) }}
+		        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deletePlanning_path', $turnNav['displayTurn']->id, $planning->id))) }}
+		        						{{ HTML::decode(link_to_route('editPlanningInformation_path', '<i class="glyphicon glyphicon-edit"></i>', array($turnNav['displayTurn']->id, $planning->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Planung bearbeiten'))) }}
 		        						@if ($currentUser->id == $planning->user_id || $currentUser->can('delete_planning') || $currentUser->hasRole('Admin'))
 			        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Planung löschen', 'data-message' => 'Wollen Sie die Planung wirklich löschen?')) }}
 			        					@endif

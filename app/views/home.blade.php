@@ -302,7 +302,7 @@
                                         @if (in_array($pl->planning_id, $deleted_planninglogs))
                                             {{ $pl->action }}
                                         @else
-                                            <a href="{{ route('plannings.edit', array($pl->turn_id, $pl->planning_id)) }}">{{ $pl->action }}</a>
+                                            <a href="{{ route('editPlanningInformation_path', array($pl->turn_id, $pl->planning_id)) }}">{{ $pl->action }}</a>
                                         @endif
                                     </td>
                                 </tr>
@@ -313,95 +313,4 @@
             </div>
         </div>
     </div>
-	
-    <!-- <div  class="table-responsive">
-            <table class="table table-striped table-condensed" cellspacing="0">
-                <thead>
-                        <tr>
-                            <th colspan=3>Lehrplanung</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Semesterplanung:</td>
-                            <td>Erstellung der Planung für die nächsten Semester.</td>
-                            <td>{{ HTML::decode(link_to_route('plannings.index', '... gehe zur Semesterplanung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Module:</td>
-                            <td>Erstellen, verwalten und löschen von Modulen. Zuordnung zu Studiengängen und Erstellung der mittelfristige Lehrplanung für des Moduls.</td>
-                            <td>{{ HTML::decode(link_to_route('modules.index', '... gehe zur Modulverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Lehrveranstaltungen:</td>
-                            <td>Erstellen, verwalten und löschen von Lehrveranstaltungen.</td>
-                            <td>{{ HTML::decode(link_to_route('courses.index', '... gehe zur Lehrveranstaltungsverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Studiengänge:</td>
-                            <td>Erstellen, verwalten und löschen von Studiengängen.</td>
-                            <td>{{ HTML::decode(link_to_route('degree_courses.index', '... gehe zur Studiengangsverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                    </tbody>
-                    <thead>
-                        <tr>
-                            <th colspan=3>Verwaltung</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Fachbereiche:</td>
-                            <td>Erstellen, bearbeiten und löschen von Fachbereichen.</td>
-                            <td>{{ HTML::decode(link_to_route('departments.index', '... gehe zur Fachbereichverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Arbeitsbereiche:</td>
-                            <td>Erstellen, bearbeiten und löschen von Arbeitsbereichen.</td>
-                            <td>{{ HTML::decode(link_to_route('researchgroups.index', '... gehe zur Arbeitsbereichverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Mitarbeiter:</td>
-                            <td>Erstellen, bearbeiten und löschen von Mitarbeitern.</td>
-                            <td>{{ HTML::decode(link_to_route('employees.index', '... gehe zur Mitarbeiterverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Räume:</td>
-                            <td>Erstellen, verwalten und löschen von Räumen.</td>
-                            <td>{{ HTML::decode(link_to_route('rooms.index', '... gehe zur Raumverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                    </tbody>
-                    <thead>
-                        <tr>
-                            <th colspan=3>Einstellungen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Abschlüsse:</td>
-                            <td>Erstellen, bearbeiten und löschen von Abschlüssen, wie z.B. Bachelor, ...</td>
-                            <td>{{ HTML::decode(link_to_route('degrees.index', '... gehe zur Abschlussverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Lehrveranstaltungstypen:</td>
-                            <td>Erstellen, bearbeiten und löschen von Lehrveranstaltungstypen, wie z.B. Vorlesung, Übung</td>
-                            <td>{{ HTML::decode(link_to_route('coursetypes.index', '... gehe zur Lehrveranstaltungstypenverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Raumtypen:</td>
-                            <td>Erstellen, bearbeiten und löschen von Raumtypen, wie z.B. Hörsaal, Seminarraum</td>
-                            <td>{{ HTML::decode(link_to_route('roomtypes.index', '... gehe zur Raumtypenverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Semester:</td>
-                            <td>Erstellen, verwalten und löschen von Semestern. Angabe von Start- und Enddatum.</td>
-                            <td>{{ HTML::decode(link_to_route('turns.index', '... gehe zur Semesterverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Turnus:</td>
-                            <td>Erstellen, verwalten und löschen von Turnussen, wie zB. WiSe, SoSe ...</td>
-                            <td>{{ HTML::decode(link_to_route('rotations.index', '... gehe zur Turnusverwaltung', array(), array('class' => 'btn btn-sm btn-link'))) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-        </div> -->
 @stop

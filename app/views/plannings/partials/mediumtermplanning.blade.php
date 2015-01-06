@@ -1,13 +1,13 @@
 <div class="modal-dialog">
 	<div class="modal-content">
   		<div class="modal-body">
-    		{{ Form::model($turnNav['displayTurn']->id, ['method' => 'PATCH', 'route' => ['plannings.generateFromMediumtermplanning',$turnNav['displayTurn']->id], 'class' => "form-horizontal"])}}
+    		{{ Form::model($turnNav['displayTurn']->id, ['method' => 'PATCH', 'route' => ['generateFromMediumtermplanning_path',$turnNav['displayTurn']->id], 'class' => "form-horizontal"])}}
     		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     		<fieldset>
     			<legend>Semester aus mittelfristiger Lehrplanung generieren</legend>
 
                 <div class="form-group col-lg-12 col-lg-offset-1">
-                    Wollen Sie alle Lehrveranstaltungen aus der mittelfristigen Lehrplanung für das Semester {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }} genieren? Sollten Lehrveranstaltungen aus der mittelfristigen Lehrplanung schon im aktuellen Semester geplant worden sein, so werden diese nicht generiert! Die Anzahl der, zu einer Vorlesung gehörenden, Übungen bzw. Seminaren, orientiert sich an der Standardteilnehmerzahl der Vorlesung. Diese sollte im Anschluss, unter Berücksichtung der prognostizierten Teilnehmerzahlen, angepasst werden.
+                    Wollen Sie alle Lehrveranstaltungen aus der mittelfristigen Lehrplanung für das Semester {{ $turnNav['displayTurn']->present() }} genieren? Sollten Lehrveranstaltungen aus der mittelfristigen Lehrplanung schon im aktuellen Semester geplant worden sein, so werden diese nicht generiert! Die Anzahl der, zu einer Vorlesung gehörenden, Übungen bzw. Seminaren, orientiert sich an der Standardteilnehmerzahl der Vorlesung. Diese sollte im Anschluss, unter Berücksichtung der prognostizierten Teilnehmerzahlen, angepasst werden.
                 </div>
     			
     			<div class="form-group">

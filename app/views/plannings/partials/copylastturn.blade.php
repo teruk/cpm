@@ -1,7 +1,7 @@
 <div class="modal-dialog">
 	<div class="modal-content">
   		<div class="modal-body">
-    		{{ Form::model(new Planning, ['route' => ['plannings.copy',$turnNav['displayTurn']->id], 'class' => "form-horizontal"])}}
+    		{{ Form::model(new Planning, ['route' => ['copyPlanningsFromLastTurn_path',$turnNav['displayTurn']->id], 'class' => "form-horizontal"])}}
     		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     		<fieldset>
     			<legend>{{ $turnNav['displayTurn']->name }} {{ ($turnNav['displayTurn']->year-1) }} kopieren</legend>

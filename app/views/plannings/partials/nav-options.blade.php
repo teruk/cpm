@@ -44,7 +44,7 @@
 
 		@if ($currentUser->hasRole('Admin') || $currentUser->can('copy_planning') || $currentUser->can('copy_planning_all'))
 			<div class="btn-group">
-				{{HTML::decode(link_to_route('plannings.showall', '<i class="glyphicon glyphicon-repeat"></i> Einzelne LVs kopieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-copy')))}}
+				{{HTML::decode(link_to_route('showAllPlannings_path', '<i class="glyphicon glyphicon-repeat"></i> Einzelne LVs kopieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-copy')))}}
 			</div>
 
 			@if ( $pastcourses > 0 )
@@ -56,7 +56,7 @@
 
 		@if ($currentUser->hasRole('Admin') || $currentUser->can('change_planning_status'))
 			<div class="btn-group">
-				{{HTML::decode(link_to_route('plannings.statusOverview', '<i class="glyphicon glyphicon-refresh"></i> LV-Status aktualisieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-primary')))}}
+				{{HTML::decode(link_to_route('showAllPlanningsStats_path', '<i class="glyphicon glyphicon-refresh"></i> LV-Status aktualisieren', array($turnNav['displayTurn']->id) , array('class' => 'btn btn-xs btn-primary')))}}
 			</div>
 		@endif
 	</div>

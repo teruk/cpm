@@ -8,34 +8,55 @@ class CopyPlanningsController extends \BaseController {
 	 * @param  Turn   $turn [description]
 	 * @return [type]       [description]
 	 */
-	public function copy(Turn $turn)
+	public function copySelected(Turn $turn)
 	{
 		$input = Input::all();
 		if (array_key_exists('selected', $input))
 		{
 			$plannings = Planning::whereIn('id', $input['selected'])->get();
-		}
-		else
-		{
-			$predecessorturn = $turn->getPredecessor();
-			if (is_numeric($predecessorturn))
+
+			$result = $this->copyPlannings($turn, $plannings, $input);
+			if ($result['copyall'])
 			{
-				Flash::error("Es existiert kein vorheriges Semester zum Kopieren!");
-				return Redirect::back();
+				Flash::success('Alle Veranstaltungen wurden erfolgreich kopiert.');
+				return Redirect::route('showTurnPlannings_path', $turn->id);
 			}
 
-			$plannings = $this->getTurnPlannings($predecessorturn->id);
+			Flash::error($result['warnmessage']);
+			return Redirect::route('showTurnPlannings_path', $turn->id);
 		}
+
+		Flash::message('Sie habe keine Planung ausgewählt!');
+		return back();
+	}
+
+	/**
+	 * copy selected plannings
+	 * 
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
+	public function copyTurn(Turn $turn)
+	{
+		$input = Input::all();
+		$predecessorturn = $turn->getPredecessor();
+		if (is_numeric($predecessorturn))
+		{
+			Flash::error("Es existiert kein vorheriges Semester zum Kopieren!");
+			return Redirect::back();
+		}
+
+		$plannings = $this->getTurnPlannings($predecessorturn->id);
 
 		$result = $this->copyPlannings($turn, $plannings, $input);
 		if ($result['copyall'])
 		{
 			Flash::success('Alle Veranstaltungen wurden erfolgreich kopiert.');
-			return Redirect::route('plannings.indexTurn', $turn->id);
+			return Redirect::route('showTurnPlannings_path', $turn->id);
 		}
 
 		Flash::error($result['warnmessage']);
-		return Redirect::route('plannings.indexTurn', $turn->id);
+		return Redirect::route('showTurnPlannings_path', $turn->id);
 	}
 
 	/**

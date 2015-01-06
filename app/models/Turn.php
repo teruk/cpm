@@ -24,6 +24,15 @@ class Turn extends Ardent {
 	{
 		return $this->belongsToMany('Module')->withPivot('exam');
 	}
+
+	/**
+	 * return a presentable form of the turn
+	 * @return [type] [description]
+	 */
+	public function present()
+	{
+		return $this->name.' '.$this->year;
+	}
 	
 	public function scopeOrderYearName($query)
 	{
@@ -201,5 +210,79 @@ class Turn extends Ardent {
 		$passed['successful'] = $logicalcheckpassed;
 		$passed['message'] = $message;
 		return $passed;
+	}
+
+	/**
+	 * get the users planning for this turn
+	 *
+	 * TODO: a better place for this method would be a (planning) repository
+	 * @return [type] [description]
+	 */
+	public function getMyPlannings()
+	{
+		// get the planned courses for the current turn
+		if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
+			$myPlannings = Planning::turnCourses($this)->get();
+		else
+		{
+			$rg_ids = $this->getIds(Entrust::user()->researchgroups);
+			// plannings with employees of the specific research groups
+			$myPlannings = DB::table('plannings')
+				->join('employee_planning','employee_planning.planning_id', '=', 'plannings.id')
+				->join('employees', 'employees.id','=','employee_planning.employee_id')
+				->join('researchgroups', 'researchgroups.id', '=', 'employees.researchgroup_id')
+				->select('plannings.id')
+				->whereIn('researchgroups.id',$rg_ids)
+				->where('plannings.turn_id','=', $this->id)
+				->groupBy('plannings.id')
+				->get();
+			$planning_ids = array();
+			if (sizeof($myPlannings) > 0)
+			{
+				foreach ($myPlannings as $p) {
+					array_push($planning_ids, $p->id);
+				}
+			}
+			else 
+				$myPlannings = array();
+
+			// plannings which were created the current user
+			$myPlannings_user = Planning::where('user_id','=',Entrust::user()->id)
+								->where('turn_id','=',$this->id)
+								->groupBy('id')
+								->get();
+			if (sizeof($myPlannings_user) > 0)
+			{
+				foreach ($myPlannings_user as $p) {
+					if (!in_array($p->id, $planning_ids))
+						array_push($planning_ids, $p->id);
+				}
+			}
+			// plannings by medium-term planning
+			// the target is to find plannings, where two pr more research groups are involved
+			// if one of the research groups creates the planning, the other ones have to see it
+			$myPlannings_mediumtermplanning = DB::table('plannings')
+													->join('courses','courses.id','=','plannings.course_id')
+													->join('mediumtermplannings','mediumtermplannings.module_id','=','courses.module_id')
+													->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
+													->join('employees','employee_mediumtermplanning.employee_id','=','employees.id')
+													->select('plannings.id')
+													->where('plannings.turn_id','=',$this->id)
+													->where('user_id','!=', Entrust::user()->id)
+													->whereIn('employees.researchgroup_id',$rg_ids)
+													->groupBy('plannings.id')
+													->get();
+			if (sizeof($myPlannings_mediumtermplanning) > 0)
+			{
+				foreach ($myPlannings_mediumtermplanning as $p) {
+					if (!in_array($p->id, $planning_ids))
+						array_push($planning_ids, $p->id);
+				}
+			}
+
+			if (sizeof($planning_ids) > 0)
+				$myPlannings = Planning::related($planning_ids)->get();
+		}
+		return $myPlannings;
 	}
 }

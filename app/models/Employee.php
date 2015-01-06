@@ -41,6 +41,15 @@ class Employee extends Ardent {
 	}
 
 	/**
+	 * return presentable employee
+	 * @return [type] [description]
+	 */
+	public function present()
+	{
+		return $this->title.' '.$this->firstname.' '.$this->name;
+	}
+
+	/**
 	* Return a list with all employees that belong to the same researchgroup and 
 	* are not already assigned to a course, in the constallation <employee firstname> <employee name> (<research group short>)
 	* @param array<integer>

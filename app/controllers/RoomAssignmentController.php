@@ -3,6 +3,44 @@
 class RoomAssignmentController extends \BaseController {
 
 	/**
+	 * show room form
+	 * @param  Turn     $turn     [description]
+	 * @param  Planning $planning [description]
+	 * @return [type]             [description]
+	 */
+	public function showRooms(Turn $turn, Planning $planning)
+	{
+		// check if current user is allowed to access this planning
+		if (!$this->checkPlanningResponsibility($turn, $planning))
+		{
+			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
+			return Redirect::route('home');
+		}
+
+		$course = Course::findOrFail($planning->course_id);
+
+		// get list of rooms
+		$rooms = Room::getList();
+
+		// get old plannings
+		$oldplannings = Planning::oldPlannings($planning, $turn)->get();
+		if (sizeof($oldplannings) == 0)
+			$oldplannings = array();
+
+		// get related plannings
+		$relatedplannings = Planning::relatedPlannings($planning, $course)->get();
+
+		if (sizeof($relatedplannings) == 0)
+			$relatedplannings = array();
+
+		// get information for the conflict schedule
+		$conflictcourses = $planning->getConflictCourses();
+		$output = $this->getConflictCourseSchedule($conflictcourses);
+
+		$this->layout->content = View::make('plannings.editRoom', compact('turn', 'planning', 'course', 'rooms', 'oldplannings', 'relatedplannings', 'output'));
+	}
+
+	/**
 	 * Assign a room with weekday and time to a planning
 	 * @param  Turn     $turn     [description]
 	 * @param  Planning $planning [description]
@@ -206,5 +244,27 @@ class RoomAssignmentController extends \BaseController {
 		return Redirect::back();
 	}
 
-
+	/**
+	 * generate output for conflict schedule
+	 * @param  [type] $plannings [description]
+	 * @return [type]            [description]
+	 */
+	private function getConflictCourseSchedule($plannings)
+	{
+		$output = array();
+		foreach ($plannings as $p) {
+			foreach ($p->rooms as $room) {
+				$e = array();
+				$e['title'] = $p->course_number. ' '.$p->course->coursetype->short.' '.$p->course_title.' Gruppe: '.$p->group_number;
+				$day = $this->getWeekdayDate($room->pivot->weekday);
+					
+				$e['start'] = $day.'T'.$room->pivot->start_time;
+				$e['end'] = $day.'T'.$room->pivot->end_time;
+				$e['backgroundColor'] = '#32CD32';
+				$e['borderColor'] = '#228B22';
+				array_push($output, $e);
+			}
+		}
+		return $output;
+	}
 }

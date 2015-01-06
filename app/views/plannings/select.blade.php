@@ -47,15 +47,15 @@
 
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('plannings')}}">Semesterplanung</a></li>
-	  <li><a href="{{ URL::route('plannings.indexTurn', $turn->id)}}">{{ $turn->name }} {{ $turn->year }}</a></li>
+	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">Semesterplanung</a></li>
+	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">{{ $turn->present() }}</a></li>
 	  <li class="active">Lehreranstaltungen kopieren</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Semesterplanung {{ $turn->name }} {{ $turn->year }} - Lehrveranstaltungen übernehmen</h4>
-	{{ Form::model(new Planning, ['route' => ['plannings.copy', $turn->id], 'class' => "form-horizontal"])}}
+	<h4>Semesterplanung {{ $turn->present() }} - Lehrveranstaltungen übernehmen</h4>
+	{{ Form::model(new Planning, ['route' => ['copySelectedPlannings_path', $turn->id], 'class' => "form-horizontal"])}}
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="col-sm-12 well well-sm">

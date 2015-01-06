@@ -33,6 +33,15 @@ class Room extends Ardent {
 	{
 		return $this->belongsToMany('Planning')->withPivot('weekday','start_time','end_time','created_at','updated_at');
 	}
+
+	/**
+	 * return a presentable form of the room
+	 * @return [type] [description]
+	 */
+	public function present()
+	{
+		return $this->name.' ('.$this->location.') - Plätze: '.$this->seats;
+	}
 	
 	/**
 	* Scope for room with the same or higher number of seats

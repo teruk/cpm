@@ -3,39 +3,67 @@
 // Routes for PlanningsController
 Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 {
-	Route::get('/', 'PlanningsController@index');
-	Route::get('/', array('as' => 'plannings.index', 'uses' => 'PlanningsController@index'));
-	Route::get('{turn}', array('as' => 'plannings.indexTurn', 'uses' => 'PlanningsController@indexTurn'));
-	Route::get('{turn}/showall', array('as' => 'plannings.showall', 'uses' => 'PlanningsController@showall'));
-	Route::get('{turn}/update_status', array('as' => 'plannings.statusOverview', 'uses' => 'PlanningsController@getStatusOverview'));
-	Route::get('{turn}/show/{planning}/edit', array('as' => 'plannings.edit', 'uses' => 'PlanningsController@edit'));
-	Route::delete('{turn}/delete/{planning}', array('as' => 'plannings.destroy', 'uses' => 'PlanningsController@destroy'));
-	Route::patch('{turn}/show/{planning}/update', array('as' => 'plannings.update', 'uses' => 'PlanningsController@update'));
-	
-	Route::post('{turn}/update_status', array('as' => 'plannings.updateStatus', 'uses' => 'PlanningsController@updateStatus'));
+	/** show plannings index page */
 
-	Route::patch('{turn}/generateFromMediumtermplanning', array('as' => 'plannings.generateFromMediumtermplanning', 'uses' => 'GenerateMediumtermplanningsController@generatePlannings'));
+	Route::get('{turn}/showTurnPlannings', [
+		'as' => 'showTurnPlannings_path',
+		'uses' => 'PlanningsController@index'
+		]);
 
-	Route::post('{turn}/save', array('as' => 'plannings.store', 'uses' => 'StorePlanningsController@store'));
-	Route::post('{turn}/save_module', array('as' => 'plannings.storeModule', 'uses' => 'StorePlanningsController@storeModule'));
-	Route::post('{turn}/save_individual', array('as' => 'plannings.storeIndividual', 'uses' => 'StorePlanningsController@storeIndividual'));
-	Route::post('{turn}/copy', array('as' => 'plannings.copy', 'uses' => 'CopyPlanningsController@copy'));
+	Route::get('{turn}/showAllPlannings', [
+		'as' => 'showAllPlannings_path',
+		'uses' => 'PlanningsController@showall'
+		]);
 
-	Route::delete('{turn}/show/{planning}/delete_employee', array('as' => 'plannings.deleteEmployee', 'uses' => 'LecturerAssignmentController@detachLecturer'));
-	Route::patch('{turn}/show/{planning}/update_employee', array('as' => 'plannings.updateEmployee', 'uses' => 'LecturerAssignmentController@updateLecturer'));
-	Route::patch('{turn}/show/{planning}/copy_employee', array('as' => 'plannings.copyEmployee', 'uses' => 'LecturerAssignmentController@copyLecturer'));
-	Route::post('{turn}/show/{planning}/add_employee', array('as' => 'plannings.addEmployee', 'uses' => 'LecturerAssignmentController@assignLecturer'));
+	/** Storing plannings */
+	Route::post('{turn}/savePlanning', [
+		'as' => 'savePlanning_path',
+		'uses' => 'StorePlanningsController@store'
+		]);
 
-	Route::delete('{turn}/show/{planning}/delete_room', array('as' => 'plannings.deleteRoom', 'uses' => 'RoomAssignmentController@destroyRoomAssignment'));
-	Route::patch('{turn}/show/{planning}/update_room', array('as' => 'plannings.updateRoom', 'uses' => 'RoomAssignmentController@updateRoomAssignment'));
-	Route::patch('{turn}/show/{planning}/copy_room', array('as' => 'plannings.copyRoom', 'uses' => 'RoomAssignmentController@copyRoomAssignment'));
-	Route::post('{turn}/show/{planning}/add_room', array('as' => 'plannings.addRoom', 'uses' => 'RoomAssignmentController@assignRoom'));
+	Route::post('{turn}/savePlanningModule', [
+		'as' => 'savePlanningModule_path',
+		'uses' => 'StorePlanningsController@storeModule'
+		]);
 
-	Route::patch('{turn}/show/{planning}/update_examType', array('as' => 'plannings.updateExamType', 'uses' => 'PlanningsController@updateExamType'));
+	Route::post('{turn}/savePlanningIndividual', [
+		'as' => 'savePlanningIndividual_path',
+		'uses' => 'StorePlanningsController@storeIndividual'
+		]);
 
-	Route::get('schedule/{turn}', array('as' => 'plannings.showSchedule', 'uses' => 'PlanningsController@showSchedule'));
+	/** Copy selected plannings */
+	Route::post('{turn}/copySelectedPlannings', [
+		'as' => 'copySelectedPlannings_path',
+		'uses' => 'CopyPlanningsController@copySelected'
+		]);
 
-	Route::get('room_preference/{turn}', array('as' => 'plannings.showRoomPreference', 'uses' => 'RoomPreferencesController@showRoomPreference'));
+	Route::post('{turn}/copyPlanningsFromLastTurn', [
+		'as' => 'copyPlanningsFromLastTurn_path',
+		'uses' => 'CopyPlanningsController@copyTurn'
+		]);
+
+	/** Delete planning */
+	Route::delete('{turn}/deletePlanning/{planning}', [
+		'as' => 'deletePlanning_path',
+		'uses' => 'PlanningsController@destroy'
+		]);
+
+	/** Modify planning status */
+	Route::get('{turn}/showAllPlanningsStats', [
+		'as' => 'showAllPlanningsStats_path',
+		'uses' => 'PlanningsController@getStatusOverview'
+		]);
+
+	Route::post('{turn}/updateSelectedPlanningsStats', [
+		'as' => 'updateSelectedPlanningsStats_path',
+		'uses' => 'PlanningsController@updateStatus'
+		]);
+
+	/** Generate plannings from medium term planning */
+	Route::patch('{turn}/generateFromMediumtermplanning', [
+		'as' => 'generateFromMediumtermplanning_path',
+		'uses' => 'GenerateMediumtermplanningsController@generatePlannings'
+		]);
 
 	/** Edit general planning information */
 	Route::get('{turn}/show/{planning}/editPlanning', [
@@ -46,32 +74,6 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 	Route::patch('{turn}/show/{planning}/editPlanning', [
 		'as' => 'updatePlanningInformation_path',
 		'uses' => 'EditPlanningController@updateInformation'
-		]);
-
-	/** lecturer assignment */
-	Route::get('{turn}/show/{planning}/showPlanningLecturer', [
-		'as' => 'editPlanningLecturer_path',
-		'uses' => 'LecturerAssignmentController@showLecturer'
-		]);
-
-	Route::delete('{turn}/show/{planning}/detachPlanningLecturer', [
-		'as' => 'detachPlanningLecturer_path',
-		'uses' => 'LecturerAssignmentController@detachLecturer'
-		]);
-
-	Route::patch('{turn}/show/{planning}/updatePlanningLecturer', [
-		'as' => 'updatePlanningLecturer_path',
-		'uses' => 'LecturerAssignmentController@updateLecturer'
-		]);
-
-	Route::patch('{turn}/show/{planning}/copyPlanningLecturer', [
-		'as' => 'copyPlanningLecturer_path',
-		'uses' => 'LecturerAssignmentController@copyLecturer'
-		]);
-
-	Route::post('{turn}/show/{planning}/assignPlanningLecturer', [
-		'as' => 'assignPlanningLecturer_path',
-		'uses' => 'LecturerAssignmentController@assignLecturer'
 		]);
 
 	/** exam */
@@ -89,5 +91,17 @@ Route::group(['prefix' => 'plannings', 'before' => 'auth'], function()
 	Route::get('{turn}/show/{planning}/showProtocol', [
 		'as' => 'showPlanningProtocol_path',
 		'uses' => 'EditPlanningController@showProtocol'
+		]);
+
+	/** show room preferences */
+	Route::get('{turn}/showRoomPreference', [
+		'as' => 'showRoomPreference_path',
+		'uses' => 'RoomPreferencesController@showRoomPreference'
+		]);
+
+	/** show researchgroup week schedule */
+	Route::get('{turn}/showWeeklySchedule', [
+		'as' => 'showWeeklySchedule_path',
+		'uses' => 'ResearchgroupWeeklyScheduleController@show'
 		]);
 });

@@ -16,12 +16,12 @@
 	<ol class="breadcrumb">
 		<li class="active">Semesterplanung</li>
 	    <li class="active">Übersicht Raumwünsche</li>
-	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Semesterplanung {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }} - Übersicht Raumwünsche</h4>
+	<h4>Semesterplanung {{ $turnNav['displayTurn']->present() }} - Übersicht Raumwünsche</h4>
 	
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
