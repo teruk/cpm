@@ -1,12 +1,12 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('employees')}}">Mitarbeitermanagement</a></li>
+	  <li>{{ link_to_route('showEmployees_path', 'Mitarbeitermanagement')}}</li>
 	  <li class="active">{{ $employee->name }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>{{ $employee->title}} {{ $employee->firstname }} {{ $employee->name }} (<a href="{{ route('researchgroups.show', $employee->researchgroup_id) }}">{{ $employee->researchgroup->name }}</a>)</h4>
+	<h4>{{ $employee->present() }} (<a href="{{ route('researchgroups.show', $employee->researchgroup_id) }}">{{ $employee->researchgroup->name }}</a>)</h4>
 
 	<ul class="nav nav-tabs" style="margin-bottom: 15px;">
 		<li class="active"><a href="#home" data-toggle="tab">Informationen</a></li>
@@ -19,7 +19,7 @@
 				<div class="col-sm-7">
 					<div class="panel panel-primary">
 					    <div class="panel-body">
-							{{ Form::model($employee, ['method' => 'PATCH', 'route' => ['employees.update', $employee->id], 'class' => "form-horizontal"]) }}
+							{{ Form::model($employee, ['method' => 'PATCH', 'route' => ['updateEmployee_path', $employee->id], 'class' => "form-horizontal"]) }}
 							<fieldset>
 			        			<div class="form-group">
 				    				{{ Form::label('title', 'Titel:', array('class' => "col-lg-4 control-label", 'id' => "title")) }}

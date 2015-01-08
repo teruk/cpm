@@ -1,7 +1,7 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">Semesterplanung</a></li>
-	  <li><a href="{{ URL::route('showTurnPlannings_path', $turn->id)}}">{{ $turn->present() }}</a></li>
+	  <li>{{ link_to_route('showTurnPlannings_path', 'Semesterplanung', $turn->id) }}</li>
+	  <li>{{ link_to_route('showTurnPlannings_path', $turn->present(), $turn->id) }}</li>
 	  <li  class="active">{{$course->module->short}} {{ $course->module->name }}</li>
 	  <li class="active">Informationen bearbeiten</li>
 	</ol>

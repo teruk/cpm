@@ -70,14 +70,7 @@
 							@else
 								<tr>
 							@endif
-								<td>
-									<a href="{{ route('employees.show', $employee->id) }}">
-									{{ $employee->firstname }} {{ $employee->name }}
-									@if($employee->title != "")
-										, {{ $employee->title }} 
-									@endif
-									</a>
-								</td>
+								<td>{{ link_to_route('showEmployee_path', $employee->present(), $employee->id) }}</td>
 								<td>
 									@if (Entrust::hasRole('Admin') || Entrust::can('edit_researchgroup'))
 										<a href="{{ route('researchgroups.show', $employee->researchgroup_id) }}">{{ $employee->researchgroup->short }}</a>
@@ -96,9 +89,9 @@
 									@endif
 								</td>
 								<td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('employees.destroy', $employee->id))) }}
+									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteEmployee_path', $employee->id))) }}
 										@if (Entrust::hasRole('Admin') || Entrust::can('edit_employee'))
-										{{ HTML::decode(link_to_route('employees.show', '<i class="glyphicon glyphicon-edit"></i>', array($employee->id), array('class' => 'btn btn-xs btn-warning'))) }}
+										{{ HTML::decode(link_to_route('showEmployee_path', '<i class="glyphicon glyphicon-edit"></i>', array($employee->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										@endif
 										@if (Entrust::hasRole('Admin') || Entrust::can('delete_employee'))
 											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Mitarbeiter löschen', 'data-message' => 'Wollen Sie den Mitarbeiter wirklich löschen?')) }}

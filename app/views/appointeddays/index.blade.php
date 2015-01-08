@@ -43,12 +43,12 @@
 		       		<tbody>
 						@foreach( $appointeddays as $a )
 							<tr>
-		    					<td><a href="{{ route('appointeddays.show', $a->id) }}">{{ $a->subject }}</a></td>
+		    					<td><a href="{{ route('showAppointedday_path', $a->id) }}">{{ $a->subject }}</a></td>
 		    					<td>{{ $a->read_more }}</td>
 		    					<td>{{ date('d.m.Y', strtotime($a->date)) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('appointeddays.destroy', $a->id))) }}
-										{{ HTML::decode(link_to_route('appointeddays.show', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAppointedday_path', $a->id))) }}
+										{{ HTML::decode(link_to_route('showAppointedday_path', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Termin löschen', 'data-message' => 'Wollen Sie den Termin wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

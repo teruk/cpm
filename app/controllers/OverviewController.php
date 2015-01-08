@@ -7,7 +7,7 @@ class OverviewController extends BaseController {
 	 * [getDegreeCourses description]
 	 * @return [type] [description]
 	 */
-	public function getDegreeCourses()
+	public function showDegreecourses()
 	{
 		$degreecourses = DegreeCourse::orderBy('degree_id','ASC')->orderBy('name','ASC')->get();
 		$this->layout->content = View::make('overviews.degreecourses', compact('degreecourses'));
@@ -18,7 +18,7 @@ class OverviewController extends BaseController {
 	 * @param  DegreeCourse $degreecourse [description]
 	 * @return [type]                     [description]
 	 */
-	public function getDegreeCourse(DegreeCourse $degreecourse)
+	public function showSelectedDegreecourse(DegreeCourse $degreecourse)
 	{
 		$listofsections = Section::lists('name','id');
 		$this->layout->content = View::make('overviews.degreecourse', compact('degreecourse','listofsections'));
@@ -28,11 +28,10 @@ class OverviewController extends BaseController {
 	 * [getCourses description]
 	 * @return [type] [description]
 	 */
-	public function getCourses()
+	public function showCourses()
 	{
-		$courses = Course::orderBy('course_number','ASC')->get();
-		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
-		$this->layout->content = View::make('overviews.courses', compact('courses','listofcoursetypes'));
+		$courses = Course::with('coursetype')->orderBy('course_number','ASC')->get();
+		$this->layout->content = View::make('overviews.courses', compact('courses'));
 	}
 
 	/**
@@ -40,19 +39,18 @@ class OverviewController extends BaseController {
 	 * @param  Course $course [description]
 	 * @return [type]         [description]
 	 */
-	public function getCourse(Course $course)
+	public function showSelectedCourse(Course $course)
 	{
-		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
-		$this->layout->content = View::make('overviews.course', compact('course','listofcoursetypes'));
+		$this->layout->content = View::make('overviews.course', compact('course'));
 	}
 
 	/**
 	 * [getEmployees description]
 	 * @return [type] [description]
 	 */
-	public function getEmployees()
+	public function showEmployees()
 	{
-		$employees = Employee::orderBy('researchgroup_id','ASC')->orderBy('name','ASC')->get();
+		$employees = Employee::with('researchgroup')->orderBy('researchgroup_id','ASC')->orderBy('name','ASC')->get();
 		$this->layout->content = View::make('overviews.employees', compact('employees'));
 	}
 
@@ -61,7 +59,7 @@ class OverviewController extends BaseController {
 	 * @param  Employee $employee [description]
 	 * @return [type]             [description]
 	 */
-	public function getEmployee(Employee $employee)
+	public function showSelectedEmployee(Employee $employee)
 	{
 		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$this->layout->content = View::make('overviews.employee', compact('employee','listofcoursetypes'));
@@ -71,7 +69,7 @@ class OverviewController extends BaseController {
 	 * [getModules description]
 	 * @return [type] [description]
 	 */
-	public function getModules()
+	public function showModules()
 	{
 		$modules = Module::orderBy('short','ASC')->get();
 		$this->layout->content = View::make('overviews.modules', compact('modules'));
@@ -82,21 +80,10 @@ class OverviewController extends BaseController {
 	 * @param  Module $module [description]
 	 * @return [type]         [description]
 	 */
-	public function getModule(Module $module)
+	public function showSelectedModule(Module $module)
 	{
 		$listofsections = Section::orderBy('name', 'ASC')->lists('name','id');
-		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
-		$this->layout->content = View::make('overviews.module', compact('module','listofsections','listofcoursetypes'));
-	}
-
-	/**
-	 * [tableReseachgroups description]
-	 * @return [type] [description]
-	 */
-	public function tableReseachgroups()
-	{
-		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('overview.tableResearchgroups', $turn->id);
+		$this->layout->content = View::make('overviews.module', compact('module','listofsections'));
 	}
 
 	/**
@@ -144,16 +131,6 @@ class OverviewController extends BaseController {
 			}
 		}
 		$this->layout->content = View::make('overviews.table_researchgroups', compact('turnNav','output'));
-	}
-
-	/**
-	 * [tablePlannings description]
-	 * @return [type] [description]
-	 */
-	public function tablePlannings()
-	{
-		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('overview.tablePlannings', $turn->id);
 	}
 
 	/**
@@ -217,31 +194,11 @@ class OverviewController extends BaseController {
 	}
 
 	/**
-	 * [exams description]
-	 * @return [type] [description]
-	 */
-	public function exams()
-	{
-		$turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('overview.showExams', $turn->id);
-	}
-
-	/**
-	 * [shk description]
-	 * @return [type] [description]
-	 */
-	public function shk()
-	{
-		$current_turn = Turn::find(Setting::setting('current_turn')->first()->value);
-		return Redirect::route('overview.showShk',$current_turn->id);
-	}
-
-	/**
 	 * [showShk description]
 	 * @param  Turn   $turn [description]
 	 * @return [type]       [description]
 	 */
-	public function showShk(Turn $turn)
+	public function showStudentAssistants(Turn $turn)
 	{
 		// turn navigation
 		$turnNav = $this->getTurnNav($turn);
@@ -253,22 +210,22 @@ class OverviewController extends BaseController {
 							->where('employees.firstname','=','SHK')
 							->where('plannings.turn_id','=',$turn->id)
 							->get();
-		$planning_ids = array();
+		$planningIds = array();
 		$semester_periods_per_week_total = 0;
 		foreach ($shkplannings as $shk) 
 		{
-			array_push($planning_ids, $shk->id);
+			array_push($planningIds, $shk->id);
 			$semester_periods_per_week_total += $shk->semester_periods_per_week;
 		}
-		if (sizeof($planning_ids) > 0)
+		if (sizeof($planningIds) > 0)
 		{
-			$plannings = Planning::whereIn('id',$planning_ids)->get();
+			$plannings = Planning::whereIn('id',$planningIds)->get();
 		}
 		else
 		{
 			$plannings = array();
 		}
-		$this->layout->content = View::make('overviews.shk', compact('plannings', 'turnNav', 'semester_periods_per_week_total'));
+		$this->layout->content = View::make('overviews.studentAssistants', compact('plannings', 'turnNav', 'semester_periods_per_week_total'));
 	}
 
 	/**

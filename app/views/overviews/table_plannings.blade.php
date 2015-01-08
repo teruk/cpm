@@ -48,15 +48,15 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	    <li class="active">Aufstellung Lehrveranstaltungen</li>
-	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Lehrveranstaltungsaufstellung sortiert nach LV-Nummern {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
+	<h4>Lehrveranstaltungsaufstellung sortiert nach LV-Nummern {{ $turnNav['displayTurn']->present() }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			@include('layouts.partials.nav-turn-selection', ['route' => 'overview.tablePlannings'])
+			@include('layouts.partials.nav-turn-selection', ['route' => 'showPlanningsOrderByCourseNumber_path'])
 		</div>
 	</div>
 
@@ -84,9 +84,9 @@
 		          				</td>
 		          				<td>{{ $plannings_data[$p->course_id]['groups'] }} * {{ $p->course->semester_periods_per_week }}</td>
 		          				<td>
-		          					{{ $plannings_data[$p->course_id]['groups'] * $p->course->semester_periods_per_week }} {{ $p->course_title }}<br><br>
+		          					{{ $plannings_data[$p->course_id]['groups'] * $p->course->semester_periods_per_week }} SWS {{ $p->course_title }}<br><br>
 		          					@foreach($plannings_data[$p->course_id]['employees'] as $e)
-		          						{{ $e['semester_periods_per_week'] }} {{ $e['employee']->firstname }} {{ $e['employee']->name }} ({{ $e['employee']->researchgroup->short }})<br>
+		          						{{ $e['semester_periods_per_week'] }} SWS {{ $e['employee']->firstname }} {{ $e['employee']->name }} ({{ $e['employee']->researchgroup->short }})<br>
 		          					@endforeach
 		          				</td>
 		          				<td>

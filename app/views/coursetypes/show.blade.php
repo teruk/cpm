@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('coursetypes')}}">Kurstypmanagement</a></li>
+	  <li>{{ link_to_route('showCoursetypes_path', 'Kurstypmanagement') }}</li>
 	  <li class="active">{{ $coursetype->name }}</li>
 	</ol>
 @stop
@@ -15,7 +15,7 @@
 			        <h3 class="panel-title">Informationen</h3>
 		        </div>
 		        <div class="panel-body">
-					{{ Form::model($coursetype, ['method' => 'PATCH', 'route' => ['coursetypes.update', $coursetype->id]]) }}
+					{{ Form::model($coursetype, ['method' => 'PATCH', 'route' => ['updateCoursetype_path', $coursetype->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>

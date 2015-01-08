@@ -1,12 +1,30 @@
 <?php
 
-// Routes for CoursetypesController
+// Routes for CoursetypetypesController
 Route::group(['prefix' => 'coursetypes', 'before' => 'auth'], function()
 {
-	Route::get('/', 'CoursetypesController@index');
-	Route::get('/', array('as' => 'coursetypes.index', 'uses' => 'CoursetypesController@index'));
-	Route::get('{coursetype}/show', array('as' => 'coursetypes.show', 'uses' => 'CoursetypesController@show'));
-	Route::delete('{coursetype}/delete', array('as' => 'coursetypes.destroy', 'uses' => 'CoursetypesController@destroy'));
-	Route::patch('{coursetype}/update', array('as' => 'coursetypes.update', 'uses' => 'CoursetypesController@update'));
-	Route::post('save', array('as' => 'coursetypes.store', 'uses' => 'CoursetypesController@store'));
+	Route::get('showCoursetypes', [
+		'as' => 'showCoursetypes_path',
+		'uses' => 'CoursetypesController@index'
+		]);
+
+	Route::get('{coursetype}/showCoursetype', [
+		'as' => 'showCoursetype_path',
+		'uses' => 'CoursetypesController@show'
+		]);
+
+	Route::delete('{coursetype}/deleteCoursetype', [
+		'as' => 'deleteCoursetype_path',
+		'uses' => 'CoursetypesController@destroy'
+		]);
+
+	Route::patch('{coursetype}/updateCoursetype', [
+		'as' => 'updateCoursetype_path',
+		'uses' => 'CoursetypesController@update'
+		]);
+
+	Route::post('saveCoursetype', [
+		'as' => 'saveCoursetype_path',
+		'uses' => 'CoursetypesController@store'
+		]);
 });

@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('departments')}}">Fachbereichsmanagement</a></li>
+	  <li>{{ link_to_route('showDepartments_path', 'Fachbereichsmanagement') }}</li>
 	  <li class="active">{{ $department->name }}</li>
 	</ol>
 @stop
@@ -14,7 +14,7 @@
 		              <h3 class="panel-title">Informationen</h3>
 		            </div>
 		            <div class="panel-body">
-						{{ Form::model($department, ['method' => 'PATCH', 'route' => ['departments.update', $department->id]]) }}
+						{{ Form::model($department, ['method' => 'PATCH', 'route' => ['updateDepartment_path', $department->id]]) }}
 							<table class="table table-striped">
 								<tbody>
 									<tr>
@@ -73,7 +73,7 @@
 								@if ( sizeof($degreecourses) > 0 )
 									@foreach($degreecourses as $degreecourse)
 									<tr>
-										<td><a href="{{ route('degree_courses.show', [$degreecourse->id]) }}">{{ $degreecourse->degree->name }} {{$degreecourse->name}}</a></td>
+										<td>{{ link_to_route('showDegreecourse_path', $degreecourse->degree->name.' '.$degreecourse->name, $degreecourse->id ) }}</td>
 									</tr>
 									@endforeach
 								@else

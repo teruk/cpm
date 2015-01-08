@@ -2,11 +2,34 @@
 // Routes for AppointeddaysController
 Route::group(['prefix' => 'appointeddays', 'before' => 'auth'], function()
 {
-	Route::get('/', 'AppointeddaysController@index');
-	Route::get('/', array('as' => 'appointeddays.index', 'uses' => 'AppointeddaysController@index'));
-	Route::get('{appointedday}/show', array('as' => 'appointeddays.show', 'uses' => 'AppointeddaysController@show'));
-	Route::get('{appointedday}/info', array('as' => 'appointeddays.info', 'uses' => 'AppointeddaysController@info'));
-	Route::delete('{appointedday}/delete', array('as' => 'appointeddays.destroy', 'uses' => 'AppointeddaysController@destroy'));
-	Route::patch('{appointedday}/update', array('as' => 'appointeddays.update', 'uses' => 'AppointeddaysController@update'));
-	Route::post('save', array('as' => 'appointeddays.store', 'uses' => 'AppointeddaysController@store'));
+
+	Route::get('showAppointeddays', [
+		'as' => 'showAppointeddays_path',
+		'uses' => 'AppointeddaysController@index'
+		]);
+
+	Route::get('{appointedday}/showAppointedday', [
+		'as' => 'showAppointedday_path',
+		'uses' => 'AppointeddaysController@show'
+		]);
+
+	Route::get('{appointedday}/showInformation', [
+		'as' => 'showAppointeddayInformation_path',
+		'uses' => 'AppointeddaysController@info'
+		]);
+
+	Route::delete('{appointedday}/deleteAppointedday', [
+		'as' => 'deleteAppointedday_path',
+		'uses' => 'AppointeddaysController@destroy'
+		]);
+
+	Route::patch('{appointedday}/updateAppointedday', [
+		'as' => 'updateAppointedday_path',
+		'uses' => 'AppointeddaysController@update'
+		]);
+
+	Route::post('{appointedday}/saveAppointedday', [
+		'as' => 'saveAppointedday_path',
+		'uses' => 'AppointeddaysController@store'
+		]);
 });

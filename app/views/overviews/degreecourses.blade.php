@@ -35,7 +35,8 @@
 		          	<tbody>
 						@foreach( $degreecourses as $degreecourse )
 							<tr>
-								<td><a href="{{ route('overview.degreecourse', $degreecourse->id) }}">{{ $degreecourse->degree->name }} {{ $degreecourse->name }}</td>
+								<td>
+									{{ link_to_route('showOverviewSelectedDegreecourse_path', $degreecourse->present(), $degreecourse->id) }}
 								<td>{{ $degreecourse->short }}</td>
 								<td>{{ $degreecourse->department->name }}</td>
 							</tr>

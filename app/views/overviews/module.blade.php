@@ -1,7 +1,7 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
-		<li><a href="{{ route('overview.modules') }}">Module</a></li>
+		<li>{{ link_to_route('showOverviewModules_path', 'Module') }}</li>
 		<li class="active">{{ $module->name }} ({{ $module->short }})</li>
 	</ol>
 @stop
@@ -66,9 +66,9 @@
 						@foreach( $module->courses as $course )
 							<tr>
 								<td>{{ $course->course_number }}</td>
-								<td><a href="{{ route('overview.course',$course->id)}}">{{ $course->name }}</a></td>
+								<td>{{ link_to_route('showOverviewSelectedCourse_path', $course->name, $course->id) }}</td>
 								<td>{{ $course->name_eng }}</td>
-								<td>{{ $listofcoursetypes[$course->coursetype_id] }}</td>
+								<td>{{ $course->coursetype->name }}</td>
 								<td>{{ $course->participants }}</td>
 								<td>{{ $course->semester_periods_per_week }}</td>
 								<td>{{ Config::get('constants.language')[$course->language] }}</td>
@@ -98,7 +98,9 @@
 		          	<tbody>
 						@foreach( $module->degreecourses as $degreecourse )
 							<tr>
-								<td><a href="{{ route('overview.degreecourse', $degreecourse->id) }}">{{ $degreecourse->degree->name }} {{ $degreecourse->name }}</td>
+								<td>
+									{{ link_to_route('showOverviewSelectDegreecourse_path', $degreecourse->present(), $degreecourse->id)}}
+								</td>
 								<td>{{ $degreecourse->short }}</td>
 								<td>{{ $degreecourse->department->name }}</td>
 								<td>{{ $degreecourse->pivot->semester }}</td>

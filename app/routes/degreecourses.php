@@ -1,12 +1,30 @@
 <?php
 // Routes for DegreecoursesController
 
-Route::group(['prefix' => 'degree_courses', 'before' => 'auth'], function()
+Route::group(['prefix' => 'degreecourses', 'before' => 'auth'], function()
 {
-	Route::get('/', 'DegreecoursesController@index');
-	Route::get('/', array('as' => 'degree_courses.index', 'uses' => 'DegreecoursesController@index'));
-	Route::get('{degreecourse}/show', array('as' => 'degree_courses.show', 'uses' => 'DegreecoursesController@show'));
-	Route::delete('{degreecourse}/delete', array('as' => 'degree_courses.destroy', 'uses' => 'DegreecoursesController@destroy'));
-	Route::patch('{degreecourse}/update', array('as' => 'degree_courses.update', 'uses' => 'DegreecoursesController@update'));
-	Route::post('save', array('as' => 'degree_courses.store', 'uses' => 'DegreecoursesController@store'));
+	Route::get('showDegreecourses', [
+		'as' => 'showDegreecourses_path',
+		'uses' => 'DegreecoursesController@index'
+		]);
+
+	Route::get('{degreecourse}/showDegreecourse', [
+		'as' => 'showDegreecourse_path',
+		'uses' => 'DegreecoursesController@show'
+		]);
+
+	Route::delete('{degreecourse}/deleteDegreecourse', [
+		'as' => 'deleteDegreecourse_path',
+		'uses' => 'DegreecoursesController@destroy'
+		]);
+
+	Route::patch('{degreecourse}/updateDegreecourse', [
+		'as' => 'updateDegreecourse_path',
+		'uses' => 'DegreecoursesController@update'
+		]);
+
+	Route::post('saveDegreecourse', [
+		'as' => 'saveDegreecourse_path',
+		'uses' => 'DegreecoursesController@store'
+		]);
 });

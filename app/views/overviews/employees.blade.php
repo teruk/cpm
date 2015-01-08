@@ -66,7 +66,7 @@
 		          	<tbody>
 						@foreach( $employees as $employee )
 							<tr>
-								<td><a href="{{ route('overview.employee',$employee->id) }}">{{ $employee->title }} {{ $employee->firstname }} {{ $employee->name }}</a></td>
+								<td>{{ link_to_route('showOverviewSelectedEmployee_path', $employee->present(), $employee->id) }}</td>
 								<td>{{ $employee->researchgroup->name }} ({{ $employee->researchgroup->short}})</td>
 								<td>{{ date('d.m.Y', strtotime($employee->employed_since)) }}</td>
 								<td>

@@ -53,7 +53,7 @@
 							<tr class="info">
 						@endif
 							<td>{{ $module->short }}</td>
-							<td><a href="{{ route('overview.module', $module->id) }}">{{ $module->name }}</a></td>
+							<td>{{ link_to_route('showOverviewSelectedModule_path', $module->name, $module->id) }}</td>
 							<td>{{ $module->name_eng }}</td>
 							<td>{{ $module->department->name }}</td>
 							<td>{{ $module->degree->name }}</td>

@@ -64,6 +64,7 @@ class DatabaseSeeder extends Seeder {
         'PermissionRoleTableSeeder',
         'ResearchgroupUserTableSeeder',
         'PlanninglogsTableSeeder',
+        'AnnouncementsTableSeeder',
 
     ];
 	/**

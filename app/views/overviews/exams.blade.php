@@ -18,15 +18,15 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	  	<li class="active">Prüfungen</li>
-	  	<li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
+	  	<li class="active">{{ $turnNav['displayTurn']->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Übersicht Prüfungsformen der angebotene Module {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
+	<h4>Übersicht Prüfungsformen der angebotene Module {{ $turnNav['displayTurn']->present() }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			@include('layouts.partials.nav-turn-selection', ['route' => 'overview.showExams'])
+			@include('layouts.partials.nav-turn-selection', ['route' => 'showExams_path'])
 		</div>
 	</div>
 

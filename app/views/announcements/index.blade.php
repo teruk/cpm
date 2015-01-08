@@ -45,12 +45,12 @@
 						@foreach( $announcements as $a )
 				
 							<tr>
-		    					<td><a href="{{ route('announcements.show', $a->id) }}">{{ $a->subject }}</a></td>
+		    					<td>{{ link_to_route('showAnnouncement_path', $a->subject, $a->id) }}</td>
 		    					<td>{{ $a->read_more }}</td>
 		    					<td>{{ date('d.m.Y', strtotime($a->created_at)) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('announcements.destroy', $a->id))) }}
-										{{ HTML::decode(link_to_route('announcements.show', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAnnouncement_path', $a->id))) }}
+										{{ HTML::decode(link_to_route('showAnnouncement_path', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Ankündigung löschen', 'data-message' => 'Wollen Sie die Ankündigung wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

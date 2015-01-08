@@ -33,17 +33,8 @@ class CoursesController extends BaseController {
 		$course->department_id = 1;
 		if ( $course->save() )
 		{
-			// check the origin of the save request
-			if (Input::get('tabindex') == "")
-			{
-				Flash::success('Lehrveranstaltung erfolgreich erstellt!');
-				return Redirect::back();
-			}
-
-			// back to module show
-			$module = Module::find($course->module_id);
 			Flash::success('Lehrveranstaltung erfolgreich erstellt!');
-			return Redirect::route('modules.show',$module->id)->with('tabindex', Input::get('tabindex'));
+			return Redirect::back();
 		}
 
 		if (Input::get('tabindex') == "")
@@ -97,11 +88,11 @@ class CoursesController extends BaseController {
 		if ( $course->updateUniques() )
 		{
 			Flash::success('Der Lehrveranstaltung wurde aktualisiert.');
-			return Redirect::route('courses.show', $course->id);
+			return Redirect::back();
 		}
 
 		Flash::error($course->errors());
-		return Redirect::route('courses.show', array_get($course->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**

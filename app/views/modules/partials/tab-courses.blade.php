@@ -27,7 +27,7 @@
 	            			@foreach ($courses as $course)
 	            				<tr>
 									<td>{{ $course->course_number }}</td>
-									<td><a href="{{ route('courses.show', [$course->id]) }}">{{ $course->name }}</a></td>
+									<td>{{ link_to_route('showCourse_path', $course->name, [$course->id]) }}</td>
 									<td>{{ $course->name_eng }}</td>
 									<td>{{ $course->coursetype->short }}</td>
 									<td>{{ $course->participants }}</td>

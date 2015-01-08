@@ -104,7 +104,7 @@ class EmployeesController extends BaseController {
 		else
 		{
 			Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
-			return Redirect::route('home');
+			return Redirect::route('dashboard_path');
 		}
 	}
 	
@@ -125,11 +125,11 @@ class EmployeesController extends BaseController {
 		if ( $employee->updateUniques() )
 		{
 			Flash::success('Das Modul wurde aktualisiert.');
-			return Redirect::route('employees.show', $employee->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($employee->errors());
-		return Redirect::route('employees.show', array_get($employee->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 	/**

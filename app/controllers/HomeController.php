@@ -32,7 +32,7 @@ class HomeController extends BaseController {
 	 */
 	public function showLogin()
 	{
-		$this->layout->content = View::make('login');
+		$this->layout->content = View::make('pages.login');
 	}
 
 	/**
@@ -68,18 +68,18 @@ class HomeController extends BaseController {
 					$user->last_login = new Datetime;
 					$user->save();
 					Flash::success('Sie haben sich erfolgreich eingeloggt.');
-					return Redirect::to('home');
+					return Redirect::route('dashboard_path');
 				}
 				else
 				{
 					Auth::logout();
 					Flash::error('Dieser Account wurde deaktiviert! Bitte kontaktieren Sie den Administrator.');
-					return Redirect::to('login');
+					return Redirect::route('login_path');
 				}
 			}
 
 			Flash::error('Login fehlgeschlagen! E-Mail-Adresse oder Passwort ungültig!');
-			return Redirect::to('login');
+			return Redirect::route('login_path')->withInput();
 		}
 	}
 
@@ -90,7 +90,7 @@ class HomeController extends BaseController {
 	public function doLogout()
 	{
 		Auth::logout();
-		return Redirect::to('login');
+		return Redirect::route('login_path');
 	}
 
 }

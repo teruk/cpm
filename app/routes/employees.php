@@ -2,10 +2,28 @@
 // Routes for EmployeesController
 Route::group(['prefix' => 'employees', 'before' => 'auth'], function ()
 {
-	Route::get('', 'EmployeesController@index');
-	Route::get('', array('as' => 'employees.index', 'uses' => 'EmployeesController@index'));
-	Route::get('{employee}/show', array('as' => 'employees.show', 'uses' => 'EmployeesController@show'));
-	Route::delete('{employee}/delete', array('as' => 'employees.destroy', 'uses' => 'EmployeesController@destroy'));
-	Route::patch('{employee}/update', array('as' => 'employees.update', 'uses' => 'EmployeesController@update'));
-	Route::post('save', array('as' => 'employees.store', 'uses' => 'EmployeesController@store'));
+	Route::get('showEmployees', [
+		'as' => 'showEmployees_path',
+		'uses' => 'EmployeesController@index'
+		]);
+
+	Route::get('{employee}/showEmployee', [
+		'as' => 'showEmployee_path',
+		'uses' => 'EmployeesController@show'
+		]);
+
+	Route::delete('{employee}/deleteEmployee', [
+		'as' => 'deleteEmployee_path',
+		'uses' => 'EmployeesController@destroy'
+		]);
+
+	Route::patch('{employee}/updateEmployee', [
+		'as' => 'updateEmployee_path',
+		'uses' => 'EmployeesController@update'
+		]);
+
+	Route::post('saveEmployee', [
+		'as' => 'saveEmployee_path',
+		'uses' => 'EmployeesController@store'
+		]);
 });

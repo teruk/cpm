@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('appointeddays')}}">Termine</a></li>
+	  <li>{{ link_to_route('showAppointeddays_path', 'Termine') }}</li>
 	  <li class="active">{{ $appointedday->subject }}</li>
 	</ol>
 @stop
@@ -10,7 +10,7 @@
 		<div class="col-sm-8">
 			<div class="panel panel-primary">
 		        <div class="panel-body">
-					{{ Form::model($appointedday, ['method' => 'PATCH', 'route' => ['appointeddays.update', $appointedday->id], 'class' => "form-horizontal"]) }}
+					{{ Form::model($appointedday, ['method' => 'PATCH', 'route' => ['updateAppointedday_path', $appointedday->id], 'class' => "form-horizontal"]) }}
 			        <fieldset>
 			        	<legend>Termin aktualisieren</legend>
 			        	<div class="form-group">

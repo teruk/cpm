@@ -55,11 +55,11 @@ class DepartmentsController extends BaseController {
 		if ($department->updateUniques())
 		{
 			Flash::success('Der Fachbereich wurde aktualisiert.');
-			return Redirect::route('departments.show', $department->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($department->errors());
-		return Redirect::route('departments.show', array_get($department->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 	/**

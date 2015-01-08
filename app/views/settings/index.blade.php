@@ -13,7 +13,7 @@
 		<div class="col-sm-12">
 			<div class="panel panel-primary">
 	            <div class="panel-body">
-					{{ Form::model(new Turn, ['method' => 'PATCH', 'route' => ['settings.updateCurrentTurn'], 'class' => "form-horizontal"]) }}
+					{{ Form::model(new Turn, ['method' => 'PATCH', 'route' => ['updateCurrentTurn_path'], 'class' => "form-horizontal"]) }}
 						<fieldset>
 							<legend>Aktuelles Semester</legend>
 							<div class="form-group">

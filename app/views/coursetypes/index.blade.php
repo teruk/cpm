@@ -45,12 +45,12 @@
 						@foreach( $coursetypes as $coursetype )
 				
 							<tr>
-		    					<td><a href="{{ route('coursetypes.show', $coursetype->id) }}">{{ $coursetype->name }}</a></td>
+		    					<td>{{ link_to_route('showCoursetype_path', $coursetype->name, $coursetype->id) }}</td>
 		    					<td>{{ $coursetype->short }}</td>
 		    					<td>{{ $coursetype->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('coursetypes.destroy', $coursetype->id))) }}
-										{{ HTML::decode(link_to_route('coursetypes.show', '<i class="glyphicon glyphicon-edit"></i>', array($coursetype->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCoursetype_path', $coursetype->id))) }}
+										{{ HTML::decode(link_to_route('showCoursetype_path', '<i class="glyphicon glyphicon-edit"></i>', array($coursetype->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltungstyp löschen', 'data-message' => 'Wollen Sie den Lehrveranstaltungstyp wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

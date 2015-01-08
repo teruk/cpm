@@ -39,10 +39,10 @@
 				
 							<tr>
 	        					<td>{{ $department->short }}</td>
-	        					<td><a href="{{ route('departments.show', $department->id) }}">{{ $department->name }}</a></td>
+	        					<td>{{ link_to_route('showDepartment_path', $department->name, $department->id) }}</td>
 	        					<td>
-	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('departments.destroy', $department->id))) }}
-										{{ HTML::decode(link_to_route('departments.show', '<i class="glyphicon glyphicon-edit"></i>', array($department->id), array('class' => 'btn btn-xs btn-warning'))) }}
+	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteDepartment_path', $department->id))) }}
+										{{ HTML::decode(link_to_route('showDepartment_path', '<i class="glyphicon glyphicon-edit"></i>', array($department->id), array('class' => 'btn btn-xs btn-warning'))) }}
 
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Fachbereich löschen', 'data-message' => 'Wollen Sie den Fachbereich wirklich löschen?')) }}
 									{{ Form::close() }}

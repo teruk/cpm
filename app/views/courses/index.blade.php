@@ -84,7 +84,7 @@
     			  @foreach( $courses as $course )
     					<tr>
     						<td>{{ $course->course_number }}</td>
-          					<td><a href="{{ route('courses.show', $course->id) }}">{{ $course->name }}</a></td>
+          					<td>{{ link_to_route('showCourse_path', $course->name, $course->id) }}</td>
           					<td>{{ $course->name_eng }}</td>
           					<td>{{ $course->coursetype->name }}</td>
           					<td>{{ $course->module->short }}</td>
@@ -92,8 +92,8 @@
           					<td>{{ $course->semester_periods_per_week }}</td>
           					<td>{{ Config::get('constants.language')[$course->language] }}</td>
           					<td>
-          						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('courses.destroy', $course->id))) }}
-    								{{ HTML::decode(link_to_route('courses.show', '<i class="glyphicon glyphicon-edit"></i>', array($course->id), array('class' => 'btn btn-xs btn-warning'))) }}
+          						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCourse_path', $course->id))) }}
+    								{{ HTML::decode(link_to_route('showCourse_path', '<i class="glyphicon glyphicon-edit"></i>', array($course->id), array('class' => 'btn btn-xs btn-warning'))) }}
     								{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltung löschen', 'data-message' => 'Wollen Sie die Lehrveranstaltung wirklich löschen?')) }}
     							{{ Form::close() }}
           					</td>

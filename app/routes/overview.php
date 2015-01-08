@@ -1,35 +1,86 @@
 <?php
 
-Route::get('overview/shk', array('as' => 'overview.shk', 'uses' => 'OverviewController@shk'));
-Route::get('overview/shk/{turn}', array('as' => 'overview.showShk', 'uses' => 'OverviewController@showShk'));
+// Routes for OverviewController
+Route::group(['prefix' => 'overview'], function ()
+{
 
-Route::get('overview/exams', array('as' => 'overview.exams', 'uses' => 'OverviewController@exams'));
-Route::get('overview/exams/{turn}', array('as' => 'overview.showExams', 'uses' => 'OverviewController@showExams'));
+/** courses overview */
+Route::get('showCourses', [
+	'as' => 'showOverviewCourses_path',
+	'uses' => 'OverviewController@showCourses'
+	]);
 
-Route::get('overview/courses', array('as' => 'overview.courses', 'uses' => 'OverviewController@getCourses'));
-Route::get('overview/courses/{course}', array('as' => 'overview.course', 'uses' => 'OverviewController@getCourse'));
+Route::get('showCourses/{course}', [
+	'as' => 'showOverviewSelectedCourse_path',
+	'uses' => 'OverviewController@showSelectedCourse'
+	]);
 
-Route::get('overview/degreecourses', array('as' => 'overview.degreecourses', 'uses' => 'OverviewController@getDegreeCourses'));
-Route::get('overview/degreecourses/{degreecourse}', array('as' => 'overview.degreecourse', 'uses' => 'OverviewController@getDegreeCourse'));
+/** modules overview */
+Route::get('showModules', [
+	'as' => 'showOverviewModules_path',
+	'uses' => 'OverviewController@showModules'
+	]);
 
-Route::get('overview/employees', array('as' => 'overview.employees', 'uses' => 'OverviewController@getEmployees'));
-Route::get('overview/employees/{employee}', array('as' => 'overview.employee', 'uses' => 'OverviewController@getEmployee'));
+Route::get('showModules/{module}', [
+	'as' => 'showOverviewSelectedModule_path',
+	'uses' => 'OverviewController@showSelectedModule'
+	]);
 
-Route::get('overview/modules', array('as' => 'overview.modules', 'uses' => 'OverviewController@getModules'));
-Route::get('overview/modules/{module}', array('as' => 'overview.module', 'uses' => 'OverviewController@getModule'));
+/** degreecourse overview */
+Route::get('showDegreecourses', [
+	'as' => 'showOverviewDegreecourses_path',
+	'uses' => 'OverviewController@showDegreecourses'
+	]);
+
+Route::get('showDegreecourses/{degreecourse}', [
+	'as' => 'showOverviewSelectedDegreecourse_path',
+	'uses' => 'OverviewController@showSelectedDegreecourse'
+	]);
+
+/** employee overview */
+Route::get('showEmployees', [
+	'as' => 'showOverviewEmployees_path',
+	'uses' => 'OverviewController@showEmployees'
+	]);
+
+Route::get('showEmployees/{employee}', [
+	'as' => 'showOverviewSelectedEmployee_path',
+	'uses' => 'OverviewController@showSelectedEmployee'
+	]);
 
 Route::get('overview/room_search', array('as' => 'overview.showRoomSearch', 'uses' => 'OverviewController@showRoomSearch'));
 Route::patch('overview/room_search_results', array('as' => 'overview.roomSearch', 'uses' => 'OverviewController@roomSearch'));
 
-Route::get('overview/table_researchgroups', array('as' => 'overview.tableRG', 'uses' => 'OverviewController@tableReseachgroups'));
-Route::get('overview/table_researchgroups/{turn}', array('as' => 'overview.tableResearchgroups', 'uses' => 'OverviewController@getTableResearchgroups'));
+/** table overview for planning */
+Route::get('showPlanningsOrderByCourseNumber/{turn}', [
+	'as' => 'showPlanningsOrderByCourseNumber_path',
+	'uses' => 'OverviewController@getTablePlannings'
+	]);
 
-Route::get('overview/table_plannings', array('as' => 'overview.tablePl', 'uses' => 'OverviewController@tablePlannings'));
-Route::get('overview/table_plannings/{turn}', array('as' => 'overview.tablePlannings', 'uses' => 'OverviewController@getTablePlannings'));
+Route::get('showPlanningsOrderByResearchgroup/{turn}', [
+	'as' => 'showPlanningsOrderByResearchgroup_path',
+	'uses' => 'OverviewController@getTableResearchgroups'
+	]);
 
-/**
- * Schedule
- */
+/** exam overview */
+Route::get('showExams/{turn}', [
+	'as' => 'showExams_path',
+	'uses' => 'OverviewController@showExams'
+	]);
+
+/** student assistant overview */
+Route::get('showStudentAssistants/{turn}', [
+	'as' => 'showStudentAssistants_path',
+	'uses' => 'OverviewController@showStudentAssistants'
+	]);
+
+/** medium term planning overview */
+Route::get('showMediumTermPlannings', [
+	'as' => 'showMediumTermPlannings_path',
+	'uses' => 'MediumtermplanningsController@index'
+	]);
+
+/** degree course schedule overview */
 Route::get('overview/schedule', [
 	'as' => 'overview.default_schedule',
 	'uses' => 'ScheduleController@getDefaultSchedule'
@@ -50,9 +101,7 @@ Route::patch('overview/schedule', [
 	'uses' => 'ScheduleController@grabSchedule'
 	]);
 
-/**
- * Room Occupation
- */
+/** room occupation overview */
 Route::get('overview/room', [
 	'as' => 'overview.default_room',
 	'uses' => 'RoomOccupationController@getDefaultRoom'
@@ -72,3 +121,5 @@ Route::patch('overview/room', [
 	'as' => 'overview.grab_room',
 	'uses' => 'RoomOccupationController@grabRoom'
 	]);
+
+});

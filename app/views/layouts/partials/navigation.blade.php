@@ -7,7 +7,7 @@
 	    <div class="navbar-collapse collapse navbar-inverse-collapse">
 	    	<ul class="nav navbar-nav">
 	    		@if($signedIn)
-          			<li><a href="{{ URL::to('home')}}"><span class="glyphicon glyphicon-home"></span></a></li>
+          			<li>{{ HTML::decode( link_to_route('dashboard_path', '<i class="glyphicon glyphicon-home"></i>')) }}</li>
           			<!-- Plannings links -->
           			@include('layouts.partials.nav-plannings')
 
@@ -23,9 +23,9 @@
 			<ul class="nav navbar-nav navbar-right">
 				@if($signedIn)
 					<li class="navbar-brand">{{ $currentUser->name }}</li>
-          			<li>{{ link_to_route('logout', 'Logout') }}</li>
+          			<li>{{ link_to_route('logout_path', 'Logout') }}</li>
           		@else
-          			<li>{{ link_to_route('login', 'Anmelden') }}</li>
+          			<li>{{ link_to_route('login_path', 'Anmelden') }}</li>
                 @endif
           	</ul>
         </div>

@@ -2,7 +2,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
-      {{ Form::model(new Course, ['route' => ['courses.store'], 'class' => "form-horizontal"])}}
+      {{ Form::model(new Course, ['route' => ['saveCourse_path'], 'class' => "form-horizontal"])}}
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <fieldset>
         <legend>Neue Lehrveranstaltung erstellen</legend>

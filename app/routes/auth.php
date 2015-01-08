@@ -2,12 +2,12 @@
 
 // log in and log out routes
 Route::get('login', [
-	'as' => 'login',
+	'as' => 'login_path',
 	'uses' => 'HomeController@showLogin'
 	]);
 
 Route::get('logout', [
-	'as' =>  'logout',
+	'as' =>  'logout_path',
 	'uses' => 'HomeController@doLogout'
 	]);
 

@@ -1,8 +1,8 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
-		<li><a href="{{ route('overview.degreecourses') }}">Studiengänge</a></li>
-		<li class="active">{{ $degreecourse->degree->name }} {{ $degreecourse->name }}</li>
+		<li>{{ link_to_route('showOverviewDegreecourses_path', 'Studiengänge') }}</li>
+		<li class="active">{{ $degreecourse->present() }}</li>
 	</ol>
 @stop
 
@@ -35,7 +35,7 @@
 								<td>{{ $module->pivot->semester }}</td>
 								<td>{{ $listofsections[$module->pivot->section] }}</td>
 								<td>{{ $module->short }}</td>
-								<td><a href="{{ route('overview.module', $module->id) }}">{{ $module->name }}</td>
+								<td>{{ link_to_route('showOverviewSelectedModule_path', $module->name, $module->id) }}</td>
 								<td>{{ $module->credits }}</td>
 								<td>{{ $module->rotation->name }}</td>
 							</tr>

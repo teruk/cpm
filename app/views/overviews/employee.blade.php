@@ -46,8 +46,8 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
-		<li><a href="{{ route('overview.employees')}}">Mitarbeiter</a></li>
-		<li class="active">{{ $employee->title }} {{ $employee->firstname }} {{ $employee->name }} ({{ $employee->researchgroup->short}})</li>
+		<li>{{ link_to_route('showOverviewEmployees_path', 'Mitarbeiter') }}</li>
+		<li class="active">{{ $employee->present() }} ({{ $employee->researchgroup->short}})</li>
 	</ol>
 @stop
 
@@ -66,7 +66,7 @@
 		          	</thead>
 		          	<tbody>
 							<tr>
-								<td>{{ $employee->title }} {{ $employee->firstname }} {{ $employee->name }}</td>
+								<td>{{ $employee->present() }}</td>
 								<td>{{ $employee->researchgroup->name }} ({{ $employee->researchgroup->short}})</td>
 								<td>{{ date('d.m.Y', strtotime($employee->employed_since)) }}</td>
 								<td>
@@ -101,11 +101,15 @@
 		          	<tbody>
 		          		@foreach ($employee->plannings as $planning)
 							<tr>
-								<td>{{ $planning->turn->name }} {{ $planning->turn->year }}</td>
-								<td><a href="{{ route('overview.module',$planning->course->module_id) }}">{{ $planning->course->module->short }}</a></td>
+								<td>{{ $planning->turn->present() }}</td>
+								<td>
+									{{ link_to_route('showOverviewSelectedModule_path', $planning->course->module->short, $planning->course->module_id) }}
+								</td>
 								<td>{{ $planning->course_number }}</td>
 								<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>
-								<td>{{ $planning->course_title }}<br> {{$planning->course_title_eng }}</td>
+								<td>
+									{{ HTML::decode( link_to_route('showOverviewSelectedCourse_path', $planning->course_title.'<br>'.$planning->course_title_eng, $planning->course_id)) }}
+								</td>
 								<td>{{ $planning->group_number }}</td>
 								<td>{{ $planning->pivot->semester_periods_per_week }}</td>
 							</tr>

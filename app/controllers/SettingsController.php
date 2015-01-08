@@ -25,10 +25,10 @@ class SettingsController extends \BaseController {
 		{
 			DB::table('settings')->where('name','=','current_turn')->update(array('value' => Input::get('current_turn')));
 			Flash::success('Die Einstellung aktuelles Semester erfolgreich aktualisiert.');
-			return Redirect::route('settings.index');
+			return Redirect::back();
 		}
 
 		Flash::message('Keine Änderungen registriert!');
-		return Redirect::route('settings.index');
+		return Redirect::back();
 	}
 }

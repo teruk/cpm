@@ -3,10 +3,28 @@
 // Routes for DegreesController
 Route::group(['prefix' => 'degrees', 'before' => 'auth'], function()
 {
-	Route::get('/', 'DegreesController@index');
-	Route::get('/', array('as' => 'degrees.index', 'uses' => 'DegreesController@index'));
-	Route::get('{degree}/show', array('as' => 'degrees.show', 'uses' => 'DegreesController@show'));
-	Route::delete('{degree}/delete', array('as' => 'degrees.destroy', 'uses' => 'DegreesController@destroy'));
-	Route::patch('{degree}/update', array('as' => 'degrees.update', 'uses' => 'DegreesController@update'));
-	Route::post('save', array('as' => 'degrees.store', 'uses' => 'DegreesController@store'));
+	Route::get('showDegrees', [
+		'as' => 'showDegrees_path',
+		'uses' => 'DegreesController@index'
+		]);
+
+	Route::get('{degree}/showDegree', [
+		'as' => 'showDegree_path',
+		'uses' => 'DegreesController@show'
+		]);
+
+	Route::delete('{degree}/deleteDegree', [
+		'as' => 'deleteDegree_path',
+		'uses' => 'DegreesController@destroy'
+		]);
+
+	Route::patch('{degree}/updateDegree', [
+		'as' => 'updateDegree_path',
+		'uses' => 'DegreesController@update'
+		]);
+
+	Route::post('saveDegree', [
+		'as' => 'saveDegree_path',
+		'uses' => 'DegreesController@store'
+		]);
 });

@@ -3,7 +3,7 @@
 	<div class="modal-dialog">
     	<div class="modal-content">
 	      	<div class="modal-body">
-	        {{ Form::model(new Announcement, ['route' => ['announcements.store'], 'class' => "form-horizontal"])}}
+	        {{ Form::model(new Announcement, ['route' => ['saveAnnouncement_path'], 'class' => "form-horizontal"])}}
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	        <fieldset>
 	        	<legend>Neue Ankündigung erstellen</legend>

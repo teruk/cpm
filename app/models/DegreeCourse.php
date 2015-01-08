@@ -38,6 +38,15 @@ class Degreecourse extends Ardent {
 	}
 
 	/**
+	 * returns presentable degree course
+	 * @return [type]
+	 */
+	public function present()
+	{
+		return $this->degree->name.' '.$this->name;
+	}
+
+	/**
 	* Return a list with all degree course in the constallation <degree name> <degree course name>
 	* @return array<list>
 	*/

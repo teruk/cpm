@@ -48,15 +48,15 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 	    <li class="active">Aufstellung nach Arbeitsbereichen</li>
-	    <li class="active">{{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</li>
+	    <li class="active">{{ $turnNav['displayTurn']->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Lehrveranstaltungsaufstellung sortiert nach Arbeitsbereichen {{ $turnNav['displayTurn']->name }} {{ $turnNav['displayTurn']->year }}</h4>
+	<h4>Lehrveranstaltungsaufstellung sortiert nach Arbeitsbereichen {{ $turnNav['displayTurn']->present() }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			@include('layouts.partials.nav-turn-selection',['route' => 'overview.tableResearchgroups'])
+			@include('layouts.partials.nav-turn-selection',['route' => 'showPlanningsOrderByResearchgroup_path'])
 		</div>
 	</div>
 
@@ -69,7 +69,7 @@
 		                	<th>Arbeitsbereich</th>
 		                	<th>LVNr</th>
 		                	<th>SWS</th>
-		                	<th>Gr</th>
+		                	<th>Gr.</th>
 		                	<th>Veranstaltung</th>
 		                	<th>Status</th>
 		                	<th>VeranstalterIn</th>
@@ -98,7 +98,7 @@
 			          			</td>
 			          			<td>
 			          				@foreach ($p->employees as $e)
-			          					{{ $e->pivot->semester_periods_per_week }}  {{ $e->firstname }} {{ $e->name }}<br>
+			          					{{ $e->pivot->semester_periods_per_week }} SWS {{ $e->firstname }} {{ $e->name }}<br>
 			          				@endforeach
 			          			</td>
 			          			<td>

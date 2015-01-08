@@ -64,11 +64,11 @@ class CoursetypesController extends BaseController {
 		if ( $coursetype->updateUniques() )
 		{
 			Flash::success('Der Kurstyp wurde aktualisiert.');
-			return Redirect::route('coursetypes.show', $coursetype->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($coursetype->errors());
-		return Redirect::route('coursetypes.show', array_get($coursetype->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**

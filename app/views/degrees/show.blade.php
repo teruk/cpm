@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('degrees')}}">Abschlussmanagement</a></li>
+	  <li>{{ link_to_route('showDegrees_path', 'Abschlussmanagement') }}</li>
 	  <li class="active">{{ $degree->name }}</li>
 	</ol>
 @stop
@@ -15,7 +15,7 @@
 			        <h3 class="panel-title">Informationen</h3>
 		        </div>
 		        <div class="panel-body">
-					{{ Form::model($degree, ['method' => 'PATCH', 'route' => ['degrees.update', $degree->id]]) }}
+					{{ Form::model($degree, ['method' => 'PATCH', 'route' => ['updateDegree_path', $degree->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>

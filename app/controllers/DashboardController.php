@@ -112,7 +112,7 @@ class DashboardController extends BaseController {
 		}
 
 		// make view
-		$this->layout->content = View::make('home', compact('turn', 'turns','announcements','appointeddays','employees','planned_courses','listofcoursetypes', 'mtpgrid', 'planninglog','deleted_planninglogs'));
+		$this->layout->content = View::make('pages.home', compact('turn', 'turns','announcements','appointeddays','employees','planned_courses','listofcoursetypes', 'mtpgrid', 'planninglog','deleted_planninglogs'));
 	}
 
 	/**

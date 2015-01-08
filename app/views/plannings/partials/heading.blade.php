@@ -1,6 +1,6 @@
 <h4>
 	@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_course'))
-		<a href="{{ route('courses.show', $course->id) }}">{{ $planning->course_number }} {{ $planning->course_title }}</a>  
+		{{ link_to_route('showCourse_path', $planning->course_number.' '.$planning->course_title, $course->id) }}
 	@else
 		{{ $planning->course_number }} {{ $planning->course_title }} 
 	@endif

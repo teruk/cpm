@@ -15,7 +15,7 @@ class DegreecoursesController extends \BaseController {
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
 
-		$this->layout->content = View::make('degree_courses.index', compact('degreecourses','listofdepartments', 'listofdegrees'));
+		$this->layout->content = View::make('degreecourses.index', compact('degreecourses','listofdepartments', 'listofdegrees'));
 	}
 
 	/**
@@ -26,7 +26,7 @@ class DegreecoursesController extends \BaseController {
 	 */
 	public function create()
 	{
-		$this->layout->content = View::make('degree_courses.index');
+		$this->layout->content = View::make('degreecourses.index');
 	}
 
 	/**
@@ -64,7 +64,7 @@ class DegreecoursesController extends \BaseController {
 		$listofrotations = Rotation::lists('name','id');
 		$listofsections = Section::lists('name','id');
 
-		$this->layout->content = View::make('degree_courses.show', compact('degreecourse', 'listofdepartments', 'listofdegrees', 'listofsections', 'listofrotations'));
+		$this->layout->content = View::make('degreecourses.show', compact('degreecourse', 'listofdepartments', 'listofdegrees', 'listofsections', 'listofrotations'));
 	}
 
 	/**
@@ -76,7 +76,7 @@ class DegreecoursesController extends \BaseController {
 	 */
 	public function edit(Degreecourse $degreecourse)
 	{
-		$this->layout->content = View::make('degree_courses.index', compact('degreecourse'));
+		$this->layout->content = View::make('degreecourses.index', compact('degreecourse'));
 	}
 
 	/**
@@ -94,11 +94,11 @@ class DegreecoursesController extends \BaseController {
 		if ( $degreecourse->updateUniques() )
 		{
 			Flash::success('Der Studiengang wurde aktualisiert.');
-			return Redirect::route('degree_courses.show', $degreecourse->id);
+			return Redirect::back();
 		}
 
 		Flash::error($degreecourse->errors());
-		return Redirect::route('degree_courses.show', array_get($degreecourse->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**

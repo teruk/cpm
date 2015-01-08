@@ -25,7 +25,7 @@
 	
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			@include('layouts.partials.nav-turn-selection',['route'=>'plannings.showRoomPreference'])
+			@include('layouts.partials.nav-turn-selection',['route'=>'showRoomPreference_path'])
 		</div>
 
 		<div class="col-sm-12">
@@ -43,7 +43,7 @@
 		          		@foreach ($plannings as $pl)
 			          		<tr>
 			                  	<td>{{ $pl->user->name }}</td>
-			                  	<td><a href="{{ route('plannings.edit', array($turnNav['displayTurn']->id,$pl->id)) }}">{{ $pl->course_number }} {{ $pl->course_title}} ({{ $pl->course->module->short }})</a></td>
+			                  	<td><a href="{{ route('editPlanningInformation_path', array($turnNav['displayTurn']->id,$pl->id)) }}">{{ $pl->course_number }} {{ $pl->course_title}} ({{ $pl->course->module->short }})</a></td>
 			                  	<td>{{ $pl->course->semester_periods_per_week }}</td>
 			                  	<td>{{ nl2br($pl->room_preference) }}</td>
 			                </tr>

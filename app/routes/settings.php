@@ -3,7 +3,14 @@
 // Routes for SettingsController
 Route::group(['prefix' => 'settings', 'before' => 'auth'], function()
 {
-	Route::get('/', 'SettingsController@index');
-	Route::get('/', array('as' => 'settings.index', 'uses' => 'SettingsController@index'));
-	Route::patch('save', array('as' => 'settings.updateCurrentTurn', 'uses' => 'SettingsController@updateCurrentTurn'));
+
+	Route::get('showSettings', [
+		'as' => 'showSettings_path',
+		'uses' => 'SettingsController@index'
+		]);
+
+	Route::patch('updateCurrentTurn', [
+		'as' => 'updateCurrentTurn_path',
+		'uses' => 'SettingsController@updateCurrentTurn'
+		]);
 });

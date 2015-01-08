@@ -1,7 +1,7 @@
 <div class="modal-dialog">
 	<div class="modal-content">
 		<div class="modal-body">
-			{{ Form::model(new Course, ['route' => ['courses.store'], 'class' => "form-horizontal"])}}
+			{{ Form::model(new Course, ['route' => ['saveCourse_path'], 'class' => "form-horizontal"])}}
 			{{ Form::hidden('module_id',$module->id) }}
 			{{ Form::hidden('tabindex',"courses") }}
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -36,9 +36,9 @@
 				</div>
 				
 				<div class="form-group">
-					{{ Form::label('course_type_id', 'Typ*:', array('class' => "col-lg-4 control-label", 'id' => "course_type_id")) }}
+					{{ Form::label('coursetype_id', 'Typ*:', array('class' => "col-lg-4 control-label", 'id' => "coursetype_id")) }}
 					<div class="col-lg-8">
-						{{ Form::select('course_type_id', $lists['coursetypes'], 0,array('id' => "course_type_id", 'class' => "form-control input-sm")) }}
+						{{ Form::select('coursetype_id', $lists['coursetypes'], 0,array('id' => "coursetype_id", 'class' => "form-control input-sm")) }}
 					</div>
 				</div>	
 				

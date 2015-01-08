@@ -6,7 +6,7 @@
         <h4 class="modal-title" id="myModalLabel">Neuen Fachbereich anlegen</h4>
       </div>
       <div class="modal-body">
-        {{ Form::model(new Department, ['route' => ['departments.store']])}}
+        {{ Form::model(new Department, ['route' => ['saveDepartment_path']])}}
         <table class="table table-striped">
 			<tbody>
 				<tr>

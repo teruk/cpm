@@ -1,7 +1,7 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
-		<li><a href="{{ route('overview.courses') }}">Lehrveranstaltungen</a></li>
+		<li>{{ link_to_route('showOverviewCourses_path', 'Lehrveranstaltungen') }}</li>
 		<li class="active">{{ $course->course_number }} ({{ $course->name }})</li>
 	</ol>
 @stop
@@ -28,9 +28,9 @@
 	          	<tbody>
 						<tr>
 							<td>{{ $course->course_number }}</td>
-							<td><a href="{{ route('overview.module', $course->module_id) }}">{{ $course->module->short }}</a></td>
+							<td>{{ link_to_route('showOverviewSelectedModule_path', $course->module->short, $course->module_id) }}</td>
 							<td>{{ $course->name }}<br>{{ $course->name_eng }}</td>
-							<td>{{ $listofcoursetypes[$course->coursetype_id] }}</td>
+							<td>{{ $course->coursetype->name }}</td>
 							<td>{{ $course->participants }}</td>
 							<td>{{ $course->semester_periods_per_week }}</td>
 							<td>{{ Config::get('constants.language')[$course->language] }}</td>
@@ -68,7 +68,7 @@
 	          				<td>{{ Config::get('constants.language')[$planning->language] }}</td>
 	          				<td>
 	          					@foreach ($planning->employees as $employee)
-	          						<a href="{{ route('overview.employee', $employee->id) }}">{{ $employee->title }} {{ $employee->firstname }} {{ $employee->name }} ({{ $employee->pivot->semester_periods_per_week}})</a><br>
+	          						{{ link_to_route('showOverviewSelectedEmployee_path', $employee->present().' ('.$employee->pivot->semester_periods_per_week.')', $employee->id) }}
 	          					@endforeach
 	          				</td>
 	          				<td>
