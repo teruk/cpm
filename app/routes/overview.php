@@ -48,9 +48,6 @@ Route::get('showEmployees/{employee}', [
 	'uses' => 'OverviewController@showSelectedEmployee'
 	]);
 
-Route::get('overview/room_search', array('as' => 'overview.showRoomSearch', 'uses' => 'OverviewController@showRoomSearch'));
-Route::patch('overview/room_search_results', array('as' => 'overview.roomSearch', 'uses' => 'OverviewController@roomSearch'));
-
 /** table overview for planning */
 Route::get('showPlanningsOrderByCourseNumber/{turn}', [
 	'as' => 'showPlanningsOrderByCourseNumber_path',
@@ -121,5 +118,4 @@ Route::patch('overview/room', [
 	'as' => 'overview.grab_room',
 	'uses' => 'RoomOccupationController@grabRoom'
 	]);
-
 });

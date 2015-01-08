@@ -24,7 +24,7 @@
 	<div class="row">
 		<div class="col-sm-4">
 			<div class="well">
-				{{ Form::model(new Room, ['method' => 'PATCH', 'route' => ['overview.roomSearch'], 'class' => "form-horizontal"]) }}
+				{{ Form::model(new Room, ['method' => 'PATCH', 'route' => ['showRoomSearchResults_path'], 'class' => "form-horizontal"]) }}
 				<div class="form-group">
 	                {{ Form::label('min_seats', 'Min. Plätze*:', array('class' => "col-lg-5 control-label", 'id' => "min_seats")) }}
 	                <div class="col-lg-7">
@@ -100,7 +100,7 @@
 			          	<tbody>
 			          		@foreach ($searchresults as $room)
 			          			<tr>
-				       				<td><a href="{{ route('rooms.showRoomSchedule', array($turn->id, $room->id))}}">{{ $room->name }} ({{ $room->location }})</td>
+				       				<td><a href="{{ route('overview.specific_room', array($turn->id, $room->id))}}">{{ $room->name }} ({{ $room->location }})</td>
 			    					<td>{{ $room->seats }}</td>
 			    					<td>{{ $roomtypes[$room->roomtype_id] }}</td>
 			    					@if ($room->beamer)

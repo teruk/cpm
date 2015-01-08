@@ -7,7 +7,7 @@
     	<li>{{ link_to_route('showMediumTermPlannings_path', 'Mittelfristge Lehrplanung') }}</li>
     	<li>{{ link_to_route('showExams_path', 'Prüfungen', $currentTurn) }}</li>
     	<li>{{ link_to_route('overview.default_room', 'Raumbelegung') }}</li>
-    	<li>{{ link_to_route('overview.showRoomSearch', 'Raumsuche') }}</li>
+    	<li>{{ link_to_route('showRoomSearchForm_path', 'Raumsuche') }}</li>
     	<li>{{ link_to_route('overview.default_schedule', 'Stundenpläne') }}</li>
     	<li>{{ link_to_route('showStudentAssistants_path', 'SHK-Übersicht', $currentTurn) }}</li>
     	<li class="divider"></li>
