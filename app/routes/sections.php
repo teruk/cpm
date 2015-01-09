@@ -2,10 +2,28 @@
 // Routes for SectionsController
 Route::group(['prefix' => 'sections', 'before' => 'auth'], function()
 {
-	Route::get('/', 'SectionsController@index');
-	Route::get('/', array('as' => 'sections.index', 'uses' => 'SectionsController@index'));
-	Route::get('{section}/show', array('as' => 'sections.show', 'uses' => 'SectionsController@show'));
-	Route::delete('{section}/delete', array('as' => 'sections.destroy', 'uses' => 'SectionsController@destroy'));
-	Route::patch('{section}/update', array('as' => 'sections.update', 'uses' => 'SectionsController@update'));
-	Route::post('save', array('as' => 'sections.store', 'uses' => 'SectionsController@store'));
+	Route::get('showSections', [
+		'as' => 'showSections_path',
+		'uses' => 'SectionsController@index'
+		]);
+
+	Route::get('{section}/showSection', [
+		'as' => 'showSection_path',
+		'uses' => 'SectionsController@show'
+		]);
+
+	Route::delete('{section}/deleteSection', [
+		'as' => 'deleteSection_path',
+		'uses' => 'SectionsController@destroy'
+		]);
+
+	Route::patch('{section}/updateSection', [
+		'as' => 'updateSection_path',
+		'uses' => 'SectionsController@update'
+		]);
+
+	Route::post('saveSection', [
+		'as' => 'saveSection_path',
+		'uses' => 'SectionsController@store'
+		]);
 });

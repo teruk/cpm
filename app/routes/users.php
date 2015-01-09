@@ -2,21 +2,67 @@
 // Routes for UsersController
 Route::group(['prefix' => 'users', 'before' => 'auth'], function()
 {
-	Route::get('/', 'UsersController@index');
-	Route::get('/', array('as' => 'users.index', 'uses' => 'UsersController@index'));
-	Route::get('{user}/show', array('as' => 'users.show', 'uses' => 'UsersController@show'));
+	/** general user routes */
+	Route::get('showUsers', [
+		'as' => 'showUsers_path',
+		'uses' => 'UsersController@index'
+		]);
 
-	Route::delete('{user}/delete', array('as' => 'users.destroy', 'uses' => 'UsersController@destroy'));
-	Route::patch('{user}/update', array('as' => 'users.update', 'uses' => 'UsersController@update'));
-	Route::patch('{user}/set_new_password', array('as' => 'users.setNewPassword', 'uses' => 'UsersController@setNewPassword'));
-	Route::post('save', array('as' => 'users.store', 'uses' => 'UsersController@store'));
+	Route::get('{user}/showUser', [
+		'as' => 'showUser_path',
+		'uses' => 'UsersController@show'
+		]);
 
-	Route::delete('{user}/detach_role', array('as' => 'users.detachRole', 'uses' => 'UsersController@detachRole'));
-	Route::patch('{user}/attach_role', array('as' => 'users.attachRole', 'uses' => 'UsersController@attachRole'));
+	Route::delete('{user}/deleteUser', [
+		'as' => 'deleteUser_path',
+		'uses' => 'UsersController@destroy'
+		]);
 
-	Route::delete('{user}/detach_researchgroup', array('as' => 'users.detachResearchGroup', 'uses' => 'UsersController@detachResearchGroup'));
-	Route::patch('{user}/attach_researchgroup', array('as' => 'users.attachResearchGroup', 'uses' => 'UsersController@attachResearchGroup'));
+	Route::patch('{user}/updateUser', [
+		'as' => 'updateUser_path',
+		'uses' => 'UsersController@update'
+		]);
 
-	Route::patch('{user}/activate', array('as' => 'users.activate', 'uses' => 'UsersController@activate'));
-	Route::patch('{user}/deactivate', array('as' => 'users.deactivate', 'uses' => 'UsersController@deactivate'));
+	Route::post('saveUser', [
+		'as' => 'saveUser_path',
+		'uses' => 'UsersController@store'
+		]);
+
+	Route::patch('{user}/setNewPassword', [
+		'as' => 'setUserNewPassword_path',
+		'uses' => 'UsersController@setNewPassword'
+		]);
+
+	/** user role relationship routes */
+	Route::delete('{user}/detachRole', [
+		'as' => 'detachRoleUser_path',
+		'uses' => 'UsersController@detachRole'
+		]);
+
+	Route::patch('{user}/attachRole', [
+		'as' => 'attachRoleUser_path',
+		'uses' => 'UsersController@attachRole'
+		]);
+
+	/** user researchgroup relationship routes */
+	Route::delete('{user}/detachResearchgroup', [
+		'as' => 'detachResearchgroupUser_path',
+		'uses' => 'UsersController@detachResearchgroup'
+		]);
+
+	Route::patch('{user}/attachResearchgroup', [
+		'as' => 'attachResearchgroupUser_path',
+		'uses' => 'UsersController@attachResearchgroup'
+		]);
+
+	/** user de-/activation routes */
+	Route::patch('{user}/activateUser', [
+		'as' => 'activateUser_path',
+		'uses' => 'UsersController@active'
+		]);
+
+	Route::patch('{user}/deactivateUser', [
+		'as' => 'deactivateUser_path',
+		'uses' => 'UsersController@deactivate'
+		]);
 });

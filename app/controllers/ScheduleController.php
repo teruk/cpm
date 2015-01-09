@@ -1,38 +1,43 @@
 <?php
 
 class ScheduleController extends \BaseController {
-
-	/**
-	* default show schedule for a degree course
-	*/
-	public function getDefaultSchedule()
-	{
-		$turn = Turn::find(Setting::setting('current_turn')->first()->value); // current turn
-		$degreecourse = Degreecourse::findOrFail(1);
-		$this->setScheduleSession($turn->id, $degreecourse->id, 1);
-
-		return Redirect::route('overview.generate_schedule');
-	}
 	
 	/**
-	* show schedule for a degree course
-	*/
-	public function getSpecificSchedule(Turn $turn, Degreecourse $degreecourse, $semester)
+	 * get a schedule for a default degree course
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
+	public function getDefaultSchedule(Turn $turn)
+	{
+		$degreecourse = Degreecourse::first();
+		$this->setScheduleSession($turn->id, $degreecourse->id, 1);
+
+		return Redirect::route('showSelectedSchedule_path');
+	}
+
+	/**
+	 * get schedule for a specific degree course semester
+	 * @param  Turn         $turn         [description]
+	 * @param  Degreecourse $degreecourse [description]
+	 * @param  [type]       $semester     [description]
+	 * @return [type]                     [description]
+	 */
+	public function getSchedule(Turn $turn, Degreecourse $degreecourse, $semester)
 	{
 		$this->setScheduleSession($turn->id, $degreecourse->id, $semester);
 
-		return Redirect::route('overview.generate_schedule');
+		return Redirect::route('showSelectedSchedule_path');
 	}
 
 	/**
 	* show schedule for a degree course
 	*/
-	public function grabSchedule()
+	public function fetchSchedule()
 	{
 		$input = Input::all();
 		$this->setScheduleSession($input['turn_id'], $input['degreecourse_id'], $input['semester']);
 
-		return Redirect::route('overview.generate_schedule');
+		return Redirect::route('showSelectedSchedule_path');
 	}
 
 	/**
@@ -46,9 +51,9 @@ class ScheduleController extends \BaseController {
 		
 		$turn = Turn::findOrFail(Session::get('overview_schedule_turn'));
 		$degreecourse = Degreecourse::findOrFail(Session::get('overview_schedule_degreecourse'));
+		$semester = Session::get('overview_schedule_semester');
 
 		$output = $this->generate();
-		$semester = Session::get('overview_schedule_semester');
 
 		$this->layout->content = View::make('overviews.schedule', compact('output','degreecourse', 'listofdegreecourses', 'listofturns', 'semester', 'turn'));
 	}
@@ -72,9 +77,9 @@ class ScheduleController extends \BaseController {
 	*/
 	private function generate()
 	{
-		$semester = Session::pull('overview_schedule_semester');
-		$degreecourseId = Session::pull('overview_schedule_degreecourse');
-		$turnId = Session::pull('overview_schedule_turn');
+		$semester = Session::get('overview_schedule_semester');
+		$degreecourseId = Session::get('overview_schedule_degreecourse');
+		$turnId = Session::get('overview_schedule_turn');
 
 		$listofcoursetypes = CourseType::lists('short','id');
 		// Get all lectures

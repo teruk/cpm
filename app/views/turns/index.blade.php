@@ -48,12 +48,12 @@
 		          	<tbody>
 						@foreach( $turns as $turn )
 							<tr>
-								<td><a href="{{ route('turns.show', $turn->id) }}">{{ $turn->name }} {{ $turn->year }}</a></td>
+								<td>{{ link_to_route('showTurn_path', $turn->present(), $turn->id) }}</td>
 								<td>{{ $turn->semester_start }}</td>
 								<td>{{ $turn->semester_end }}</td>
 								<td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('turns.destroy', $turn->id))) }}
-										{{ HTML::decode(link_to_route('turns.show', '<i class="glyphicon glyphicon-edit"></i>', array($turn->id), array('class' => 'btn btn-xs btn-warning'))) }}
+									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteTurn_path', $turn->id))) }}
+										{{ HTML::decode(link_to_route('showTurn_path', '<i class="glyphicon glyphicon-edit"></i>', array($turn->id), array('class' => 'btn btn-xs btn-warning'))) }}
 
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Semester löschen', 'data-message' => 'Wollen Sie das Semester wirklich löschen?')) }}
 										{{ Form::close() }}

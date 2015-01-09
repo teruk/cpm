@@ -1,12 +1,12 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('researchgroups')}}">Arbeitsbereichsmanagement</a></li>
+	  <li>{{ link_to_route('showResearchgroups_path', 'Arbeitsbereichsmanagement') }}</li>
 	  <li class="active">{{ $researchgroup->name }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h3>{{ $researchgroup->name }} (<a href="{{ route('departments.show', $researchgroup->department_id) }}">{{ $listofdepartments[$researchgroup->department_id] }}</a>)</h3>
+	<h3>{{ $researchgroup->name }} ({{ link_to_route('showDepartment_path', $researchgroup->department->name, $researchgroup->department_id) }}</h3>
 	<div class="row">
 		<div class="col-sm-6">
 			<div class="panel panel-primary">
@@ -14,7 +14,7 @@
 			    	<h3 class="panel-title">Informationen</h3>
 			    </div>
 			    <div class="panel-body">
-					{{ Form::model($researchgroup, ['method' => 'PATCH', 'route' => ['researchgroups.update', $researchgroup->id]]) }}
+					{{ Form::model($researchgroup, ['method' => 'PATCH', 'route' => ['updateResearchgroup_path', $researchgroup->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>
@@ -62,7 +62,7 @@
 					              	<tbody>
 										@foreach( $employees as $employee )
 											<tr>
-												<td><a href="{{ route('employees.show', $employee->id) }}">{{ $employee->firstname }} {{ $employee->name }}</a></td>
+												<td>{{ link_to_route('showEmployee_path', $employee->present(), $employee->id)}}</td>
 												<td>{{ $employee->teaching_load }} SWS</td>
 												<td>{{ $employee->employed_since }}</td>
 												<td>{{ $employee->employed_till }}</td>

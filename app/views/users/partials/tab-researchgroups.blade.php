@@ -23,7 +23,7 @@
 									<td>{{ $researchgroup->short }}</td>
 									<td>
 										@if (Entrust::can('detach_user_researchgroup') || Entrust::hasRole('Admin'))
-												{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('users.detachResearchGroup', $user->id))) }}
+												{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('detachResearchgroupUser_path', $user->id))) }}
 												{{ Form::hidden('researchgroup_id', $researchgroup->id) }}
 												{{ Form::hidden('tabindex', "researchgroups") }}
 												{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zuordnung löschen')) }}
@@ -40,7 +40,7 @@
 								<th colspan="3">Arbeitsbereich zuordnen:</th>
 							</tr>
 							<tr>
-								{{ Form::model($user, ['method' => 'PATCH', 'route' => ['users.attachResearchGroup', $user->id]]) }}
+								{{ Form::model($user, ['method' => 'PATCH', 'route' => ['attachResearchgroupUser_path', $user->id]]) }}
 								<td>{{ Form::select('researchgroup_id', $available_researchgroups, null, array('class' => 'form-control input-sm')) }} </td>
 								<td></td>
 								<td>

@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('users')}}">Benutzermanagement</a></li>
+	  <li>{{ link_to_route('showUsers_path', 'Benutzermanagement') }}</li>
 	  <li class="active">{{ $user->name }}</li>
 	</ol>
 @stop

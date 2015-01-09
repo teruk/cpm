@@ -24,7 +24,7 @@
 	        	<div class="form-group">
 	        		{{ Form::label('content', 'Text*:', array('class' => "col-lg-3 control-label", 'id' => "content")) }}
 	        		<div class="col-lg-9">
-	        			{{ Form::textarea('content', '', array('id' => "content", 'placeholder' => 'Text', 'class' => "form-control input-sm", 'rows'=>5, 'style' => 'resize:none;')) }}
+	        			{{ Form::textarea('content', '', array('id' => "content", 'max'=> 10, 'placeholder' => 'Text', 'class' => "form-control input-sm", 'rows'=>5, 'style' => 'resize:none;')) }}
 	        		</div>
 	        	</div>
 	        	

@@ -50,7 +50,7 @@
 						@foreach( $users as $user )
 				
 							<tr>
-		    					<td><a href="{{ route('users.show', $user->id) }}">{{ $user->name }}</a></td>
+		    					<td>{{ link_to_route('showUser_path', $user->name, $user->id) }}</td>
 		    					<!-- <td>{{ $user->username }}</td> -->
 		    					<td>{{ $user->email }}</td>
 		    					<!-- <td>{{ $user->password }}</td> -->
@@ -68,8 +68,8 @@
 		    					</td>
 		    					<td>{{ date('d.m.Y', strtotime($user->last_login)) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('users.destroy', $user->id))) }}
-		    						{{ HTML::decode(link_to_route('users.show', '<i class="glyphicon glyphicon-edit"></i>', array($user->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteUser_path', $user->id))) }}
+		    						{{ HTML::decode(link_to_route('showUser_path', '<i class="glyphicon glyphicon-edit"></i>', array($user->id), array('class' => 'btn btn-xs btn-warning'))) }}
 		    						@if((Entrust::hasRole('Admin') || Entrust::can('delete_user')) && !$user->hasRole('Admin'))
 		    							{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Benutzer löschen', 'data-message' => 'Wollen Sie den Benutzer wirklich löschen?')) }}
 		    						@endif

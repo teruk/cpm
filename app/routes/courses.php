@@ -8,9 +8,14 @@ Route::group(['prefix' => 'courses', 'before' => 'auth'], function()
 		'uses' => 'CoursesController@index'
 		]);
 
-	Route::get('{course}/showCourse', [
-		'as' => 'showCourse_path',
-		'uses' => 'CoursesController@show'
+	Route::get('{course}/editCourseInformation', [
+		'as' => 'editCourseInformation_path',
+		'uses' => 'CoursesController@edit'
+		]);
+
+	Route::get('{course}/showCourseHistory', [
+		'as' => 'showCourseHistory_path',
+		'uses' => 'CoursesController@showHistory'
 		]);
 
 	Route::delete('{course}/deleteCourse', [

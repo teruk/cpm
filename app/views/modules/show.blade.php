@@ -24,7 +24,7 @@
 
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('modules')}}">Modulmanagement</a></li>
+	  <li>{{ link_to_route('showModules_path', 'Modulmanagement') }}</li>
 	  <li class="active">{{ $module->name }}</li>
 	</ol>
 @stop
@@ -59,7 +59,7 @@
 		@else
 			<li>
 		@endif
-			<a href="#mediumtermplanning" data-toggle="tab">Mittelfristige Lehrlpanung</a></li>
+			<a href="#mediumtermplanning" data-toggle="tab">Mittelfristige Lehrplanung</a></li>
 		
 	</ul>
 	<div id="myTabContent" class="tab-content">

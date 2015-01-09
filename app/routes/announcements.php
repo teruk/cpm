@@ -7,7 +7,7 @@ Route::group(['prefix' => 'announcements', 'before' => 'auth'], function()
 		'uses' => 'AnnouncementsController@index'
 		]);
 
-	Route::post('save', [
+	Route::post('saveAnnouncement', [
 		'as' => 'saveAnnouncement_path',
 		'uses' => 'AnnouncementsController@store'
 		]);

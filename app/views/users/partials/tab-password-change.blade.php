@@ -2,7 +2,7 @@
 	<div class="col-sm-8">
 		<div class="panel panel-primary">
 	        <div class="panel-body">
-				{{ Form::model($user, ['method' => 'PATCH', 'route' => ['users.setNewPassword', $user->id], 'class' => "form-horizontal"])}}
+				{{ Form::model($user, ['method' => 'PATCH', 'route' => ['setUserNewPassword_path', $user->id], 'class' => "form-horizontal"])}}
 				<fieldset>
 					<legend>Passwort aktualisieren</legend>
 					<div class="form-group">

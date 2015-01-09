@@ -6,7 +6,7 @@
 
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('roles')}}">Rollenmanagement</a></li>
+	  <li>{{ link_to_route('showRoles_path', 'Rollenmanagement') }}</li>
 	  <li class="active">{{ $role->name }}</li>
 	</ol>
 @stop
@@ -39,7 +39,7 @@
 				<div class="col-sm-8">
 					<div class="panel panel-primary">
 			            <div class="panel-body">
-							{{ Form::model($role, ['method' => 'PATCH', 'route' => ['roles.update', $role->id], 'class' => "form-horizontal"]) }}
+							{{ Form::model($role, ['method' => 'PATCH', 'route' => ['updateRole_path', $role->id], 'class' => "form-horizontal"]) }}
 							<fieldset>
 								<legend>Rolle aktualisieren</legend>
 								<div class="form-group">
@@ -108,7 +108,7 @@
 			            		<tbody>
 									@foreach ($role->perms as $perm)
 										<tr>
-											<td><a href="{{ route('permissions.show', $perm->id) }}">{{ $perm->display_name }}</a></td>
+											<td>{{ link_to_route('showPermission_path', $perm->display_name, $perm->id) }}</td>
 										</tr>
 									@endforeach
 								</tbody>
@@ -138,7 +138,7 @@
 			            			</tr>
 			            		</thead>
 			            		<tbody>
-			            			{{ Form::model($role, ['method' => 'PATCH', 'route' => ['roles.updatePermission',$role->id]]) }}
+			            			{{ Form::model($role, ['method' => 'PATCH', 'route' => ['updatePermission_path',$role->id]]) }}
 									@foreach($role->perms as $perm)
 											<!-- <tr>
 												<td>{{ $perm->display_name }}</td>

@@ -5,12 +5,12 @@ class RoomOccupationController extends \BaseController {
 	/**
 	* returns the schedule of a room
 	*/
-	public function grabRoom()
+	public function fetchRoom()
 	{
 		$input = Input::all();
 		$this->setRoomOccupationSession($input['turn_id'], $input['room_id']);
 
-		return Redirect::route('overview.generate_room');
+		return Redirect::route('showSelectedRoomOccupation_path');
 	}
 
 	/**
@@ -19,19 +19,18 @@ class RoomOccupationController extends \BaseController {
 	public function getSpecificRoom(Turn $turn, Room $room)
 	{
 		$this->setRoomOccupationSession($turn->id, $room->id);
-		return Redirect::route('overview.generate_room');
+		return Redirect::route('showSelectedRoomOccupation_path');
 	}
 
 	/**
 	 * returns a default setting for a room
 	 * @return [type] [description]
 	 */
-	public function getDefaultRoom()
+	public function getDefaultRoom(Turn $turn)
 	{
-		$turn = Turn::findOrFail(Setting::setting('current_turn')->first()->value); // current turn
 		$room = Room::findOrFail(5);
 		$this->setRoomOccupationSession($turn->id, $room->id);
-		return Redirect::route('overview.generate_room');
+		return Redirect::route('showSelectedRoomOccupation_path');
 	}
 	
 	/**
@@ -39,8 +38,8 @@ class RoomOccupationController extends \BaseController {
 	*/
 	public function generateRoom()
 	{
-		$turn = Turn::findOrFail(Session::get('overview_room_turn'));
-		$room = Room::findOrFail(Session::get('overview_room_room'));
+		$turn = Turn::findOrFail(Session::get('roomOccupation_turnId'));
+		$room = Room::findOrFail(Session::get('roomOccupation_roomId'));
 		$output = $this->generate($turn, $room);
 		$listofturns = Turn::getList();
 		$listofrooms = Room::getList();
@@ -56,8 +55,8 @@ class RoomOccupationController extends \BaseController {
 	 */
 	private function setRoomOccupationSession($turnId, $roomId)
 	{
-		Session::set('overview_room_turn', $turnId);
-		Session::set('overview_room_room', $roomId);
+		Session::set('roomOccupation_turnId', $turnId);
+		Session::set('roomOccupation_roomId', $roomId);
 	}
 
 	/**

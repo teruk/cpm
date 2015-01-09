@@ -3,13 +3,34 @@
 // Routes for RolesController
 Route::group(['prefix' => 'roles', 'before' => 'auth'], function()
 {
-	Route::get('/', 'RolesController@index');
-	Route::get('/', array('as' => 'roles.index', 'uses' => 'RolesController@index'));
-	Route::get('{role}/show', array('as' => 'roles.show', 'uses' => 'RolesController@show'));
-	Route::patch('{role}/update', array('as' => 'roles.update', 'uses' => 'RolesController@update'));
-	Route::post('save', array('as' => 'roles.store', 'uses' => 'RolesController@store'));
-	Route::delete('{role}/delete', array('as' => 'roles.destroy', 'uses' => 'RolesController@destroy'));
+	Route::get('showRoles', [
+		'as' => 'showRoles_path',
+		'uses' => 'RolesController@index'
+		]);
 
-	Route::delete('{role}/detach_permission', array('as' => 'roles.detachPermission', 'uses' => 'RolesController@detachPermission'));
-	Route::patch('{role}/update_permission', array('as' => 'roles.updatePermission', 'uses' => 'RolesController@updatePermission'));
+	Route::get('{role}/showRole', [
+		'as' => 'showRole_path',
+		'uses' => 'RolesController@show'
+		]);
+
+	Route::delete('{role}/deleteRole', [
+		'as' => 'deleteRole_path',
+		'uses' => 'RolesController@destroy'
+		]);
+
+	Route::patch('{role}/updateRole', [
+		'as' => 'updateRole_path',
+		'uses' => 'RolesController@update'
+		]);
+
+	Route::post('saveRole', [
+		'as' => 'saveRole_path',
+		'uses' => 'RolesController@store'
+		]);
+
+	/** roles permission relationship routes */
+	Route::patch('{role}/updatePermission', [
+		'as' => 'updatePermission_path',
+		'uses' => 'RolesController@updatePermission'
+		]);
 });

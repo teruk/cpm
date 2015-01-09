@@ -1,12 +1,12 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('turns')}}">Semestermanagement</a></li>
-	  <li class="active">{{ $turn->name }} {{ $turn->year }}</li>
+	  <li>{{ link_to_route('showTurns_path', 'Semestermanagement') }}</li>
+	  <li class="active">{{ $turn->present() }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h3>{{ $turn->name }} {{ $turn->year }}</h3>
+	<h3>{{ $turn->present() }}</h3>
 	<div class="row">
 		<div class="col-sm-6">
 			<div class="panel panel-primary">
@@ -14,7 +14,7 @@
 			    	<h3 class="panel-title">Informationen</h3>
 			    </div>
 			    <div class="panel-body">
-					{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['turns.update', $turn->id]]) }}
+					{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['updateTurn_path', $turn->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>

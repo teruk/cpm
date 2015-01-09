@@ -45,10 +45,10 @@
 						@foreach( $rotations as $rotation )
 				
 							<tr>
-	        					<td><a href="{{ route('rotations.show', $rotation->id) }}">{{ $rotation->name }}</a></td>
+	        					<td>{{ link_to_route('showRotation_path', $rotation->name, $rotation->id) }}</td>
 	        					<td>
-	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('rotations.destroy', $rotation->id))) }}
-										{{ HTML::decode(link_to_route('rotations.show', '<i class="glyphicon glyphicon-edit"></i>', array($rotation->id), array('class' => 'btn btn-xs btn-warning'))) }}
+	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRotation_path', $rotation->id))) }}
+										{{ HTML::decode(link_to_route('showRotation_path', '<i class="glyphicon glyphicon-edit"></i>', array($rotation->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Turnus löschen', 'data-message' => 'Wollen Sie den Turnus wirklich löschen?')) }}
 									{{ Form::close() }}
 	        					</td>

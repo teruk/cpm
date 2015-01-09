@@ -60,11 +60,11 @@ class SectionsController extends BaseController {
 		if ($section->updateUniques())
 		{
 			Flash::success('Der Bereich wurde aktualisiert.');
-			return Redirect::route('sections.show', $section->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($section->errors());
-		return Redirect::route('sections.show', array_get($section->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 }

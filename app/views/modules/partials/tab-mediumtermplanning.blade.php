@@ -46,10 +46,10 @@
 									@endif
 									</td> -->
 									<td>
-										{{ HTML::decode(link_to_route('modules.editMediumtermplanning', '<i class="glyphicon glyphicon-edit"></i>', array($module->id, $m->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mittelfristige Lehrplanung bearbeiten'))) }}
+										{{ HTML::decode(link_to_route('editMediumtermplanning_path', '<i class="glyphicon glyphicon-edit"></i>', array($module->id, $m->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mittelfristige Lehrplanung bearbeiten'))) }}
 									</td>
 									<td>	
-										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('modules.destroyMediumtermplanning', $module->id, $m->id))) }}
+										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteMediumtermplanning_path', $module->id, $m->id))) }}
 										{{ Form::hidden('tabindex', "mediumtermplanning") }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger','data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Mittelfristige Lehrplanung löschen', 'data-message' => 'Wollen Sie die Mittelfristige Lehrplanung für dieses Semester wirklich löschen?')) }}
 										{{ Form::close() }}
@@ -57,19 +57,6 @@
 							</tr>
 						@endforeach
 					</tbody>
-					<!-- <tfoot>
-						<tr>
-							<th colspan="4">Semester zur Mittelfristigen Lehrplanung hinzufügen:</th>
-						</tr>
-						{{ Form::model($module, ['method' => 'POST', 'route' => ['modules.addMediumtermplanning', $module->id]]) }}
-						{{ Form::hidden('tabindex', "mediumtermplanning") }}
-							<tr>
-								<td>{{ Form::select('turn_id', $available_turns,'', array('id' => "turn_id", 'class' => "form-control input-sm")) }} </td>
-								<td colspan=3></td>
-								<td>{{ Form::button('<i class="glyphicon glyphicon-plus"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Semester zur Mittelfristigen Lehrplanung hinzufügen')) }}</td>
-							</tr>
-						{{ Form::close() }}
-					</tfoot> -->
 				</table>
 			</div>
 		</div>

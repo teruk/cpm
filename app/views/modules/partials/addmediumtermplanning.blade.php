@@ -1,7 +1,7 @@
 <div class="modal-dialog">
 	<div class="modal-content">
   		<div class="modal-body">
-            {{ Form::model($module, ['method' => 'POST', 'route' => ['modules.addMediumtermplanning', $module->id], 'class' => "form-horizontal"]) }}
+            {{ Form::model($module, ['method' => 'POST', 'route' => ['saveMediumtermplanning_path', $module->id], 'class' => "form-horizontal"]) }}
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <fieldset>
                 <legend>Mittelfristige Lehrplanung - Semester hinzufügen</legend>

@@ -34,14 +34,14 @@
 									<td>
 										@if (Entrust::can('detach_user_role') || Entrust::hasRole('Admin'))
 											@if (Entrust::user()->id != $user->id)
-												{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('users.detachRole', $user->id))) }}
+												{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('detachRoleUser_path', $user->id))) }}
 												{{ Form::hidden('role_id', $role->id) }}
 												{{ Form::hidden('tabindex', "roles") }}
 												{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zuordnung löschen')) }}
 												{{ Form::close() }}
 											@else
 												@if($role->name != "Admin")
-													{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('users.detachRole', $user->id))) }}
+													{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('detachRoleUser_path', $user->id))) }}
 													{{ Form::hidden('role_id', $role->id) }}
 													{{ Form::hidden('tabindex', "roles") }}
 													{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zuordnung löschen')) }}
@@ -60,7 +60,7 @@
 							<th colspan="2">Rolle zuordnen:</th>
 						</tr>
 						<tr>
-							{{ Form::model($user, ['method' => 'PATCH', 'route' => ['users.attachRole',$user->id]]) }}
+							{{ Form::model($user, ['method' => 'PATCH', 'route' => ['attachRoleUser_path',$user->id]]) }}
 							<td>{{ Form::select('role_id', $available_roles, null, array('class' => 'form-control input-sm')) }} </td>
 							<!-- <td></td> -->
 							<td>

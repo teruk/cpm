@@ -83,7 +83,7 @@ class ModulesController extends \BaseController {
 		$mtp_turns = array();
 		foreach ($mtp as $m) {
 			array_push($mtp_turn_ids, $m->turn_id);
-			$mtp_turns = array_add($mtp_turns, $m->turn_id, $m->turn->name.' '.$m->turn->year);
+			$mtp_turns = array_add($mtp_turns, $m->id, $m->turn->name.' '.$m->turn->year);
 		}
 		if (sizeof($mtp_turn_ids) > 0)
 			$turns = Turn::whereNotIn('id',$mtp_turn_ids)->orderBy('year','DESC')->orderBy('name','DESC')->get();
@@ -115,11 +115,11 @@ class ModulesController extends \BaseController {
 		if ( $module->updateUniques() )
 		{
 			Flash::success('Das Modul wurde aktualisiert.');
-			return Redirect::route('modules.show', $module->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($module->errors());
-		return Redirect::route('modules.show', array_get($module->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 	/**
@@ -133,11 +133,11 @@ class ModulesController extends \BaseController {
 		if($module->saveDegreeCourse($input = Input::all()))
 		{
 			Flash::success('Das Modul wurde dem Studiengang zugeordnet.');
-			return Redirect::route('modules.show', $module->id)->with('tabindex',$input['tabindex']);
+			return Redirect::back()->with('tabindex',$input['tabindex']);
 		}
 		
 		Flash::error('Die Kombination aus Modul-Studiengang-Semester existiert bereits.');
-		return Redirect::route('modules.show', $module->id)->with('tabindex',$input['tabindex']);
+		return Redirect::back()->with('tabindex',$input['tabindex']);
 	}
 	
 	/**
@@ -149,7 +149,7 @@ class ModulesController extends \BaseController {
 		$module->degreecourses()->detach(Input::get('degree_course_id'));
 
 		Flash::success('Die Zuordnung wurde erfolgreich aufgehoben.');
-		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
+		return Redirect::back()->with('tabindex',Input::get('tabindex'));
 	}
 	
 	/**
@@ -167,7 +167,7 @@ class ModulesController extends \BaseController {
 					'updated_at' => new Datetime), false);
 
 		Flash::success('Die Zuordnung wurde erfolgreich aktualisiert.');
-		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
+		return Redirect::back()->with('tabindex',Input::get('tabindex'));
 	}
 
 	/**
@@ -192,140 +192,6 @@ class ModulesController extends \BaseController {
 		$module->delete();
 		Flash::success('Modul erfolgreich gelöscht.');
 		return Redirect::back();
-	}
-	
-	/**
-	* copy medium term planning
-	* @param Module $module
-	*/
-	public function copyMediumtermplanning(Module $module)
-	{
-		$turn = Turn::find(Input::get('turn_id_target'));  // find the attached semester turn
-		$mediumtermplanning = Mediumtermplanning::where('turn_id','=',Input::get('turn_id_source'))->where('module_id','=',$module->id)->first();
-		$newmediumtermplanning = new Mediumtermplanning();
-		$newmediumtermplanning->module_id = $module->id;
-		$newmediumtermplanning->turn_id = $turn->id;
-		if ($newmediumtermplanning->save())
-		{
-			foreach ($mediumtermplanning->employees as $e) {
-				$newmediumtermplanning->employees()->attach($e->id, array(
-					'semester_periods_per_week' => $e->pivot->semester_periods_per_week, 
-					'annulled' => $e->pivot->annulled));
-			}
-
-			Flash::success('Die mittelfristige Lehrplanung wurde erfolgreich kopiert.');
-			return Redirect::route('modules.show', $module->id)->with('tabindex', Input::get('tabindex'));
-		}
-
-		Flash::error('Die mittelfristige Lehrplanung konnte nicht kopiert werden.');
-		return Redirect::route('modules.show', $module->id)->with('tabindex', Input::get('tabindex'));
-	}
-	
-	
-	/**
-	 * delete medium term planning
-	 * @param Module $module
-	 * @param Mediumtermplanning $mediumtermplanning
-	 */
-	public function destroyMediumtermplanning(Module $module, Mediumtermplanning $mediumtermplanning)
-	{
-		// first step: delete all entries in employee_mediumtermplanning table
-		$mediumtermplanning->detachEmployees();
-		// second step: delete mediumtermplanning table
-		$mediumtermplanning->delete();
-
-		Flash::success('Die Planung wurde erfolgreich gelöscht.');
-		return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
-	}
-	
-	/**
-	* edit medium term planning
-	* @param Module $module
-	* @param Mediumtermplanning $mediumtermplanning
-	*/
-	public function editMediumtermplanning(Module $module, Mediumtermplanning $mediumtermplanning)
-	{
-		$mtp_employees_ids = $mediumtermplanning->getEmployeeIds();
-		$available_employees = Employee::getAvailableEmployeesWithResearchgroup($mtp_employees_ids);
-
-		$this->layout->content = View::make('modules.mediumtermplanning', compact('module', 'mediumtermplanning','available_employees'));
-	}
-	
-	/**
-	 * [storeMediumtermplanning description]
-	 * @param  Module $module [description]
-	 * @return [type]         [description]
-	 */
-	public function storeMediumtermplanning(Module $module)
-	{
-		$mediumtermplanning = new Mediumtermplanning();
-		$mediumtermplanning->module_id = $module->id;
-		$mediumtermplanning->turn_id = Input::get('turn_id');
-
-		if ( $mediumtermplanning->save() )
-		{
-			Flash::success('Ein neues Semester wurde zur mittelfristigen Lehrplanung des Moduls erfolgreich hinzugefügt.');
-			return Redirect::route('modules.show', $module->id)->with('tabindex',Input::get('tabindex'));
-		}
-
-		Flash::error($mediumtermplanning->errors());
-		return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex',Input::get('tabindex'));
-	}
-	
-	/**
-	 * [addEmployee description]
-	 * @param Module             $module             [description]
-	 * @param Mediumtermplanning $mediumtermplanning [description]
-	 */
-	public function addEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
-	{
-		if (Input::get('annulled')==1)
-			$annulled = Input::get('annulled');
-		else
-			$annulled = 0;
-
-		$mediumtermplanning->employees()->attach(Input::get('employee_id'),array(
-				'semester_periods_per_week' => Input::get('semester_periods_per_week'),
-				'annulled' => $annulled,
-			));
-
-		Flash::success('Mitarbeiter erfolgreich zur Planung hinzugefügt.');
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
-	}
-	
-	/**
-	 * [updateEmployee description]
-	 * @param  Module             $module             [description]
-	 * @param  Mediumtermplanning $mediumtermplanning [description]
-	 * @return [type]                                 [description]
-	 */
-	public function updateEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
-	{
-		if (Input::get('annulled')==1)
-			$annulled = Input::get('annulled');
-		else
-			$annulled = 0;
-
-		$mediumtermplanning->employees()->updateExistingPivot(Input::get('employee_id'), array(
-				'semester_periods_per_week' => Input::get('semester_periods_per_week'),
-				'annulled' => $annulled,
-			),false);
-
-		Flash::success('Mitarbeiter erfolgreich aktualisiert.');
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
-	}
-	
-	/**
-	 * 
-	 * @param Module $module
-	 * @param Mediumtermplanning $mediumtermplanning
-	 */
-	public function destroyEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
-	{
-		$mediumtermplanning->employees()->detach(Input::get('employee_id'));
-
-		Flash::success('Mitarbeiter erfolgreich gelöscht.');
-		return Redirect::route('modules.editMediumtermplanning', array($module->id, $mediumtermplanning->id));
 	}
 	
 	// public function export()

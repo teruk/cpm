@@ -60,11 +60,10 @@ class RotationsController extends BaseController {
 		if ($rotation->updateUniques())
 		{
 			Flash::success('Der Abschluss wurde aktualisiert.');
-			return Redirect::route('rotations.show', $rotation->id);
+			return Redirect::back();
 		}
 		
 		Flash::error($rotation->errors());
-		return Redirect::route('rotations.show', array_get($rotation->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
-	
 }

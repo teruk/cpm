@@ -81,11 +81,11 @@ class RolesController extends BaseController {
 			}
 			
 			Flash::error($role->errors());
-			return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput();
+			return Redirect::back()->withInput();
 		}
 		
 		Flash::error('Die Admin-Rolle kann nicht aktualisiert werden!');
-		return Redirect::route('roles.show', array_get($role->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -136,24 +136,6 @@ class RolesController extends BaseController {
 		}
 
 		Flash::success('Die Berechtigung wurden erfolgreich aktualisiert.');
-		return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
-	}
-
-	/**
-	* detach permission
-	* @param Role $role
-	*/
-	public function detachPermission(Role $role)
-	{
-		$permission = Permission::find(Input::get('permission_id'));
-		if (Entrust::hasRole('Admin') || Entrust::can('detach_role_permission'))
-		{
-			$role->detachPermission($permission);
-			Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
-			return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
-		}
-		
-		Flash::error('Die Zuordnung konnte nicht aufgelöst werden. Fehlende Rechte!');
-		return Redirect::route('roles.show',$role->id)->with('tabindex', Input::get('tabindex'));
+		return Redirect::back()->with('tabindex', Input::get('tabindex'));
 	}
 }

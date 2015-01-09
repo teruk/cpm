@@ -52,7 +52,7 @@
 						@foreach( $rooms as $room )
 				
 							<tr>
-		    					<td><a href="{{ route('rooms.show', $room->id) }}">{{ $room->name }}</a></td>
+		    					<td>{{ link_to_route('showRoom_path', $room->name, $room->id) }}</td>
 		    					<td>{{ $room->location }}</td>
 		    					<td>{{ $room->seats }}</td>
 		    					<td>{{ $listofroomtypes[$room->room_type_id] }}</td>
@@ -77,8 +77,8 @@
 		    						<td>nein</td>
 		    					@endif
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('rooms.destroy', $room->id))) }}
-										{{ HTML::decode(link_to_route('rooms.show', '<i class="glyphicon glyphicon-edit"></i>', array($room->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoom_path', $room->id))) }}
+										{{ HTML::decode(link_to_route('showRoom_path', '<i class="glyphicon glyphicon-edit"></i>', array($room->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raum löschen', 'data-message' => 'Wollen Sie den Raum wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('rooms')}}">Raummanagement</a></li>
+	  <li>{{ link_to_route('showRooms_path','Raummanagement') }}</li>
 	  <li class="active">{{ $room->name }}</li>
 	</ol>
 @stop
@@ -15,7 +15,7 @@
 			        <h3 class="panel-title">Informationen</h3>
 		        </div>
 		        <div class="panel-body">
-					{{ Form::model($room, ['method' => 'PATCH', 'route' => ['rooms.update', $room->id]]) }}
+					{{ Form::model($room, ['method' => 'PATCH', 'route' => ['updateRoom_path', $room->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>

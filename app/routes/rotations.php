@@ -3,10 +3,28 @@
 // Routes for RotationsController
 Route::group(['prefix' => 'rotations', 'before' => 'auth'], function()
 {
-	Route::get('/', 'RotationsController@index');
-	Route::get('/', array('as' => 'rotations.index', 'uses' => 'RotationsController@index'));
-	Route::get('{rotation}/show', array('as' => 'rotations.show', 'uses' => 'RotationsController@show'));
-	Route::delete('{rotation}/delete', array('as' => 'rotations.destroy', 'uses' => 'RotationsController@destroy'));
-	Route::patch('{rotation}/update', array('as' => 'rotations.update', 'uses' => 'RotationsController@update'));
-	Route::post('save', array('as' => 'rotations.store', 'uses' => 'RotationsController@store'));
+	Route::get('showRotations', [
+		'as' => 'showRotations_path',
+		'uses' => 'RotationsController@index'
+		]);
+
+	Route::get('{rotation}/showRotation', [
+		'as' => 'showRotation_path',
+		'uses' => 'RotationsController@show'
+		]);
+
+	Route::delete('{rotation}/deleteRotation', [
+		'as' => 'deleteRotation_path',
+		'uses' => 'RotationsController@destroy'
+		]);
+
+	Route::patch('{rotation}/updateRotation', [
+		'as' => 'updateRotation_path',
+		'uses' => 'RotationsController@update'
+		]);
+
+	Route::post('saveRotation', [
+		'as' => 'saveRotation_path',
+		'uses' => 'RotationsController@store'
+		]);
 });

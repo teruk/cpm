@@ -50,11 +50,11 @@
 		       		<tbody>
 						@foreach( $permissions as $perm )
 							<tr>
-								<td><a href="{{ route('permissions.show', $perm->id) }}">{{ $perm->display_name }}</a></td>
-		    					<td><a href="{{ route('permissions.show', $perm->id) }}">{{ $perm->name }}</a></td>
+								<td>{{ link_to_route('showPermission_path', $perm->display_name, $perm->id) }}</td>
+		    					<td>{{ link_to_route('showPermission_path', $perm->name, $perm->id) }}</td>
 		    					<td>{{ $perm->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('permissions.destroy', $perm->id))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deletePermission_path', $perm->id))) }}
 			    						@if (Entrust::can('delete_permission') || Entrust::hasRole('Admin'))
 			        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Berechtigung löschen', 'data-message' => 'Wollen Sie die Berechtigung wirklich löschen?')) }}
 			        					@endif

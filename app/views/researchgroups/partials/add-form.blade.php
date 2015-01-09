@@ -2,7 +2,7 @@
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-body">
-	        {{ Form::model(new Researchgroup, ['route' => ['researchgroups.store'], 'class' => "form-horizontal"])}}
+	        {{ Form::model(new Researchgroup, ['route' => ['saveResearchgroup_path'], 'class' => "form-horizontal"])}}
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	        <fieldset>
 	        	<legend>Neuen Arbeitsbereich anlegen</legend>

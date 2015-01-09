@@ -20,18 +20,24 @@
 						@else
 							@foreach( $module->degreecourses as $degreecourse )
 								<tr>
-									<td> 
-										<a href="{{ route('degree_courses.show', [$degreecourse->id]) }}">{{ $lists['degrees'][$degreecourse->degree_id] }} {{ $degreecourse->name }}</a>
-									</td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'PATCH', 'route' => array('modules.updateDegreecourse', $module->id))) }}
-									<td>{{ Form::select('section', $lists['sections'], $degreecourse->pivot->section, array('class' => 'form-control input-sm')) }}</td>
-									<td>{{ Form::selectRange('semester', 1, 8, $degreecourse->pivot->semester, array('class' => 'form-control input-sm')) }}</td>
-									{{ Form::hidden('degreecourse_id', $degreecourse->id) }}
-									{{ Form::hidden('tabindex', "degreecourses") }}
-									<td>{{ Form::button('<i class="glyphicon glyphicon-refresh"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zuordnung aktualisieren')) }}</td>
-									{{ Form::close() }}
 									<td>
-										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('modules.detach', $module->id))) }}
+										{{ link_to_route('showDegreecourse_path', $degreecourse->present(), $degreecourse->id) }}
+									</td>
+										{{ Form::open(array('class' => 'inline', 'method' => 'PATCH', 'route' => array('modules.updateDegreecourse', $module->id))) }}
+									<td>
+										{{ Form::select('section', $lists['sections'], $degreecourse->pivot->section, array('class' => 'form-control input-sm')) }}
+									</td>
+									<td>
+										{{ Form::selectRange('semester', 1, 8, $degreecourse->pivot->semester, array('class' => 'form-control input-sm')) }}
+									</td>
+										{{ Form::hidden('degreecourse_id', $degreecourse->id) }}
+										{{ Form::hidden('tabindex', "degreecourses") }}
+									<td>
+										{{ Form::button('<i class="glyphicon glyphicon-refresh"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Zuordnung aktualisieren')) }}
+									</td>
+										{{ Form::close() }}
+									<td>
+										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('detachDegreecourseModule_path', $module->id))) }}
 										{{ Form::hidden('degree_course_id', $degreecourse->id) }}
 										{{ Form::hidden('tabindex', "degreecourses") }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'title' => 'Zuordnung löschen', 'data-message' => 'Wollen Sie die Zuodnung wirklich löschen?')) }}
@@ -40,7 +46,7 @@
 								</tr>
 							@endforeach
 						@endif
-					{{ Form::model($module, ['method' => 'PATCH', 'route' => ['modules.attach', $module->id]]) }}
+					{{ Form::model($module, ['method' => 'PATCH', 'route' => ['attachDegreecourseModule_path', $module->id]]) }}
 					</tbody>
 					<tfoot>
 						<tr>

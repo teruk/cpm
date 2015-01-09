@@ -39,7 +39,7 @@
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_module'))
-              	<li><a href="{{ URL::to('modules')}}">Module</a></li>
+              	<li>{{ link_to_route('showModules_path', 'Module') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_room'))
@@ -81,7 +81,7 @@
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_permission'))
-                <li><a href="{{ URL::to('permissions')}}">Berechtigungen</a></li>
+                <li>{{ link_to_route('showPermissions_path', 'Berechtigungen') }}</li>
             @endif
            
       	</ul>

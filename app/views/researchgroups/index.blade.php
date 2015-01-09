@@ -46,15 +46,15 @@
 						@foreach( $researchgroups as $researchgroup )
 							<tr>
 								<td>{{ $researchgroup->short }}</td>
-								<td><a href="{{ route('researchgroups.show', $researchgroup->id) }}">{{ $researchgroup->name }}</a></td>
+								<td>{{ link_to_route('showResearchgroup_path', $researchgroup->name, $researchgroup->id) }}</td>
 								<td>N.N.</td>
 								<td>{{ $listofdepartments[$researchgroup->department_id] }}</td>
 								<td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('researchgroups.destroy', $researchgroup->id))) }}
-										{{ HTML::decode(link_to_route('researchgroups.show', '<i class="glyphicon glyphicon-edit"></i>', array($researchgroup->id), array('class' => 'btn btn-xs btn-warning'))) }}
+									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteResearchgroup_path', $researchgroup->id))) }}
+										{{ HTML::decode(link_to_route('showResearchgroup_path', '<i class="glyphicon glyphicon-edit"></i>', array($researchgroup->id), array('class' => 'btn btn-xs btn-warning'))) }}
 
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Arbeitsbereich löschen', 'data-message' => 'Wollen Sie den Arbeitsbereich wirklich löschen?')) }}
-										{{ Form::close() }}
+									{{ Form::close() }}
 		    					</td>
 							</tr>
 						@endforeach

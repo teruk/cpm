@@ -4,7 +4,7 @@
 
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('sections')}}">Bereichsmanagement</a></li>
+	  <li>{{ link_to_route('showSections_path', Bereichsmanagement) }}</li>
 	  <li class="active">{{ $section->name }}</li>
 	</ol>
 @stop
@@ -19,7 +19,7 @@
 			        <h3 class="panel-title">Informationen</h3>
 		        </div>
 		        <div class="panel-body">
-					{{ Form::model($section, ['method' => 'PATCH', 'route' => ['sections.update', $section->id]]) }}
+					{{ Form::model($section, ['method' => 'PATCH', 'route' => ['updateSection_path', $section->id]]) }}
 					<table class="table table-striped">
 						<tbody>
 							<tr>

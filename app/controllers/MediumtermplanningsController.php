@@ -22,6 +22,149 @@ class MediumtermplanningsController extends BaseController {
 		
 		$this->layout->content = View::make('mediumtermplannings.index', compact('mtpgrid','turns'));
 	}
+
+	/**
+	 * delete a medium term planing for a specific module
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
+	 */
+	public function destroy(Module $module, Mediumtermplanning $mediumtermplanning)
+	{
+		// first step: delete all entries in employee_mediumtermplanning table
+		$mediumtermplanning->detachEmployees();
+		// second step: delete mediumtermplanning table
+		$mediumtermplanning->delete();
+
+		Flash::success('Die Planung wurde erfolgreich gelöscht.');
+		return Redirect::back()->with('tabindex',Input::get('tabindex'));
+	}
+
+	/**
+	 * store a new medium term planning
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
+	public function store(Module $module)
+	{
+		$mediumtermplanning = new Mediumtermplanning();
+		$mediumtermplanning->module_id = $module->id;
+		$mediumtermplanning->turn_id = Input::get('turn_id');
+
+		if ( $mediumtermplanning->save() )
+		{
+			Flash::success('Ein neues Semester wurde zur mittelfristigen Lehrplanung des Moduls erfolgreich hinzugefügt.');
+			return Redirect::back()->with('tabindex',Input::get('tabindex'));
+		}
+
+		Flash::error($mediumtermplanning->errors());
+		return Redirect::back()->withInput()->with('tabindex',Input::get('tabindex'));
+	}
+
+	/**
+	 * copy an old medium term planning
+	 *
+	 * TODO: get the id of the old mediumtermplanning for a more readable line
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
+	public function copy(Module $module)
+	{
+		$turn = Turn::find(Input::get('turn_id_target'));  // find the attached semester turn
+		$mediumtermplanning = Mediumtermplanning::findOrFail(Input::get('mediumtermplanningId'));
+		//$mediumtermplanning = Mediumtermplanning::where('turn_id','=',Input::get('turn_id_source'))->where('module_id','=',$module->id)->first();
+		$newMediumtermplanning = new Mediumtermplanning();
+		$newMediumtermplanning->module_id = $module->id;
+		$newMediumtermplanning->turn_id = $turn->id;
+
+		if ($newMediumtermplanning->save())
+		{
+			foreach ($mediumtermplanning->employees as $employee) {
+				$newMediumtermplanning->employees()->attach($employee->id, [
+					'semester_periods_per_week' => $employee->pivot->semester_periods_per_week, 
+					'annulled' => $employee->pivot->annulled
+					]);
+			}
+
+			Flash::success('Die mittelfristige Lehrplanung wurde erfolgreich kopiert.');
+			return Redirect::back()->with('tabindex', Input::get('tabindex'));
+		}
+
+		Flash::error('Die mittelfristige Lehrplanung konnte nicht kopiert werden.');
+		return Redirect::back()->with('tabindex', Input::get('tabindex'));
+	}
+
+	/**
+	 * edit a medium term planning
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
+	 */
+	public function edit(Module $module, Mediumtermplanning $mediumtermplanning)
+	{
+		$mediumtermplanningEmployeeIds = $mediumtermplanning->getEmployeeIds();
+		$availableEmployees = Employee::getAvailableEmployeesWithResearchgroup($mediumtermplanningEmployeeIds);
+
+		$this->layout->content = View::make('modules.mediumtermplanning', compact('module', 'mediumtermplanning','availableEmployees'));
+	}
+
+	/**
+	 * attach an employee to a medium term planning
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
+	 */
+	public function attachEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
+	{
+		$input = Input::all();
+		$annulled = 0;
+		if (array_key_exists('annulled', $input))
+			$annulled = 1;
+
+		$mediumtermplanning->employees()->attach($input['employee_id'], [
+			'semester_periods_per_week' => $input['semester_periods_per_week'],
+			'annulled' => $annulled,
+			]);
+
+		Flash::success('Mitarbeiter erfolgreich zur Planung hinzugefügt.');
+		return Redirect::back();
+	}
+
+	/**
+	 * detach an employee from a medium term planning
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
+	 */
+	public function detachEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
+	{
+		$mediumtermplanning->employees()->detach(Input::get('employee_id'));
+
+		Flash::success('Mitarbeiter erfolgreich gelöscht.');
+		return Redirect::back();
+	}
+
+	/**
+	 * update the attributes of an employee
+	 * @param  Module             $module             [description]
+	 * @param  Mediumtermplanning $mediumtermplanning [description]
+	 * @return [type]                                 [description]
+	 */
+	public function updateEmployee(Module $module, Mediumtermplanning $mediumtermplanning)
+	{
+		$input = Input::all();
+		$annulled = 0;
+		if (array_key_exists('annulled', $input))
+			$annulled = 1;
+
+		$mediumtermplanning->employees()->updateExistingPivot($input['employee_id'], [
+				'semester_periods_per_week' => $input['semester_periods_per_week'],
+				'annulled' => $annulled,
+			], false);
+
+		Flash::success('Mitarbeiter erfolgreich aktualisiert.');
+		return Redirect::back();
+	}
 	
 	/**
 	 * generate the data grid for the overview from the 

@@ -2,10 +2,28 @@
 // Routes for TurnsController
 Route::group(['prefix' => 'turns', 'before' => 'auth'], function()
 {
-	Route::get('/', 'TurnsController@index');
-	Route::get('/', array('as' => 'turns.index', 'uses' => 'TurnsController@index'));
-	Route::get('{turn}/show', array('as' => 'turns.show', 'uses' => 'TurnsController@show'));
-	Route::delete('{turn}/delete', array('as' => 'turns.destroy', 'uses' => 'TurnsController@destroy'));
-	Route::patch('{turn}/update', array('as' => 'turns.update', 'uses' => 'TurnsController@update'));
-	Route::post('store', array('as' => 'turns.store', 'uses' => 'TurnsController@store'));
+	Route::get('showTurns', [
+		'as' => 'showTurns_path',
+		'uses' => 'TurnsController@index'
+		]);
+
+	Route::get('{turn}/showTurn', [
+		'as' => 'showTurn_path',
+		'uses' => 'TurnsController@show'
+		]);
+
+	Route::delete('{turn}/deleteTurn', [
+		'as' => 'deleteTurn_path',
+		'uses' => 'TurnsController@destroy'
+		]);
+
+	Route::patch('{turn}/updateTurn', [
+		'as' => 'updateTurn_path',
+		'uses' => 'TurnsController@update'
+		]);
+
+	Route::post('saveTurn', [
+		'as' => 'saveTurn_path',
+		'uses' => 'TurnsController@store'
+		]);
 });

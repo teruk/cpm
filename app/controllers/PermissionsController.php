@@ -45,7 +45,7 @@ class permissionsController extends BaseController {
 		}
 
 		Flash::error($permission->errors());
-		return Redirect::route('permissions.index', array_get($permission->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 
 	}
 
@@ -62,11 +62,11 @@ class permissionsController extends BaseController {
 		if ( $permission->save() )
 		{
 			Flash::success('Die Berechtigung wurde aktualisiert.');
-			return Redirect::route('permissions.show', $permission->id);
+			return Redirect::back();
 		}
 		
 		Flash::error( $permission->errors() );
-		return Redirect::route('permissions.show', array_get($permission->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**

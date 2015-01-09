@@ -213,7 +213,7 @@ class UsersController extends BaseController {
 	* attach a research group
 	* @param User $user
 	*/
-	public function attachResearchGroup(User $user)
+	public function attachResearchgroup(User $user)
 	{
 		Session::set('users_tabindex', 'researchgroups');
 
@@ -229,7 +229,7 @@ class UsersController extends BaseController {
 	 * @param  User   $user [description]
 	 * @return [type]       [description]
 	 */
-	public function detachResearchGroup(User $user)
+	public function detachResearchgroup(User $user)
 	{
 		Session::set('users_tabindex', 'researchgroups');
 

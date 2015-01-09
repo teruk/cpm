@@ -1,7 +1,7 @@
 <div class="modal-dialog">
 	<div class="modal-content">
   		<div class="modal-body">
-            {{ Form::model($module, ['method' => 'PATCH', 'route' => ['modules.copyMediumtermplanning', $module->id], 'class' => "form-horizontal"]) }}
+            {{ Form::model($module, ['method' => 'PATCH', 'route' => ['copyMediumtermplanning_path', $module->id], 'class' => "form-horizontal"]) }}
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <fieldset>
                 <legend>Mittelfristige Lehrplanung des Semesters kopieren</legend>
@@ -12,9 +12,9 @@
                 </div>
 
                 <div class="form-group">
-                    {{ Form::label('turn_id_source', 'Quelle:', array('class' => "col-lg-4 control-label", 'id' => "turn_id_source")) }}
+                    {{ Form::label('mediumtermplanningId', 'Quelle:', array('class' => "col-lg-4 control-label", 'id' => "mediumtermplanningId")) }}
                     <div class="col-lg-8">
-                        {{ Form::select('turn_id_source', $mtp_turns, 1, array('id' => "turn_id_source", 'class' => "form-control input-sm"))}}
+                        {{ Form::select('mediumtermplanningId', $mtp_turns, 1, array('id' => "mediumtermplanningId", 'class' => "form-control input-sm"))}}
                     </div>
                 </div>
 

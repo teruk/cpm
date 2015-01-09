@@ -46,11 +46,11 @@
 						@foreach( $roomtypes as $roomtype )
 				
 							<tr>
-		    					<td><a href="{{ route('roomtypes.show', $roomtype->id) }}">{{ $roomtype->name }}</a></td>
+		    					<td>{{ link_to_route('showRoomtype_path', $roomtype->name, $roomtype->id) }}</td>
 		    					<td>{{ $roomtype->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('roomtypes.destroy', $roomtype->id))) }}
-										{{ HTML::decode(link_to_route('roomtypes.show', '<i class="glyphicon glyphicon-edit"></i>', array($roomtype->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoomtype_path', $roomtype->id))) }}
+										{{ HTML::decode(link_to_route('showRoomtype_path', '<i class="glyphicon glyphicon-edit"></i>', array($roomtype->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raumtyp löschen', 'data-message' => 'Wollen Sie den Raumtyp wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

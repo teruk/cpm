@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
-        {{ Form::model(new Rotation, ['route' => ['rotations.store'], 'class' => "form-horizontal"])}}
+        {{ Form::model(new Rotation, ['route' => ['saveRotation_path'], 'class' => "form-horizontal"])}}
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <fieldset>
         	<legend>Neuen Turnus anlegen</legend>

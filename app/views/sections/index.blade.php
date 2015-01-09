@@ -44,10 +44,10 @@
 		       		<tbody>
 						@foreach( $sections as $section )
 							<tr>
-		    					<td><a href="{{ route('sections.show', $section->id) }}">{{ $section->name }}</a></td>
+		    					<td> {{ link_to_route('showSection_path', $section->name, $section->id) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('sections.destroy', $section->id))) }}
-										{{ HTML::decode(link_to_route('sections.show', '<i class="glyphicon glyphicon-edit"></i>', array($section->id), array('class' => 'btn btn-xs btn-warning'))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteSection_path', $section->id))) }}
+										{{ HTML::decode(link_to_route('showSection_path', '<i class="glyphicon glyphicon-edit"></i>', array($section->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Bereich löschen', 'data-message' => 'Wollen Sie den Bereich wirklich löschen?')) }}
 									{{ Form::close() }}
 		    					</td>

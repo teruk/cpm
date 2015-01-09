@@ -28,7 +28,7 @@ Route::group(['prefix' => 'appointeddays', 'before' => 'auth'], function()
 		'uses' => 'AppointeddaysController@update'
 		]);
 
-	Route::post('{appointedday}/saveAppointedday', [
+	Route::post('saveAppointedday', [
 		'as' => 'saveAppointedday_path',
 		'uses' => 'AppointeddaysController@store'
 		]);

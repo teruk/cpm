@@ -6,7 +6,14 @@
 @stop
 
 @section('main')
-	<h4>{{ $employee->present() }} (<a href="{{ route('researchgroups.show', $employee->researchgroup_id) }}">{{ $employee->researchgroup->name }}</a>)</h4>
+	<h4>
+		{{ $employee->present() }} 
+		@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_researchgroup'))
+			({{ link_to_route('showResearchgroup_path', $employee->researchgroup->short, $employee->researchgroup_id) }})
+		@else
+			({{ $employee->researchgroup->short }})
+		@endif
+	</h4>
 
 	<ul class="nav nav-tabs" style="margin-bottom: 15px;">
 		<li class="active"><a href="#home" data-toggle="tab">Informationen</a></li>

@@ -3,7 +3,7 @@
     <div class="modal-dialog">
 	    <div class="modal-content">
 	        <div class="modal-body">
-		        {{ Form::model(new RoomType, ['route' => ['roomtypes.store'], 'class' => "form-horizontal"])}}
+		        {{ Form::model(new RoomType, ['route' => ['saveRoomtype_path'], 'class' => "form-horizontal"])}}
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		        <fieldset>
 		        	<legend>Neuen Raumtyp anlegen</legend>

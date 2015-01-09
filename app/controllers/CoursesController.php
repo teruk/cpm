@@ -37,17 +37,8 @@ class CoursesController extends BaseController {
 			return Redirect::back();
 		}
 
-		if (Input::get('tabindex') == "")
-		{
-			Flash::error($course->errors());
-			return Redirect::back()->withInput();
-		}
-
-		// back to module show
-		$module = Module::find($course->module_id);
 		Flash::error($course->errors());
-		return Redirect::route('modules.show', $module->id)->withInput()->with('tabindex', Input::get('tabindex'));
-			
+		return Redirect::back()->withInput();
 	}
 
 	/**
@@ -57,18 +48,12 @@ class CoursesController extends BaseController {
 	 * @param  int  Course $course
 	 * @return Response
 	 */
-	public function show(Course $course)
+	public function edit(Course $course)
 	{	
 		$listofcoursetypes = Coursetype::lists('name','id');
-		$listofmodules = Module::orderBy('name','ASC')->lists('name','id');
-		if (sizeof(Session::get('tabindex')) == "")
-			$tabindex = 0;
-		else 
-			$tabindex = Session::get('tabindex');
+		$listofmodules = Module::orderBy('name','ASC')->lists('name','id');		
 		
-		// get the information for the course history
-		$history = Planning::courses($course)->get();
-		$this->layout->content = View::make('courses.show', compact('course','listofcoursetypes', 'listofmodules','tabindex', 'history'));
+		$this->layout->content = View::make('courses.editInformation', compact('course','listofcoursetypes', 'listofmodules','history'));
 	}
 
 	/**
@@ -107,6 +92,18 @@ class CoursesController extends BaseController {
 		$course->delete();
 		Flash::success('Lehrveranstaltung erfolgreich gelöscht.');
 		return Redirect::back();
+	}
+
+	/**
+	 * show course history
+	 * @param  Course $course [description]
+	 * @return [type]         [description]
+	 */
+	public function showHistory(Course $course)
+	{
+		// get the information for the course history
+		$history = Planning::courses($course)->get();
+		$this->layout->content = View::make('courses.history', compact('course', 'history'));
 	}
 	
 	// public function export()

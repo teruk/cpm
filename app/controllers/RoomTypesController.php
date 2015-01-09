@@ -63,11 +63,11 @@ class RoomtypesController extends BaseController {
 		if ( $roomtype->updateUniques() )
 		{
 			Flash::success('Der Raumtyp wurde aktualisiert.');
-			return Redirect::route('roomtypes.show', $roomtype->id);
+			return Redirect::back();
 		}
 
 		Flash::error($roomtype->errors());
-		return Redirect::route('roomtypes.show', array_get($roomtype->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 
 	/**

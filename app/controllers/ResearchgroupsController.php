@@ -109,11 +109,11 @@ class ResearchgroupsController extends BaseController{
 			}
 
 			Flash::success('Der Arbeitsbereich wurde erfolgreich aktualisiert.');
-			return Redirect::route('researchgroups.show', $researchgroup->id);
+			return Redirect::back();
 		}
 
 		Flash::error($researchgroup->errors());
-		return Redirect::route('researchgroups.show', array_get($researchgroup->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 	/**

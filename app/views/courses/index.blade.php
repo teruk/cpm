@@ -5,9 +5,9 @@
     $(document).ready(function() {
         var table = $('#data_table').DataTable({
             "columnDefs": [
-                { "visible": false, "targets": 4 }
+                { "visible": false, "targets": 3 }
             ],
-            "order": [[ 4, 'asc' ]],
+            "order": [[ 3, 'asc' ]],
             "pagingType": "full",
     		"displayLength": 50,
     		"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Alle"]],
@@ -16,7 +16,7 @@
                 var rows = api.rows( {page:'current'} ).nodes();
                 var last=null;
      
-                api.column(4, {page:'current'} ).data().each( function ( group, i ) {
+                api.column(3, {page:'current'} ).data().each( function ( group, i ) {
                     if ( last !== group ) {
                         $(rows).eq( i ).before(
                             '<tr class="info"><td colspan="8">'+group+'</td></tr>'
@@ -31,11 +31,11 @@
         // Order by the grouping
         $('#data_table tbody').on( 'click', 'tr.group', function () {
             var currentOrder = table.order()[0];
-            if ( currentOrder[0] === 4 && currentOrder[1] === 'asc' ) {
-                table.order( [ 4, 'desc' ] ).draw();
+            if ( currentOrder[0] === 3 && currentOrder[1] === 'asc' ) {
+                table.order( [ 3, 'desc' ] ).draw();
             }
             else {
-                table.order( [ 4, 'asc' ] ).draw();
+                table.order( [ 3, 'asc' ] ).draw();
             }
         } );
 
@@ -70,33 +70,36 @@
        		<thead>
        			<tr>
        				<th>Nummer</th>
-       				<th>Titel</th>
-       				<th>EnglTitel</th>
-       				<th>Veranstaltungstyp</th>
+       				<th>Titel / engl. Titel</th>
+       				<th>LV-Typ</th>
        				<th>Modul</th>
        				<th>Teilnehmer</th>
        				<th>SWS</th>
        				<th>Sprache</th>
-       				<th>Optionen</th>
+       				<th>Option</th>
        			</tr>
        		</thead>
        		<tbody>
     			  @foreach( $courses as $course )
     					<tr>
     						<td>{{ $course->course_number }}</td>
-          					<td>{{ link_to_route('showCourse_path', $course->name, $course->id) }}</td>
-          					<td>{{ $course->name_eng }}</td>
-          					<td>{{ $course->coursetype->name }}</td>
-          					<td>{{ $course->module->short }}</td>
-          					<td>{{ $course->participants }}</td>
-          					<td>{{ $course->semester_periods_per_week }}</td>
-          					<td>{{ Config::get('constants.language')[$course->language] }}</td>
-          					<td>
-          						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCourse_path', $course->id))) }}
-    								{{ HTML::decode(link_to_route('showCourse_path', '<i class="glyphicon glyphicon-edit"></i>', array($course->id), array('class' => 'btn btn-xs btn-warning'))) }}
-    								{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltung löschen', 'data-message' => 'Wollen Sie die Lehrveranstaltung wirklich löschen?')) }}
-    							{{ Form::close() }}
-          					</td>
+                @if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_course'))
+        					<td>{{ HTML::decode(link_to_route('editCourseInformation_path', $course->name.'<br>'.$course->name_eng, $course->id)) }}</td>
+                @else
+                  <td>{{ $course->name }}<br>{{ $course->name_eng }}</td>
+                @endif
+      					<td>{{ $course->coursetype->name }}</td>
+      					<td>{{ $course->module->short }}</td>
+      					<td>{{ $course->participants }}</td>
+      					<td>{{ $course->semester_periods_per_week }}</td>
+      					<td>{{ Config::get('constants.language')[$course->language] }}</td>
+      					<td>
+                  @if ($currentUser->hasRole('Admin') OR $currentUser->can('delete_course'))
+        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCourse_path', $course->id))) }}
+        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltung löschen', 'data-message' => 'Wollen Sie die Lehrveranstaltung wirklich löschen?')) }}
+        						{{ Form::close() }}
+                  @endif
+          			</td>
     					</tr>
     				@endforeach	
     			</tbody>

@@ -49,7 +49,7 @@
               	<div class="form-group">
 	                {{ Form::label('turn_id', 'Semester*:', array('class' => "col-lg-5 control-label", 'id' => "turn_id")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::select('turn_id', $turns, 2, array('id' => "turn_id", 'required' => true, 'class' => "form-control input-sm")) }}
+	                  {{ Form::select('turn_id', $turns, $currentTurn, array('id' => "turn_id", 'required' => true, 'class' => "form-control input-sm")) }}
 	                </div>
               	</div>
 
@@ -100,7 +100,7 @@
 			          	<tbody>
 			          		@foreach ($searchresults as $room)
 			          			<tr>
-				       				<td><a href="{{ route('overview.specific_room', array($turn->id, $room->id))}}">{{ $room->name }} ({{ $room->location }})</td>
+				       				<td>{{ link_to_route('showRoomOccupation_path', $room->name.' ('.$room->location.')' , [$turn->id, $room->id]) }}</td>
 			    					<td>{{ $room->seats }}</td>
 			    					<td>{{ $roomtypes[$room->roomtype_id] }}</td>
 			    					@if ($room->beamer)

@@ -2,7 +2,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
-        {{ Form::model(new Turn, ['route' => ['turns.store'], 'class' => "form-horizontal"])}}
+        {{ Form::model(new Turn, ['route' => ['saveTurn_path'], 'class' => "form-horizontal"])}}
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <fieldset>
         	<legend>Neues Semester anlegen</legend>

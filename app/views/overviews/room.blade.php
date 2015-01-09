@@ -6,16 +6,16 @@
 	<ol class="breadcrumb">
 	  <li class="active">Übersichten</li>
 	  <li class="active">Raumbelegung</li>
-	  <li class="active">{{ $turn->name }}  {{ $turn->year }} </li>
-	  <li class="active">{{ $room->name }} ({{ $room->location }})</li>
+	  <li class="active">{{ $turn->present() }} </li>
+	  <li class="active">{{ $room->present() }})</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Raumbelegung {{ $room->name }} ({{ $room->location }}) im {{ $turn->name }}  {{ $turn->year }}</h4>
+	<h4>Raumbelegung {{ $room->present() }}) im {{ $turn->present() }}</h4>
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">
-			{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['overview.grab_room']]) }}
+			{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['fetchRoomOccupation_path']]) }}
 			<div class="col-xs-2">
 			{{ Form::select('turn_id', $listofturns, $turn->id, array('id' => "turn_id", 'class' => "form-control input-sm"))}}
 			</div>

@@ -47,10 +47,10 @@
 						@foreach( $roles as $role )
 				
 							<tr>
-		    					<td><a href="{{ route('roles.show', $role->id) }}">{{ $role->name }}</a></td>
+		    					<td>{{ link_to_route('showRole_path', $role->name, $role-is) }}</td>
 		    					<td>{{ $role->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('roles.destroy', $role->id))) }}
+		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRole_path', $role->id))) }}
 		    						@if ($role->name != "Admin")
 			    						@if (Entrust::can('delete_role') || Entrust::hasRole('Admin'))
 			        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Rolle löschen', 'data-message' => 'Wollen Sie die Rolle wirklich löschen?')) }}

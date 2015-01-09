@@ -61,7 +61,7 @@
     				@foreach( $modules as $module )
     					<tr>
       					<td>{{ $module->short }}</td>
-      					<td><a href="{{ route('modules.show', $module->id) }}">{{ $module->name }}</a></td>
+      					<td>{{ link_to_route('showModule_path', $module->name, $module->id) }}</td>
       					<td>{{ $listofdegrees[$module->degree_id] }}</td>
       					<td>{{ $module->credits }}</td>
       					<td>{{ $listofrotations[$module->rotation_id] }}</td>
@@ -76,12 +76,12 @@
                   @endif
                 </td>
       					<td>
-      						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('modules.destroy', $module->id))) }}
-    						{{ HTML::decode(link_to_route('modules.show', '<i class="glyphicon glyphicon-edit"></i>', array($module->id), array('class' => 'btn btn-xs btn-warning'))) }}
-                @if (Entrust::hasRole('Admin') || Entrust::can('delete_module'))
-    						   {{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Modul löschen', 'data-message' => 'Wollen Sie das Modul wirklich löschen?')) }}
-                @endif
-    					{{ Form::close() }}
+      						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteModule_path', $module->id))) }}
+    						  {{ HTML::decode(link_to_route('showModule_path', '<i class="glyphicon glyphicon-edit"></i>', array($module->id), array('class' => 'btn btn-xs btn-warning'))) }}
+                  @if (Entrust::hasRole('Admin') || Entrust::can('delete_module'))
+      						   {{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Modul löschen', 'data-message' => 'Wollen Sie das Modul wirklich löschen?')) }}
+                  @endif
+  					      {{ Form::close() }}
       					</td>
     					</tr>
     				@endforeach	

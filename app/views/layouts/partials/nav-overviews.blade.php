@@ -6,12 +6,14 @@
   		<li>{{ link_to_route('showPlanningsOrderByCourseNumber_path', 'Aufstellung Veranstaltungen', $currentTurn) }}</li>
     	<li>{{ link_to_route('showMediumTermPlannings_path', 'Mittelfristge Lehrplanung') }}</li>
     	<li>{{ link_to_route('showExams_path', 'Prüfungen', $currentTurn) }}</li>
-    	<li>{{ link_to_route('overview.default_room', 'Raumbelegung') }}</li>
-    	<li>{{ link_to_route('showRoomSearchForm_path', 'Raumsuche') }}</li>
-    	<li>{{ link_to_route('overview.default_schedule', 'Stundenpläne') }}</li>
+    	<li>{{ link_to_route('showDefaultRoomOccupation_path', 'Raumbelegung', $currentTurn) }}</li>
+    	<li>{{ link_to_route('showDefaultSchedule_path', 'Stundenpläne', $currentTurn) }}</li>
     	<li>{{ link_to_route('showStudentAssistants_path', 'SHK-Übersicht', $currentTurn) }}</li>
-    	<li class="divider"></li>
 
+    	<li class="divider"></li>
+      <li>{{ link_to_route('showRoomSearchForm_path', 'Raumsuche') }}</li>
+
+      <li class="divider"></li>
       <li class="dropdown-header">Details</li>
       <li>{{ link_to_route('showOverviewCourses_path', 'Lehrveranstaltungen') }}</li>
       <li>{{ link_to_route('showOverviewEmployees_path', 'Mitarbeiter') }}</li>

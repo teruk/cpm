@@ -1,6 +1,6 @@
 @section('breadcrumbs')
 	<ol class="breadcrumb">
-	  <li><a href="{{ URL::to('permissions')}}">Berechtigungsmanagement</a></li>
+	  <li>{{ link_to_route('showPermissions_path', 'Berechtigungsmanagement') }}</li>
 	  <li class="active">{{ $permission->display_name }}</li>
 	</ol>
 @stop
@@ -14,7 +14,7 @@
 		<div class="col-sm-8">
 			<div class="panel panel-primary">
 	            <div class="panel-body">
-					{{ Form::model($permission, ['method' => 'PATCH', 'route' => ['permissions.update', $permission->id], 'class' => "form-horizontal"]) }}
+					{{ Form::model($permission, ['method' => 'PATCH', 'route' => ['updatePermission_path', $permission->id], 'class' => "form-horizontal"]) }}
 					<legend>Berechtigung aktualisieren</legend>
 					<div class="form-group">
         				{{ Form::label('display_name', 'Anzeigename*:', array('class' => "col-lg-3 control-label", 'id' => "display_name")) }}

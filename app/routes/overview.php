@@ -78,44 +78,44 @@ Route::get('showMediumTermPlannings', [
 	]);
 
 /** degree course schedule overview */
-Route::get('overview/schedule', [
-	'as' => 'overview.default_schedule',
+Route::get('showDefaultSchedule/{turn}', [
+	'as' => 'showDefaultSchedule_path',
 	'uses' => 'ScheduleController@getDefaultSchedule'
 	]);
 
-Route::get('overview/schedule/{turn}/{degreecourse}/{semester}', [
-	'as' => 'overview.specific_schedule',
-	'uses' => 'ScheduleController@getSpecificSchedule'
+Route::get('showSchedule/{turn}/{degreecourse}/{semester}', [
+	'as' => 'showSchedule_path',
+	'uses' => 'ScheduleController@getSchedule'
 	]);
 
-Route::get('overview/schedule_generate', [
-	'as' => 'overview.generate_schedule',
+Route::get('showSelectedSchedule', [
+	'as' => 'showSelectedSchedule_path',
 	'uses' => 'ScheduleController@generateSchedule'
 	]);
 
-Route::patch('overview/schedule', [
-	'as' => 'overview.grab_schedule',
-	'uses' => 'ScheduleController@grabSchedule'
+Route::patch('fetchSchedule', [
+	'as' => 'fetchSchedule_path',
+	'uses' => 'ScheduleController@fetchSchedule'
 	]);
 
 /** room occupation overview */
-Route::get('overview/room', [
-	'as' => 'overview.default_room',
+Route::get('showDefaultRoomOccupation/{turn}', [
+	'as' => 'showDefaultRoomOccupation_path',
 	'uses' => 'RoomOccupationController@getDefaultRoom'
 	]);
 
-Route::get('overview/room/{turn}/{room}', [
-	'as' => 'overview.specific_room',
+Route::get('showRoomOccupation/{turn}/{room}', [
+	'as' => 'showRoomOccupation_path',
 	'uses' => 'RoomOccupationController@getSpecificRoom'
 	]);
 
-Route::get('overview/room_generate', [
-	'as' => 'overview.generate_room',
+Route::get('showSelectedRoomOccupation', [
+	'as' => 'showSelectedRoomOccupation_path',
 	'uses' => 'RoomOccupationController@generateRoom'
 	]);
 
-Route::patch('overview/room', [
-	'as' => 'overview.grab_room',
-	'uses' => 'RoomOccupationController@grabRoom'
+Route::patch('fetchRoomOccupation', [
+	'as' => 'fetchRoomOccupation_path',
+	'uses' => 'RoomOccupationController@fetchRoom'
 	]);
 });

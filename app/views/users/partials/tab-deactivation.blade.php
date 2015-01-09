@@ -25,14 +25,14 @@
 	  					<div class="col-lg-8 col-lg-offset-4" style="text-align: right">
 	  					@if ($user->deactivated == 1)
 	  						@if(Entrust::hasRole('Admin') || Entrust::can('activate_user'))
-	  							{{ Form::model($user, ['method' => 'PATCH', 'route' => ['users.activate', $user->id], 'class' => "form-horizontal"])}}
+	  							{{ Form::model($user, ['method' => 'PATCH', 'route' => ['activateUser_path', $user->id], 'class' => "form-horizontal"])}}
 	  								{{ Form::button('Aktivieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Benutzer aktivieren')) }}
 	  								{{ Form::hidden('tabindex', "deactivation") }}
 	  							{{ Form::close() }}
 	  						@endif
 	  					@else
 	  						@if((Entrust::hasRole('Admin') || Entrust::can('deactivate_user')) && !$user->hasRole('Admin'))
-		  						{{ Form::model($user, ['method' => 'PATCH', 'route' => ['users.deactivate', $user->id], 'class' => "form-horizontal"])}}
+		  						{{ Form::model($user, ['method' => 'PATCH', 'route' => ['deactivateUser_path', $user->id], 'class' => "form-horizontal"])}}
 		  							{{ Form::button('Deaktivieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Benutzer deaktivieren')) }}
 		  							{{ Form::hidden('tabindex', "deactivation") }}
 		  						{{ Form::close() }}

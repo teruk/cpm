@@ -98,14 +98,14 @@ class TurnsController extends BaseController {
 			if ($turn->updateUniques())
 			{
 				Flash::success('Das Semester wurde aktualisiert.');
-				return Redirect::route('turns.show', $turn->id);
+				return Redirect::back();
 			}
 			
 			Flash::error($turn->errors());
-			return Redirect::route('turns.show', array_get($turn->getOriginal(), 'id'))->withInput();
+			return Redirect::back()->withInput();
 		}
 
 		Flash::error($passed['message']);
-		return Redirect::route('turns.show', $turn->id);
+		return Redirect::back();
 	}
 }

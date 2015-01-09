@@ -2,7 +2,7 @@
 	<div class="col-sm-7">
 		<div class="panel panel-primary">
             <div class="panel-body">
-				{{ Form::model($module, ['method' => 'PATCH', 'route' => ['modules.update', $module->id], 'class' => "form-horizontal"]) }}
+				{{ Form::model($module, ['method' => 'PATCH', 'route' => ['updateModule_path', $module->id], 'class' => "form-horizontal"]) }}
 				<fieldset>
 					<legend>Modul aktualisieren</legend>
 						<div class="form-group">

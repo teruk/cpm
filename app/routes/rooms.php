@@ -3,13 +3,32 @@
 // Routes for RoomsController
 Route::group(['prefix' => 'rooms', 'before' => 'auth'], function()
 {
-	Route::get('/', 'RoomsController@index');
-	Route::get('/', array('as' => 'rooms.index', 'uses' => 'RoomsController@index'));
-	Route::get('{room}/show', array('as' => 'rooms.show', 'uses' => 'RoomsController@show'));
-	Route::delete('{room}/delete', array('as' => 'rooms.destroy', 'uses' => 'RoomsController@destroy'));
-	Route::patch('{room}/update', array('as' => 'rooms.update', 'uses' => 'RoomsController@update'));
-	Route::post('save', array('as' => 'rooms.store', 'uses' => 'RoomsController@store'));
+	Route::get('showRooms', [
+		'as' => 'showRooms_path',
+		'uses' => 'RoomsController@index'
+		]);
 
+	Route::get('{room}/showRoom', [
+		'as' => 'showRoom_path',
+		'uses' => 'RoomsController@show'
+		]);
+
+	Route::delete('{room}/deleteRoom', [
+		'as' => 'deleteRoom_path',
+		'uses' => 'RoomsController@destroy'
+		]);
+
+	Route::patch('{room}/updateRoom', [
+		'as' => 'updateRoom_path',
+		'uses' => 'RoomsController@update'
+		]);
+
+	Route::post('saveRoom', [
+		'as' => 'saveRoom_path',
+		'uses' => 'RoomsController@store'
+		]);
+
+	/** room search routes */
 	Route::get('showSearchForm', [
 		'as' => 'showRoomSearchForm_path',
 		'uses' => 'RoomSearchController@showRoomSearch'
