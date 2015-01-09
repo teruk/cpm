@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -45,12 +47,19 @@
 						@foreach( $degrees as $degree )
 				
 							<tr>
-		    					<td>{{ link_to_route('showDegree_path', $degree->name, $degree->id) }}</td>
 		    					<td>
+		    						@if (Entrust::hasRole('Admin') || Entrust::can('add_degree'))
+		    							{{ link_to_route('editDegreeInformation_path', $degree->name, $degree->id) }}
+		    						@else
+		    							{{ $degree->name }}
+		    						@endif
+		    					</td>
+		    					<td>
+		    						@if (Entrust::hasRole('Admin') || Entrust::can('delete_degree'))
 		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteDegree_path', $degree->id))) }}
-										{{ HTML::decode(link_to_route('showDegree_path', '<i class="glyphicon glyphicon-edit"></i>', array($degree->id), array('class' => 'btn btn-xs btn-warning'))) }}
 										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Abschluss löschen', 'data-message' => 'Wollen Sie den Abschluss wirklich löschen?')) }}
 									{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						

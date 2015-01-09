@@ -8,7 +8,7 @@
 		@include('degreecourses.partials.sidenav')
 
 		<div class="col-md-9">
-			@include('degreecourses.partials.heading', ['title' => 'Information bearbeiten:'])
+			@include('degreecourses.partials.heading', ['title' => 'Informationen bearbeiten:'])
 
 			<p>Bearbeitung der Informationen dieses Studiengangs.</p>
 			<div class="panel panel-default">
@@ -44,7 +44,6 @@
 	      					@if (Entrust::hasRole('Admin') || Entrust::can('edit_degreecourse'))
 		      					*erforderlich
 		      					{{ Form::button('<i class="glyphicon glyphicon-refresh"></i> Aktualisieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Informationen aktualisieren')) }}
-		      					{{ Form::hidden('tabindex', 'home') }}
 		      				@endif
 	      					</div>
 	      				</div>

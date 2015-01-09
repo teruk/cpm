@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @include('announcements.partials.breadcrumb', ['breadcrumbTitle' => 'Informationen bearbeiten'])
 
 @section('main')

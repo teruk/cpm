@@ -12,7 +12,7 @@ class appointeddaysController extends BaseController {
 	public function index()
 	{
 		$appointeddays = Appointedday::all();
-		$this->layout->content = View::make('appointeddays.index', compact('appointeddays'));
+		return View::make('appointeddays.index', compact('appointeddays'));
 	}
 
 	/**
@@ -46,24 +46,10 @@ class appointeddaysController extends BaseController {
 	public function edit(Appointedday $appointedday)
 	{	
 		if (Entrust::hasRole('Admin') || Entrust::can('edit_appointedday'))
-			$this->layout->content = View::make('appointeddays.show', compact('appointedday'));
-		else
-		{
-			Flash::error('Zugriff verweigert!');
-			return Redirect::back();
-		}
-	}
+			return View::make('appointeddays.show', compact('appointedday'));
 
-	/**
-	 * Display the specified resource.
-	 * GET /appointeddays/{id}
-	 *
-	 * @param  int  appointedday $appointedday
-	 * @return Response
-	 */
-	public function info(Appointedday $appointedday)
-	{	
-		$this->layout->content = View::make('appointeddays.info', compact('appointedday'));
+		Flash::error('Zugriff verweigert!');
+		return Redirect::back();
 	}
 
 	/**
@@ -100,5 +86,4 @@ class appointeddaysController extends BaseController {
 		Flash::success('Der Termin wurde erfolgreich gelöscht.');
 		return Redirect::back();
 	}
-
 }

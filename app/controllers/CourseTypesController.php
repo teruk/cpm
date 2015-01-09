@@ -46,7 +46,11 @@ class CoursetypesController extends BaseController {
 	 */
 	public function edit(Coursetype $coursetype)
 	{	
-		return View::make('coursetypes.editInformation', compact('coursetype'));
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_coursetype'))
+			return View::make('coursetypes.editInformation', compact('coursetype'));
+
+		Flash::error('Zugriff verweigert!');
+		return Redirect::back();
 	}
 
 	/**

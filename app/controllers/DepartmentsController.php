@@ -10,11 +10,12 @@ class DepartmentsController extends BaseController {
 	public function index()
 	{
 		$departments = Department::all();
-		$this->layout->content = View::make('departments.index', compact('departments'));
+		return View::make('departments.index', compact('departments'));
 	}
 	
 	/**
-	 * 
+	 * save a new department
+	 * @return [type] [description]
 	 */
 	public function store()
 	{
@@ -35,12 +36,18 @@ class DepartmentsController extends BaseController {
 	 * 
 	 * @param Department $department
 	 */
-	public function show(Department $department)
+	public function edit(Department $department)
 	{
-		$researchgroups = $department->researchgroups;
-		$degreecourses = $department->degreecourses;
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_department'))
+		{
+			$researchgroups = $department->researchgroups;
+			$degreecourses = $department->degreecourses;
 
-		$this->layout->content = View::make('departments.show', compact('department','researchgroups','degreecourses'));
+			return View::make('departments.editInformation', compact('department','researchgroups','degreecourses'));
+		}
+
+		Flash::error('Zugriff verweigert! Sie besitzen nicht die benötigten Berechtigungen.');
+		return Redirect::back();
 	}
 	
 	/**

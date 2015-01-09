@@ -109,5 +109,14 @@ Entrust::routeNeedsRoleOrPermission('appointeddays*',array('Admin'),array('add_a
 /** coursetype filter */
 Entrust::routeNeedsRoleOrPermission('coursetypes*',array('Admin'),array('add_coursetype', 'edit_coursetype', 'delete_coursetype'),Redirect::back(),false);
 
+/** course filter */
+Entrust::routeNeedsRoleOrPermission('courses*',array('Admin'),array('add_course', 'edit_course', 'delete_course'),Redirect::back(),false);
+
 /** degreecourse filter */
 Entrust::routeNeedsRoleOrPermission('degreecourses*',array('Admin'),array('add_degreecourse', 'edit_degreecourse', 'delete_degreecourse'),Redirect::back(),false);
+
+/** degree filter */
+Entrust::routeNeedsRoleOrPermission('degrees*',array('Admin'),array('add_degree', 'edit_degree', 'delete_degree'),Redirect::back(),false);
+
+/** department filter */
+Entrust::routeNeedsRoleOrPermission('departments*',array('Admin'),array('add_department', 'edit_department', 'delete_department'),Redirect::back(),false);

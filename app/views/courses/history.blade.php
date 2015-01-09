@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @include('courses.partials.breadcrumb', ['breadcrumbTitle' => 'Veranstaltungschronik'])
 
 @section('main')

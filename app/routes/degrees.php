@@ -8,9 +8,9 @@ Route::group(['prefix' => 'degrees', 'before' => 'auth'], function()
 		'uses' => 'DegreesController@index'
 		]);
 
-	Route::get('{degree}/showDegree', [
-		'as' => 'showDegree_path',
-		'uses' => 'DegreesController@show'
+	Route::get('{degree}/editDegreeInformation', [
+		'as' => 'editDegreeInformation_path',
+		'uses' => 'DegreesController@edit'
 		]);
 
 	Route::delete('{degree}/deleteDegree', [

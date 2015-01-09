@@ -9,7 +9,7 @@ class DegreesController extends BaseController {
 	public function index()
 	{
 		$degrees = Degree::all();
-		$this->layout->content = View::make('degrees.index', compact('degrees'));
+		return View::make('degrees.index', compact('degrees'));
 	}
 	
 	/**
@@ -17,9 +17,13 @@ class DegreesController extends BaseController {
 	 * @param  Degree $degree [description]
 	 * @return [type]         [description]
 	 */
-	public function show(Degree $degree)
+	public function edit(Degree $degree)
 	{
-		$this->layout->content = View::make('degrees.show', compact('degree'));
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_degree'))
+			return View::make('degrees.editInformation', compact('degree'));
+
+		Flash::error('Zugriff verweigert!');
+		return Redirect::back();
 	}
 	
 	/**
@@ -66,11 +70,11 @@ class DegreesController extends BaseController {
 		if ($degree->updateUniques())
 		{
 			Flash::success('Der Bereich wurde aktualisiert.');
-			return Redirect::route('degrees.show', $degree->id);
+			return Redirect::back();
 		}
 
 		Flash::error($degree->errors());
-		return Redirect::route('degrees.show', array_get($degree->getOriginal(), 'id'))->withInput();
+		return Redirect::back()->withInput();
 	}
 	
 }

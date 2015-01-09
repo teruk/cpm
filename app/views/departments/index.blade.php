@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -21,7 +23,9 @@
 @stop
 
 @section('main')
-	@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Fachbereich hinzufügen'])
+	@if ($currentUser->hasRole('Admin') OR $currentUser->can('add_department'))
+		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Fachbereich hinzufügen'])
+	@endif
 	     
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">   	
@@ -39,13 +43,20 @@
 				
 							<tr>
 	        					<td>{{ $department->short }}</td>
-	        					<td>{{ link_to_route('showDepartment_path', $department->name, $department->id) }}</td>
 	        					<td>
-	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteDepartment_path', $department->id))) }}
-										{{ HTML::decode(link_to_route('showDepartment_path', '<i class="glyphicon glyphicon-edit"></i>', array($department->id), array('class' => 'btn btn-xs btn-warning'))) }}
+	        						@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_department'))
+	        							{{ link_to_route('editDepartmentInformation_path', $department->name, $department->id) }}
+	        						@else
+	        							{{ $department->name }}
+	        						@endif
+	        					</td>
+	        					<td>
+	        						@if ($currentUser->hasRole('Admin') OR $currentUser->can('delete_department'))
+		        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteDepartment_path', $department->id))) }}
 
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Fachbereich löschen', 'data-message' => 'Wollen Sie den Fachbereich wirklich löschen?')) }}
-									{{ Form::close() }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Fachbereich löschen', 'data-message' => 'Wollen Sie den Fachbereich wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 	        					</td>
 							</tr>
 						

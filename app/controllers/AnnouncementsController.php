@@ -12,7 +12,7 @@ class AnnouncementsController extends BaseController {
 	public function index()
 	{
 		$announcements = Announcement::all();
-		$this->layout->content = View::make('announcements.index', compact('announcements'));
+		return View::make('announcements.index', compact('announcements'));
 	}
 
 	/**
@@ -44,8 +44,12 @@ class AnnouncementsController extends BaseController {
 	 * @return Response
 	 */
 	public function edit(Announcement $announcement)
-	{	
-		$this->layout->content = View::make('announcements.editInformation', compact('announcement'));
+	{
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_announcement'))
+			return View::make('announcements.editInformation', compact('announcement'));
+
+		Flash::error('Zugriff verweigert.')
+		return Redirect::back();
 	}
 
 	/**

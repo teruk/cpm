@@ -16,7 +16,7 @@ class CoursesController extends BaseController {
 		$listofcoursetypes = Coursetype::orderBy('name', 'ASC')->lists('name','id');
 		$listofmodules = Module::orderBy('name','ASC')->lists('name','id'); // list is different from Module::lists
 
-		$this->layout->content = View::make('courses.index', compact('courses','listofcoursetypes', 'listofmodules'));
+		return View::make('courses.index', compact('courses','listofcoursetypes', 'listofmodules'));
 	}
 
 	/**
@@ -50,10 +50,17 @@ class CoursesController extends BaseController {
 	 */
 	public function edit(Course $course)
 	{	
-		$listofcoursetypes = Coursetype::lists('name','id');
-		$listofmodules = Module::orderBy('name','ASC')->lists('name','id');		
-		
-		$this->layout->content = View::make('courses.editInformation', compact('course','listofcoursetypes', 'listofmodules','history'));
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_course'))
+		{
+			$listofcoursetypes = Coursetype::lists('name','id');
+			$listofmodules = Module::orderBy('name','ASC')->lists('name','id');		
+			
+			return View::make('courses.editInformation', compact('course','listofcoursetypes', 'listofmodules','history'));
+		}
+
+		Flash::error('Zugriff verweigert');
+		return Redirect::back();
+
 	}
 
 	/**
@@ -103,7 +110,7 @@ class CoursesController extends BaseController {
 	{
 		// get the information for the course history
 		$history = Planning::courses($course)->get();
-		$this->layout->content = View::make('courses.history', compact('course', 'history'));
+		return View::make('courses.history', compact('course', 'history'));
 	}
 	
 	// public function export()

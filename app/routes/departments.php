@@ -7,9 +7,9 @@ Route::group(['prefix' => 'departments', 'before' => 'auth'], function()
 		'uses' => 'DepartmentsController@index'
 		]);
 
-	Route::get('{department}/showDepartment', [
-		'as' => 'showDepartment_path',
-		'uses' => 'DepartmentsController@show'
+	Route::get('{department}/editDepartmentInformation', [
+		'as' => 'editDepartmentInformation_path',
+		'uses' => 'DepartmentsController@edit'
 		]);
 
 	Route::delete('{department}/deleteDepartment', [

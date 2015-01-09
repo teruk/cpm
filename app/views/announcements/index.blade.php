@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">

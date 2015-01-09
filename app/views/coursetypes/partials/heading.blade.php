@@ -1,4 +1,4 @@
 <h4>
-	{{ $coursetype->name }})
+	{{ $coursetype->name }}
 </h4>
 <h5>{{ $title }}</h5>

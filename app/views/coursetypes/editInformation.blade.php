@@ -13,23 +13,23 @@
 			<p>Bearbeitung der Informationen dieser Lehrveranstaltung.</p>
 			<div class="panel panel-default">
 		        <div class="panel-body">
-					{{ Form::model($coursetype, ['method' => 'PATCH', 'route' => ['updateCoursetype_path', $coursetype->id]]) }}
+					{{ Form::model($coursetype, ['method' => 'PATCH', 'route' => ['updateCoursetype_path', $coursetype->id], 'class' => "form-horizontal"]) }}
 
 						<div class="form-group">
-							{{ Form::label('name', 'Name*:', ['class' => 'col-md-2']) }}
+							{{ Form::label('name', 'Name*:', ['class' => 'col-md-3 control-label']) }}
 							<div class="col-md-4">
 								{{ Form::input('text', 'name', $coursetype->name, array('id' => "name", 'min' => 3, 'required' => true, 'class' => "form-control input-sm")) }}
 							</div>
 
-							{{ Form::label('short', 'Kurz*:', ['class' => 'col-md-2']) }}
-							<div class="col-md-4">
+							{{ Form::label('short', 'Kurz*:', ['class' => 'col-md-2 control-label']) }}
+							<div class="col-md-3">
 								{{ Form::input('text', 'short', $coursetype->short, array('id' => "short", 'min' => 3, 'required' => true, 'class' => "form-control input-sm")) }}
 							</div>
 						</div>
 
 						<div class="form-group">
-							{{ Form::label('description', 'Beschreibung:', ['class' => 'col-md-2']) }}
-							<div class="col-md-10">
+							{{ Form::label('description', 'Beschreibung:', ['class' => 'col-md-3 control-label']) }}
+							<div class="col-md-9">
 								{{ Form::textarea('description', $coursetype->description, array('id' => "description", 'class' => "form-control input-sm", 'rows'=>3, 'style' => 'resize:none;')) }}
 							</div>
 						</div>
