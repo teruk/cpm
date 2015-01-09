@@ -26,7 +26,9 @@
 		</button>
 	</h3> -->
 
-	@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Termin hinzufügen'])
+	@if ($currentUser->hasRole('Admin') OR $currentUser->can('add_appointedday'))
+		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Termin hinzufügen'])
+	@endif
 
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">	       	
@@ -37,20 +39,27 @@
 		       				<th>Betreff</th>
 		       				<th>Inhalt</th>
 		       				<th>Datum</th>
-		       				<th>Optionen</th>
+		       				<th>Option</th>
 		       			</tr>
 		       		</thead>
 		       		<tbody>
-						@foreach( $appointeddays as $a )
+						@foreach( $appointeddays as $appointedday )
 							<tr>
-		    					<td><a href="{{ route('showAppointedday_path', $a->id) }}">{{ $a->subject }}</a></td>
-		    					<td>{{ $a->read_more }}</td>
-		    					<td>{{ date('d.m.Y', strtotime($a->date)) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAppointedday_path', $a->id))) }}
-										{{ HTML::decode(link_to_route('showAppointedday_path', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Termin löschen', 'data-message' => 'Wollen Sie den Termin wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_appointedday'))
+		    							<a href="{{ route('editAppointeddayInformation_path', $appointedday->id) }}">{{ $appointedday->subject }}</a>
+		    						@else
+		    							{{ $appointedday->subject }}
+		    						@endif
+		    					</td>
+		    					<td>{{ $appointedday->read_more }}</td>
+		    					<td>{{ date('d.m.Y', strtotime($appointedday->date)) }}</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->can('delete_appointedday'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAppointedday_path', $appointedday->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Termin löschen', 'data-message' => 'Wollen Sie den Termin wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						@endforeach	

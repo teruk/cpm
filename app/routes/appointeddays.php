@@ -8,9 +8,9 @@ Route::group(['prefix' => 'appointeddays', 'before' => 'auth'], function()
 		'uses' => 'AppointeddaysController@index'
 		]);
 
-	Route::get('{appointedday}/showAppointedday', [
-		'as' => 'showAppointedday_path',
-		'uses' => 'AppointeddaysController@show'
+	Route::get('{appointedday}/editAppointeddayInformation', [
+		'as' => 'editAppointeddayInformation_path',
+		'uses' => 'AppointeddaysController@edit'
 		]);
 
 	Route::get('{appointedday}/showInformation', [

@@ -23,7 +23,7 @@
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_researchgroup'))
-            	<li><a href="{{ URL::to('researchgroups')}}">Arbeitsbereiche</a></li>
+            	<li>{{ link_to_route('showResearchgroups_path', 'Arbeitsbereiche') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin'))
@@ -43,15 +43,15 @@
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_room'))
-            	<li><a href="{{ URL::to('rooms')}}">Räume</a></li>
+            	<li>{{ link_to_route('showRooms_path', 'Räume') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_roomtype'))
-                <li><a href="{{ URL::to('roomtypes')}}">Raumtypen</a></li>
+                <li>{{ link_to_route('showRoomtypes_path', 'Raumtypen') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_turn'))
-                <li><a href="{{ URL::to('turns')}}">Semester</a></li>
+                <li>{{ link_to_route('showTurns_path', 'Semester') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_degreecourse'))
@@ -59,11 +59,11 @@
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_section'))
-                <li><a href="{{ URL::to('sections')}}">Studiengangsbereiche</a></li>
+                <li>{{ link_to_route('showSections_path', 'Studiengangsbereiche') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_rotation'))
-                <li><a href="{{ URL::to('rotations')}}">Turnus</a></li>
+                <li>{{ link_to_route('showRotations_path', 'Turnus') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_coursetype'))
@@ -73,11 +73,11 @@
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_user'))
             	<li class="divider"></li>
                 <li class="dropdown-header">Zugriffsmanagement</li>
-                <li><a href="{{ URL::to('users')}}">Benutzer</a></li>
+                <li>{{ link_to_route('showUsers_path', 'Benutzer') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_role'))
-                <li><a href="{{ URL::to('roles')}}">Rollen</a></li>
+                <li>{{ link_to_route('showRoles_path', 'Rollen') }}</li>
             @endif
 
             @if (Entrust::hasRole('Admin') || Entrust::can('edit_permission'))

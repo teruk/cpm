@@ -27,7 +27,9 @@
 		</button>
 	</h3> -->
 
-	@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Ankündigung hinzufügen'])
+	@if ($currentUser->hasRole('Admin') OR $currentUser->can('add_announcement'))
+		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Ankündigung hinzufügen'])
+	@endif
 	
 	<div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">       	

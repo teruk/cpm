@@ -102,3 +102,6 @@ Entrust::routeNeedsRoleOrPermission('plannings/*/update_status',array('Admin'),a
 
 /** announcement filter */
 Entrust::routeNeedsRoleOrPermission('announcements*',array('Admin'),array('add_announcement', 'edit_announcement', 'delete_announcement'),Redirect::back(),false);
+
+/** appointedday filter */
+Entrust::routeNeedsRoleOrPermission('appointeddays*',array('Admin'),array('add_appointedday', 'edit_appointedday', 'delete_appointedday'),Redirect::back(),false);

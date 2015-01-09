@@ -43,7 +43,7 @@ class appointeddaysController extends BaseController {
 	 * @param  int  appointedday $appointedday
 	 * @return Response
 	 */
-	public function show(Appointedday $appointedday)
+	public function edit(Appointedday $appointedday)
 	{	
 		if (Entrust::hasRole('Admin') || Entrust::can('edit_appointedday'))
 			$this->layout->content = View::make('appointeddays.show', compact('appointedday'));
