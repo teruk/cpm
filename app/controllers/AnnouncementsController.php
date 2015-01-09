@@ -43,9 +43,9 @@ class AnnouncementsController extends BaseController {
 	 * @param  int  Announcement $Announcement
 	 * @return Response
 	 */
-	public function show(Announcement $announcement)
+	public function edit(Announcement $announcement)
 	{	
-		$this->layout->content = View::make('announcements.show', compact('announcement'));
+		$this->layout->content = View::make('announcements.editInformation', compact('announcement'));
 	}
 
 	/**

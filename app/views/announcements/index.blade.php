@@ -38,21 +38,28 @@
 		       				<th>Betreff</th>
 		       				<th>Inhalt</th>
 		       				<th>Erstellt am</th>
-		       				<th>Optionen</th>
+		       				<th>Option</th>
 		       			</tr>
 		       		</thead>
 		       		<tbody>
-						@foreach( $announcements as $a )
+						@foreach( $announcements as $announcement )
 				
 							<tr>
-		    					<td>{{ link_to_route('showAnnouncement_path', $a->subject, $a->id) }}</td>
-		    					<td>{{ $a->read_more }}</td>
-		    					<td>{{ date('d.m.Y', strtotime($a->created_at)) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAnnouncement_path', $a->id))) }}
-										{{ HTML::decode(link_to_route('showAnnouncement_path', '<i class="glyphicon glyphicon-edit"></i>', array($a->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Ankündigung löschen', 'data-message' => 'Wollen Sie die Ankündigung wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_announcement'))
+		    							{{ link_to_route('editAnnouncementInformation_path', $announcement->subject, $announcement->id) }}
+		    						@else
+		    							{{ $announcement->subject }}
+		    						@endif
+		    					</td>
+		    					<td>{{ $announcement->read_more }}</td>
+		    					<td>{{ date('d.m.Y', strtotime($announcement->created_at)) }}</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->can('delete_announcement'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteAnnouncement_path', $announcement->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Ankündigung löschen', 'data-message' => 'Wollen Sie die Ankündigung wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						

@@ -12,9 +12,9 @@ Route::group(['prefix' => 'announcements', 'before' => 'auth'], function()
 		'uses' => 'AnnouncementsController@store'
 		]);
 
-	Route::get('{announcement}/showAnnouncement', [
-		'as' => 'showAnnouncement_path',
-		'uses' => 'AnnouncementsController@show'
+	Route::get('{announcement}/editAnnouncementInformation', [
+		'as' => 'editAnnouncementInformation_path',
+		'uses' => 'AnnouncementsController@edit'
 		]);
 
 	Route::delete('{announcement}/deleteAnnouncement', [

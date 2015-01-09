@@ -94,8 +94,11 @@ Route::filter('csrf', function()
 | Entrust Route protection
 |
 */
-Entrust::routeNeedsRoleOrPermission('users*',array('Admin'),array('edit_user'),Redirect::to('home'),false);
-Entrust::routeNeedsRoleOrPermission('roles*',array('Admin'),array('edit_role'),Redirect::to('home'),false);
-Entrust::routeNeedsRoleOrPermission('permissions*',array('Admin'),array('edit_permissions'),Redirect::to('home'),false);
-Entrust::routeNeedsRoleOrPermission('plannings/room_preference*',array('Admin'),array('view_room_preferences'),Redirect::to('home'),false);
-Entrust::routeNeedsRoleOrPermission('plannings/*/update_status',array('Admin'),array('change_planning_status'),Redirect::to('home'),false);
+Entrust::routeNeedsRoleOrPermission('users*',array('Admin'),array('edit_user'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('roles*',array('Admin'),array('edit_role'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('permissions*',array('Admin'),array('edit_permissions'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('plannings/room_preference*',array('Admin'),array('view_room_preferences'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('plannings/*/update_status',array('Admin'),array('change_planning_status'),Redirect::back(),false);
+
+/** announcement filter */
+Entrust::routeNeedsRoleOrPermission('announcements*',array('Admin'),array('add_announcement', 'edit_announcement', 'delete_announcement'),Redirect::back(),false);
