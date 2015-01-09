@@ -43,7 +43,7 @@ Route::filter('auth', function()
 		}
 		else
 		{
-			return Redirect::guest('login');
+			return Redirect::guest('login_path');
 		}
 	}
 });
@@ -67,7 +67,7 @@ Route::filter('auth.basic', function()
 
 Route::filter('guest', function()
 {
-	if (Auth::check()) return Redirect::to('/');
+	if (Auth::check()) return Redirect::to('dashboard_path');
 });
 
 /*
@@ -105,3 +105,9 @@ Entrust::routeNeedsRoleOrPermission('announcements*',array('Admin'),array('add_a
 
 /** appointedday filter */
 Entrust::routeNeedsRoleOrPermission('appointeddays*',array('Admin'),array('add_appointedday', 'edit_appointedday', 'delete_appointedday'),Redirect::back(),false);
+
+/** coursetype filter */
+Entrust::routeNeedsRoleOrPermission('coursetypes*',array('Admin'),array('add_coursetype', 'edit_coursetype', 'delete_coursetype'),Redirect::back(),false);
+
+/** degreecourse filter */
+Entrust::routeNeedsRoleOrPermission('degreecourses*',array('Admin'),array('add_degreecourse', 'edit_degreecourse', 'delete_degreecourse'),Redirect::back(),false);

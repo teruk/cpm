@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -27,7 +29,9 @@
 		</button>
 	</h3> -->
 
-	@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Lehrveranstaltungstyp hinzufügen'])
+	@if ($currentUser->hasRole('Admin') OR $currentUser->can('add_coursetype'))
+		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Lehrveranstaltungstyp hinzufügen'])
+	@endif
     
     <div class="row">
 		<div class="col-sm-12" style="margin-bottom: 5px;">   	
@@ -38,21 +42,28 @@
 		       				<th>Lehrveranstaltungstyp</th>
 		       				<th>Kurz</th>
 		       				<th>Beschreibung</th>
-		       				<th>Optionen</th>
+		       				<th>Option</th>
 		       			</tr>
 		       		</thead>
 		       		<tbody>
 						@foreach( $coursetypes as $coursetype )
 				
 							<tr>
-		    					<td>{{ link_to_route('showCoursetype_path', $coursetype->name, $coursetype->id) }}</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_coursetype'))
+		    							{{ link_to_route('editCoursetypeInformation_path', $coursetype->name, $coursetype->id) }}
+		    						@else
+		    							{{ $coursetype->name }}
+		    						@endif
+		    					</td>
 		    					<td>{{ $coursetype->short }}</td>
 		    					<td>{{ $coursetype->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCoursetype_path', $coursetype->id))) }}
-										{{ HTML::decode(link_to_route('showCoursetype_path', '<i class="glyphicon glyphicon-edit"></i>', array($coursetype->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltungstyp löschen', 'data-message' => 'Wollen Sie den Lehrveranstaltungstyp wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') OR $currentUser->canEdit('delete_coursetype'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteCoursetype_path', $coursetype->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Lehrveranstaltungstyp löschen', 'data-message' => 'Wollen Sie den Lehrveranstaltungstyp wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						

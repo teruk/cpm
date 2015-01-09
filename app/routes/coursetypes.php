@@ -8,9 +8,9 @@ Route::group(['prefix' => 'coursetypes', 'before' => 'auth'], function()
 		'uses' => 'CoursetypesController@index'
 		]);
 
-	Route::get('{coursetype}/showCoursetype', [
-		'as' => 'showCoursetype_path',
-		'uses' => 'CoursetypesController@show'
+	Route::get('{coursetype}/editCoursetypeInformation', [
+		'as' => 'editCoursetypeInformation_path',
+		'uses' => 'CoursetypesController@edit'
 		]);
 
 	Route::delete('{coursetype}/deleteCoursetype', [

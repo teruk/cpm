@@ -13,7 +13,7 @@ class CoursetypesController extends BaseController {
 	{
 		$coursetypes = Coursetype::all();
 
-		$this->layout->content = View::make('coursetypes.index', compact('coursetypes'));
+		return View::make('coursetypes.index', compact('coursetypes'));
 	}
 
 	/**
@@ -44,9 +44,9 @@ class CoursetypesController extends BaseController {
 	 * @param  int  CourseType $coursetype
 	 * @return Response
 	 */
-	public function show(Coursetype $coursetype)
+	public function edit(Coursetype $coursetype)
 	{	
-		$this->layout->content = View::make('coursetypes.show', compact('coursetype'));
+		return View::make('coursetypes.editInformation', compact('coursetype'));
 	}
 
 	/**

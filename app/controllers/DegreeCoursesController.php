@@ -15,18 +15,7 @@ class DegreecoursesController extends \BaseController {
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
 
-		$this->layout->content = View::make('degreecourses.index', compact('degreecourses','listofdepartments', 'listofdegrees'));
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 * GET /degreecourses/create
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		$this->layout->content = View::make('degreecourses.index');
+		return View::make('degreecourses.index', compact('degreecourses','listofdepartments', 'listofdegrees'));
 	}
 
 	/**
@@ -57,26 +46,14 @@ class DegreecoursesController extends \BaseController {
 	 * @param  int  Degree_Course $degree_course
 	 * @return Response
 	 */
-	public function show(Degreecourse $degreecourse)
+	public function edit(Degreecourse $degreecourse)
 	{	
 		$listofdepartments = Department::lists('name','id');
 		$listofdegrees = Degree::lists('name','id');
 		$listofrotations = Rotation::lists('name','id');
 		$listofsections = Section::lists('name','id');
 
-		$this->layout->content = View::make('degreecourses.show', compact('degreecourse', 'listofdepartments', 'listofdegrees', 'listofsections', 'listofrotations'));
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 * GET /degreecourses/{id}/edit
-	 *
-	 * @param  int  Degree_Course $degree_course
-	 * @return Response
-	 */
-	public function edit(Degreecourse $degreecourse)
-	{
-		$this->layout->content = View::make('degreecourses.index', compact('degreecourse'));
+		return View::make('degreecourses.editInformation', compact('degreecourse', 'listofdepartments', 'listofdegrees', 'listofsections', 'listofrotations'));
 	}
 
 	/**
@@ -113,6 +90,18 @@ class DegreecoursesController extends \BaseController {
 		$degreecourse->delete();
 		Flash::success('Studiengang erfolgreich gelöscht.');
 		return Redirect::back();
+	}
+
+	/**
+	 * return list of 
+	 * @param  Degreecourse $degreecourse [description]
+	 * @return [type]                     [description]
+	 */
+	public function showModules(Degreecourse $degreecourse)
+	{
+		$listofsections = Section::lists('name','id');
+		$listofrotations = Rotation::lists('name','id');
+		return View::make('degreecourses.modules', compact('degreecourse', 'listofsections', 'listofrotations'));
 	}
 
 }

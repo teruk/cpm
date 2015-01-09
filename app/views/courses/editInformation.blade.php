@@ -6,7 +6,7 @@
 		@include('courses.partials.sidenav')
 
 		<div class="col-md-9">
-			@include('courses.partials.heading', ['title' => 'Information bearbeiten:'])
+			@include('courses.partials.heading', ['title' => 'Informationen bearbeiten:'])
 
 			<p>Bearbeitung der Informationen dieser Lehrveranstaltung.</p>
 			<div class="panel panel-default">
