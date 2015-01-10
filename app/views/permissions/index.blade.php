@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -31,7 +33,7 @@
 		</button>
 	</h3> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_permission'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_permission'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Berechtigung hinzufügen'])
 	@endif
 	
@@ -50,12 +52,24 @@
 		       		<tbody>
 						@foreach( $permissions as $perm )
 							<tr>
-								<td>{{ link_to_route('showPermission_path', $perm->display_name, $perm->id) }}</td>
-		    					<td>{{ link_to_route('showPermission_path', $perm->name, $perm->id) }}</td>
+								<td>
+									@if ($currentUser->can('edit_permission') || $currentUser->hasRole('Admin'))
+										{{ link_to_route('editPermissionInformation_path', $perm->display_name, $perm->id) }}
+									@else
+										{{ $perm->display_name }}
+									@endif
+								</td>
+		    					<td>
+		    						@if ($currentUser->can('edit_permission') || $currentUser->hasRole('Admin'))
+		    							{{ link_to_route('editPermissionInformation_path', $perm->name, $perm->id) }}
+		    						@else
+		    							{{ $perm->name }}
+		    						@endif
+		    					</td>
 		    					<td>{{ $perm->description }}</td>
 		    					<td>
 		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deletePermission_path', $perm->id))) }}
-			    						@if (Entrust::can('delete_permission') || Entrust::hasRole('Admin'))
+			    						@if ($currentUser->can('delete_permission') || $currentUser->hasRole('Admin'))
 			        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Berechtigung löschen', 'data-message' => 'Wollen Sie die Berechtigung wirklich löschen?')) }}
 			        					@endif
 		        					{{ Form::close() }}

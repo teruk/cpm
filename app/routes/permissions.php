@@ -7,9 +7,9 @@ Route::group(['prefix' => 'permissions', 'before' => 'auth'], function()
 		'uses' => 'PermissionsController@index'
 		]);
 
-	Route::get('{permission}/showPermission', [
-		'as' => 'showPermission_path',
-		'uses' => 'PermissionsController@show'
+	Route::get('{permission}/editPermissionInformation', [
+		'as' => 'editPermissionInformation_path',
+		'uses' => 'PermissionsController@edit'
 		]);
 
 	Route::delete('{permission}/deletePermission', [

@@ -88,7 +88,7 @@
 			          			<td>{{ $p->semester_periods_per_week }}</td>
 			          			<td>{{ $p->group_number }}</td>
 			          			<td>
-			          				<a href="{{ route('overview.module', $p->course->module_id) }}">{{ $p->course->module->short }}</a><br>
+			          				{{ link_to_route('showOverviewSelectedModule_path', $p->course->module->short, $p->course->module_id) }}
 			          				{{ $p->course_title }}<br>
 			          				{{ $p->course_title_eng }}
 			          			</td>

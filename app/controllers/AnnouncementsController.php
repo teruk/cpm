@@ -45,11 +45,7 @@ class AnnouncementsController extends BaseController {
 	 */
 	public function edit(Announcement $announcement)
 	{
-		if (Entrust::hasRole('Admin') || Entrust::can('edit_announcement'))
-			return View::make('announcements.editInformation', compact('announcement'));
-
-		Flash::error('Zugriff verweigert.')
-		return Redirect::back();
+		return View::make('announcements.editInformation', compact('announcement'));
 	}
 
 	/**

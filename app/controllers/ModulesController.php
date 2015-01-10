@@ -213,6 +213,11 @@ class ModulesController extends \BaseController {
 		return View::make('modules.degreecourses', compact('module', 'degreecourses', 'sections'));
 	}
 
+	/**
+	 * show medium term plannings for a module
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
 	public function showMediumtermplannings(Module $module)
 	{
 		$mtp = Mediumtermplanning::where('module_id',$module->id)->orderBy('turn_id','ASC')->get();

@@ -44,7 +44,7 @@
 							@foreach( $turnNav['displayTurn']->modules as $module )
 								@if ($module->individual_courses == 0)
 									<tr>
-				    					<td><a href="{{ route('overview.module',$module->id) }}">{{ $module->short }} {{ $module->name }}</a></td>
+				    					<td>{{ link_to_route('showOverviewSelectedModule_path', $module->short.' '.$module->name, $module->id) }}</td>
 				              			<td>{{ Config::get('constants.exam_type')[$module->pivot->exam] }}</td>
 									</tr>
 								@endif

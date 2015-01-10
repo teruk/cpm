@@ -79,7 +79,7 @@
 
 			            <div class="form-group">
 	      					<div class="col-md-10 col-md-offset-2" style="text-align: right">
-	      					@if (Entrust::hasRole('Admin') || Entrust::can('edit_module'))
+	      					@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_module'))
 		      					*erforderlich
 		      					{{ Form::button('<i class="glyphicon glyphicon-refresh"></i> Aktualisieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Informationen aktualisieren')) }}
 		      				@endif

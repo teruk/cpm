@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	<link rel="stylesheet" type="text/css" href="{{ url('css/dataTables.bootstrap.css')}}">
 	<script type="text/javascript" language="javascript" src="{{ url('js/jquery.dataTables.min.js')}}"></script>
@@ -45,7 +47,7 @@ $(document).ready(function() {
 			                		<tr>
 			                  			<th>Modul</th>
 							                 @foreach($turns as $turn)
-							                 	<th>{{$turn->name}} {{$turn->year}}</th>
+							                 	<th>{{$turn->present()}}</th>
 							                 @endforeach
 			                		</tr>
 		              			</thead>
@@ -53,16 +55,16 @@ $(document).ready(function() {
 									@foreach( $mtpgrid['modules_all'] as $module )
 										<tr>
 											<td>
-												<a href="{{ route('overview.module', $module['id']) }}">{{ $module['short'] }}</a>
+												{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['id']) }}
 											</td>
 											@foreach( $module['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $employee)
-															@if (!$employee['annulled'])
-																<p><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</p>
+															@if (!$employee['annulled']) 
+																<p>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif
@@ -95,16 +97,16 @@ $(document).ready(function() {
 									@foreach( $mtpgrid['modules_bachelor'] as $module )
 										<tr>
 											<td>
-												<a href="{{ route('overview.module', $module['id']) }}">{{ $module['short'] }}</a>
+												{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['id']) }}
 											</td>
 											@foreach( $module['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $employee)
 															@if (!$employee['annulled'])
-																<p><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</p>
+																<p>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif
@@ -128,7 +130,7 @@ $(document).ready(function() {
 			                		<tr>
 			                  			<th>Modul</th>
 							                 @foreach($turns as $turn)
-							                 	<th>{{$turn->name}} {{$turn->year}}</th>
+							                 	<th>{{$turn->present() }}</th>
 							                 @endforeach
 			                		</tr>
 		              			</thead>
@@ -136,16 +138,16 @@ $(document).ready(function() {
 									@foreach( $mtpgrid['modules_master'] as $module )
 										<tr>
 											<td>
-												<a href="{{ route('overview.module', $module['id']) }}">{{ $module['short'] }}</a>
+												{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['id']) }}
 											</td>
 											@foreach( $module['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $employee)
 															@if (!$employee['annulled'])
-																<p><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</p>
+																<p>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{$employee['name']}}</a> ({{$employee['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }} ({{$employee['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif
@@ -177,15 +179,15 @@ $(document).ready(function() {
 				              	<tbody>
 									@foreach( $mtpgrid['employees_all'] as $employee )
 										<tr>
-											<td><p><strong><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{ $employee['name'] }}</a></strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
+											<td><p><strong>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }}</strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
 											@foreach( $employee['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $module)
 															@if (!$module['annulled'])
-																<p><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</p>
+																<p>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }}</a> ({{$module['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }} ({{$module['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif
@@ -216,15 +218,15 @@ $(document).ready(function() {
 				              	<tbody>
 									@foreach( $mtpgrid['employees_bachelor'] as $employee )
 										<tr>
-											<td><p><strong><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{ $employee['name'] }}</a></strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
+											<td><p><strong>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }}</strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
 											@foreach( $employee['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $module)
 															@if (!$module['annulled'])
-																<p><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</p>
+																<p>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }} ({{$module['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }} ({{$module['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif
@@ -255,15 +257,15 @@ $(document).ready(function() {
 				              	<tbody>
 									@foreach( $mtpgrid['employees_master'] as $employee )
 										<tr>
-											<td><p><strong><a href="{{ route('overview.employee', $employee['employee_id']) }}">{{ $employee['name'] }}</a></strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
+											<td><p><strong>{{ link_to_route('showOverviewSelectedEmployee_path', $employee['name'], $employee['employee_id']) }}</strong></p><p>{{ $employee['teaching_load'] }} SWS</p></td>
 											@foreach( $employee['turns'] as $turn )
 												<td>
 													@if (sizeof($turn))
 														@foreach( $turn as $module)
 															@if (!$module['annulled'])
-																<p><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</p>
+																<p>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }} ({{$module['semester_periods_per_week']}})</p>
 															@else
-																<p><s><a href="{{ route('overview.module', $module['module_id']) }}">{{$module['short']}}</a> ({{$module['semester_periods_per_week']}})</s></p>
+																<p><s>{{ link_to_route('showOverviewSelectedModule_path', $module['short'], $module['module_id']) }} ({{$module['semester_periods_per_week']}})</s></p>
 															@endif
 														@endforeach
 													@endif

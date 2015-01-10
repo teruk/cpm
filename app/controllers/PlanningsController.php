@@ -116,7 +116,7 @@ class PlanningsController extends BaseController {
 	{
 		$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 		$plannings = Planning::where('turn_id','=',$turn->id)->orderBy('course_number')->get();
-		$this->layout->content = View::make('plannings.update_status', compact('plannings', 'turn','listofcoursetypes'));
+		$this->layout->content = View::make('plannings.status', compact('plannings', 'turn','listofcoursetypes'));
 	}
 
 	/**

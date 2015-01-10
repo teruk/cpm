@@ -99,7 +99,7 @@
 						@foreach( $module->degreecourses as $degreecourse )
 							<tr>
 								<td>
-									{{ link_to_route('showOverviewSelectDegreecourse_path', $degreecourse->present(), $degreecourse->id)}}
+									{{ link_to_route('showOverviewSelectedDegreecourse_path', $degreecourse->present(), $degreecourse->id)}}
 								</td>
 								<td>{{ $degreecourse->short }}</td>
 								<td>{{ $degreecourse->department->name }}</td>

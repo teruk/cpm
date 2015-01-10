@@ -9,7 +9,7 @@ class permissionsController extends BaseController {
 	public function index()
 	{
 		$permissions = Permission::all();
-		$this->layout->content = View::make('permissions.index', compact('permissions'));
+		return View::make('permissions.index', compact('permissions'));
 	}
 
 	/**
@@ -17,14 +17,10 @@ class permissionsController extends BaseController {
 	 * @param  Permission $permission [description]
 	 * @return [type]                 [description]
 	 */
-	public function show(Permission $permission)
+	public function edit(Permission $permission)
 	{
-		if (sizeof(Session::get('tabindex')) == "")
-			$tabindex = "home";
-		else 
-			$tabindex = Session::get('tabindex');
 
-		$this->layout->content = View::make('permissions.show', compact('permission', 'tabindex'));
+		return View::make('permissions.editInformation', compact('permission'));
 	}
 
 	/**
@@ -77,8 +73,8 @@ class permissionsController extends BaseController {
 	public function destroy(Permission $permission)
 	{
 		// if user is has the permission 'Admin', he can't be deleted
-			$permission->delete();
-			Flash::success('Die Berechtigung wurde erfolgreich gelöscht.');
-			return Redirect::back();
+		$permission->delete();
+		Flash::success('Die Berechtigung wurde erfolgreich gelöscht.');
+		return Redirect::back();
 	}
 }

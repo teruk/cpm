@@ -29,7 +29,7 @@ Route::group(['prefix' => 'rooms', 'before' => 'auth'], function()
 		]);
 
 	/** room search routes */
-	Route::get('showSearchForm', [
+	Route::get('showRoomSearchForm', [
 		'as' => 'showRoomSearchForm_path',
 		'uses' => 'RoomSearchController@showRoomSearch'
 		]);

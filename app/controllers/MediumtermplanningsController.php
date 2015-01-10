@@ -20,7 +20,7 @@ class MediumtermplanningsController extends BaseController {
 		$mtpgrid['employees_bachelor'] = $this->sortEmployees("Bachelor");
 		$mtpgrid['employees_master'] = $this->sortEmployees("Master");
 		
-		$this->layout->content = View::make('mediumtermplannings.index', compact('mtpgrid','turns'));
+		return View::make('mediumtermplannings.index', compact('mtpgrid','turns'));
 	}
 
 	/**
@@ -105,7 +105,7 @@ class MediumtermplanningsController extends BaseController {
 		$mediumtermplanningEmployeeIds = $mediumtermplanning->getEmployeeIds();
 		$availableEmployees = Employee::getAvailableEmployeesWithResearchgroup($mediumtermplanningEmployeeIds);
 
-		$this->layout->content = View::make('modules.mediumtermplanning', compact('module', 'mediumtermplanning','availableEmployees'));
+		return View::make('modules.editMediumtermplanning', compact('module', 'mediumtermplanning','availableEmployees'));
 	}
 
 	/**

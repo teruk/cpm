@@ -95,38 +95,40 @@ Route::filter('csrf', function()
 |
 */
 /** user filter */
-Entrust::routeNeedsRoleOrPermission('users*',array('Admin'),array('add_user', 'edit_user', 'delete_user'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('users/*',array('Admin'),array('add_user', 'edit_user', 'delete_user'), Redirect::to('index'),false);
 
 /** role filter */
-Entrust::routeNeedsRoleOrPermission('roles*',array('Admin'),array('add_role', 'edit_role', 'delete_role'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('roles/*',array('Admin'),array('add_role', 'edit_role', 'delete_role'), Redirect::to('index'),false);
 
-Entrust::routeNeedsRoleOrPermission('permissions*',array('Admin'),array('edit_permissions'),Redirect::back(),false);
-Entrust::routeNeedsRoleOrPermission('plannings/room_preference*',array('Admin'),array('view_room_preferences'),Redirect::back(),false);
-Entrust::routeNeedsRoleOrPermission('plannings/*/update_status',array('Admin'),array('change_planning_status'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('permissions/*',array('Admin'),array('edit_permissions', 'add_permission', 'delete_permission'), Redirect::to('index'),false);
+
+Entrust::routeNeedsRoleOrPermission('plannings/*/showRoomPreference',array('Admin'),array('view_room_preferences'), Redirect::to('index'),false);
+
+Entrust::routeNeedsRoleOrPermission('plannings/*/showAllPlanningsStats',array('Admin'),array('change_planning_status'), Redirect::to('index'),false);
 
 /** announcement filter */
-Entrust::routeNeedsRoleOrPermission('announcements*',array('Admin'),array('add_announcement', 'edit_announcement', 'delete_announcement'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('announcements/*',array('Admin'),array('add_announcement', 'edit_announcement', 'delete_announcement'), Redirect::to('index'),false);
 
 /** appointedday filter */
-Entrust::routeNeedsRoleOrPermission('appointeddays*',array('Admin'),array('add_appointedday', 'edit_appointedday', 'delete_appointedday'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('appointeddays/*',array('Admin'),array('add_appointedday', 'edit_appointedday', 'delete_appointedday'),Redirect::to('index'),false);
 
 /** coursetype filter */
-Entrust::routeNeedsRoleOrPermission('coursetypes*',array('Admin'),array('add_coursetype', 'edit_coursetype', 'delete_coursetype'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('coursetypes/*',array('Admin'),array('add_coursetype', 'edit_coursetype', 'delete_coursetype'), Redirect::to('index'),false);
 
 /** course filter */
-Entrust::routeNeedsRoleOrPermission('courses*',array('Admin'),array('add_course', 'edit_course', 'delete_course'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('courses/*',array('Admin'),array('add_course', 'edit_course', 'delete_course'), Redirect::to('index'),false);
 
 /** degreecourse filter */
-Entrust::routeNeedsRoleOrPermission('degreecourses*',array('Admin'),array('add_degreecourse', 'edit_degreecourse', 'delete_degreecourse'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('degreecourses/*',array('Admin'),array('add_degreecourse', 'edit_degreecourse', 'delete_degreecourse'), Redirect::to('index'),false);
 
 /** degree filter */
-Entrust::routeNeedsRoleOrPermission('degrees*',array('Admin'),array('add_degree', 'edit_degree', 'delete_degree'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('degrees/*',array('Admin'),array('add_degree', 'edit_degree', 'delete_degree'), Redirect::to('index'),false);
 
 /** department filter */
-Entrust::routeNeedsRoleOrPermission('departments*',array('Admin'),array('add_department', 'edit_department', 'delete_department'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('departments/*',array('Admin'),array('add_department', 'edit_department', 'delete_department'), Redirect::to('index'),false);
 
 /** employee filter */
-Entrust::routeNeedsRoleOrPermission('employees*',array('Admin'),array('add_employee', 'edit_employee', 'delete_employee'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('employees/*',array('Admin'),array('add_employee', 'edit_employee', 'delete_employee'), Redirect::to('index'),false);
 
 /** module filter */
-Entrust::routeNeedsRoleOrPermission('modules*',array('Admin'),array('add_module', 'edit_module', 'delete_module'),Redirect::back(),false);
+Entrust::routeNeedsRoleOrPermission('modules/*',array('Admin'),array('add_module', 'edit_module', 'delete_module', 'edit_mediumtermplanning', 'add_mediumtermplanning', 'delete_mediumtermplanning'), Redirect::to('index'),false);
