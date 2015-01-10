@@ -94,8 +94,12 @@ Route::filter('csrf', function()
 | Entrust Route protection
 |
 */
-Entrust::routeNeedsRoleOrPermission('users*',array('Admin'),array('edit_user'),Redirect::back(),false);
-Entrust::routeNeedsRoleOrPermission('roles*',array('Admin'),array('edit_role'),Redirect::back(),false);
+/** user filter */
+Entrust::routeNeedsRoleOrPermission('users*',array('Admin'),array('add_user', 'edit_user', 'delete_user'),Redirect::back(),false);
+
+/** role filter */
+Entrust::routeNeedsRoleOrPermission('roles*',array('Admin'),array('add_role', 'edit_role', 'delete_role'),Redirect::back(),false);
+
 Entrust::routeNeedsRoleOrPermission('permissions*',array('Admin'),array('edit_permissions'),Redirect::back(),false);
 Entrust::routeNeedsRoleOrPermission('plannings/room_preference*',array('Admin'),array('view_room_preferences'),Redirect::back(),false);
 Entrust::routeNeedsRoleOrPermission('plannings/*/update_status',array('Admin'),array('change_planning_status'),Redirect::back(),false);
@@ -120,3 +124,9 @@ Entrust::routeNeedsRoleOrPermission('degrees*',array('Admin'),array('add_degree'
 
 /** department filter */
 Entrust::routeNeedsRoleOrPermission('departments*',array('Admin'),array('add_department', 'edit_department', 'delete_department'),Redirect::back(),false);
+
+/** employee filter */
+Entrust::routeNeedsRoleOrPermission('employees*',array('Admin'),array('add_employee', 'edit_employee', 'delete_employee'),Redirect::back(),false);
+
+/** module filter */
+Entrust::routeNeedsRoleOrPermission('modules*',array('Admin'),array('add_module', 'edit_module', 'delete_module'),Redirect::back(),false);

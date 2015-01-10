@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -23,13 +25,6 @@
 @stop
 
 @section('main')
-	<!-- <h2>Modulmanagement
-  @if (Entrust::can('add_module')) 
-		<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">
-	  	<span class="glyphicon glyphicon-plus"></span>
-		</button>
-  @endif
-	</h2> -->
 
   @if (Entrust::hasRole('Admin') || Entrust::can('add_module'))
     @include('layouts.partials.add-button-modal',['buttonLabel' => 'Modul hinzufügen'])
@@ -54,14 +49,20 @@
               <th>
                 <span data-toggle="tooltip" data-placement="top" data-original-title="Modul besteht aus individuellen Lehrveranstaltungen">IV</span>
                 </th>
-       				<th>Optionen</th>
+       				<th>Option</th>
        			</tr>
        		</thead>
        		<tbody>
     				@foreach( $modules as $module )
     					<tr>
       					<td>{{ $module->short }}</td>
-      					<td>{{ link_to_route('showModule_path', $module->name, $module->id) }}</td>
+      					<td>
+                  @if (Entrust::hasRole('Admin') || Entrust::can('edit_module'))
+                    {{ link_to_route('editModuleInformation_path', $module->name, $module->id) }}
+                  @else
+                    {{ $module->name }}
+                  @endif
+                </td>
       					<td>{{ $listofdegrees[$module->degree_id] }}</td>
       					<td>{{ $module->credits }}</td>
       					<td>{{ $listofrotations[$module->rotation_id] }}</td>
@@ -76,12 +77,11 @@
                   @endif
                 </td>
       					<td>
-      						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteModule_path', $module->id))) }}
-    						  {{ HTML::decode(link_to_route('showModule_path', '<i class="glyphicon glyphicon-edit"></i>', array($module->id), array('class' => 'btn btn-xs btn-warning'))) }}
-                  @if (Entrust::hasRole('Admin') || Entrust::can('delete_module'))
+      						@if (Entrust::hasRole('Admin') || Entrust::can('delete_module'))
+                    {{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteModule_path', $module->id))) }}
       						   {{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Modul löschen', 'data-message' => 'Wollen Sie das Modul wirklich löschen?')) }}
+                    {{ Form::close() }}
                   @endif
-  					      {{ Form::close() }}
       					</td>
     					</tr>
     				@endforeach	

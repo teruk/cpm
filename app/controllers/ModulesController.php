@@ -25,7 +25,7 @@ class ModulesController extends \BaseController {
 		$listofrotations = Rotation::orderBy('name','ASC')->lists('name','id');
 		$listofdegrees = Degree::orderBy('name','ASC')->lists('name','id');
 
-		$this->layout->content = View::make('modules.index', compact('modules', 'listofdepartments', 'listofdegrees', 'listofrotations'));
+		return View::make('modules.index', compact('modules', 'listofdepartments', 'listofdegrees', 'listofrotations'));
 	}
 
 	/**
@@ -60,13 +60,8 @@ class ModulesController extends \BaseController {
 	 * @param  int  Module $module
 	 * @return Response
 	 */
-	public function show(Module $module)
+	public function edit(Module $module)
 	{
-		if (sizeof(Session::get('tabindex')) == "")
-			$tabindex = "home";
-		else 
-			$tabindex = Session::get('tabindex');
-		
 		$lists = array();
 		$lists['departments'] 	= Department::orderBy('name','ASC')->lists('name','id');
 		$lists['rotations'] 	= Rotation::orderBy('name','ASC')->lists('name','id');
@@ -94,7 +89,7 @@ class ModulesController extends \BaseController {
 			$available_turns = array_add($available_turns,$t->id, $t->name.' '.$t->year);
 		}
 		
-		$this->layout->content = View::make('modules.show', compact('module', 'courses', 'lists', 'tabindex','mtp','available_turns','mtp_turns'));
+		return View::make('modules.editInformation', compact('module', 'courses', 'lists', 'tabindex','mtp','available_turns','mtp_turns'));
 	}
 
 	/**
@@ -192,6 +187,50 @@ class ModulesController extends \BaseController {
 		$module->delete();
 		Flash::success('Modul erfolgreich gelöscht.');
 		return Redirect::back();
+	}
+
+	/**
+	 * show course which belong to the module
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
+	public function showCourses(Module $module)
+	{
+		$coursetypes = Coursetype::lists('id','name');
+		return View::make('modules.courses', compact('module', 'coursetypes'));
+	}
+
+	/**
+	 * show degree courses which the module is assigned to
+	 * @param  Module $module [description]
+	 * @return [type]         [description]
+	 */
+	public function showDegreecourses(Module $module)
+	{
+		$degreecourses = Degreecourse::getList();
+		$sections = Section::lists('id','name');
+
+		return View::make('modules.degreecourses', compact('module', 'degreecourses', 'sections'));
+	}
+
+	public function showMediumtermplannings(Module $module)
+	{
+		$mtp = Mediumtermplanning::where('module_id',$module->id)->orderBy('turn_id','ASC')->get();
+		$mtp_turn_ids = array();
+		$mtp_turns = array();
+		foreach ($mtp as $m) {
+			array_push($mtp_turn_ids, $m->turn_id);
+			$mtp_turns = array_add($mtp_turns, $m->id, $m->turn->name.' '.$m->turn->year);
+		}
+		if (sizeof($mtp_turn_ids) > 0)
+			$turns = Turn::whereNotIn('id',$mtp_turn_ids)->orderBy('year','DESC')->orderBy('name','DESC')->get();
+		else
+			$turns = Turn::where('id','>',0)->orderBy('year','DESC')->orderBy('name','DESC')->get();
+		$available_turns = array();
+		foreach ($turns as $t) {
+			$available_turns = array_add($available_turns,$t->id, $t->name.' '.$t->year);
+		}
+		return View::make('modules.mediumtermplannings', compact('module', 'available_turns', 'mtp', 'mtp_turns'));
 	}
 	
 	// public function export()

@@ -8,9 +8,24 @@ Route::group(['prefix' => 'modules', 'before' => 'auth'], function()
 		'uses' => 'ModulesController@index'
 		]);
 
-	Route::get('{module}/showModule', [
-		'as' => 'showModule_path',
-		'uses' => 'ModulesController@show'
+	Route::get('{module}/editModuleInformation', [
+		'as' => 'editModuleInformation_path',
+		'uses' => 'ModulesController@edit'
+		]);
+
+	Route::get('{module}/showModuleCourses', [
+		'as' => 'showModuleCourses_path',
+		'uses' => 'ModulesController@showCourses'
+		]);
+
+	Route::get('{module}/showModuleDegreecourses', [
+		'as' => 'showModuleDegreecourses_path',
+		'uses' => 'ModulesController@showDegreecourses'
+		]);
+
+	Route::get('{module}/showModuleMediumtermplannings', [
+		'as' => 'showModuleMediumtermplannings_path',
+		'uses' => 'ModulesController@showMediumtermplannings'
 		]);
 
 	Route::delete('{module}/deleteModule', [

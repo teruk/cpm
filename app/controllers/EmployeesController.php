@@ -36,7 +36,7 @@ class EmployeesController extends BaseController {
 			}
 		}
 
-		$this->layout->content = View::make('employees.index', compact('employees', 'listofresearchgroups'));
+		return View::make('employees.index', compact('employees', 'listofresearchgroups'));
 	}
 	
 	/**
@@ -68,7 +68,7 @@ class EmployeesController extends BaseController {
 	 * @param Employee $employee
 	 * @return Response
 	 */
-	public function show(Employee $employee)
+	public function edit(Employee $employee)
 	{
 		// check if the user is allowed to see this employee
 		$allowed = false;
@@ -90,21 +90,12 @@ class EmployeesController extends BaseController {
 		{
 			// Loading the research groups for less querys in the view
 			$listofresearchgroups = Researchgroup::lists('name', 'id');
-			$plannings = array();
-			if (sizeof($employee->plannings) > 0)
-			{
-				$planning_ids = array();
-				foreach ($employee->plannings as $p) {
-					array_push($planning_ids, $p->id);
-				}
-				$plannings = Planning::whereIn('id',$planning_ids)->orderBy('turn_id','DESC')->get();
-			}
-			$this->layout->content = View::make('employees.show', compact('employee', 'listofresearchgroups', 'plannings'));
+			return View::make('employees.editInformation', compact('employee', 'listofresearchgroups'));
 		}
 		else
 		{
-			Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Mitarbeiter anzusehen!');
-			return Redirect::route('dashboard_path');
+			Flash::error('Zugriff verweigert! Sie besitzen nicht die nötigen Berechtigungen.');
+			return Redirect::back();
 		}
 	}
 	
@@ -154,6 +145,25 @@ class EmployeesController extends BaseController {
 		$employee->delete();
 		Flash::success('Mitarbeiter erfolgreich gelöscht');
 		return Redirect::back();
+	}
+
+	/**
+	 * show employee course history
+	 * @param  Employee $employee [description]
+	 * @return [type]             [description]
+	 */
+	public function showHistory(Employee $employee)
+	{
+		$plannings = array();
+		if (sizeof($employee->plannings) > 0)
+		{
+			$planning_ids = array();
+			foreach ($employee->plannings as $p) {
+				array_push($planning_ids, $p->id);
+			}
+			$plannings = Planning::whereIn('id',$planning_ids)->orderBy('turn_id','DESC')->get();
+		}
+		return View::make('employees.history', compact('employee', 'plannings'));
 	}
 
 	// public function export()

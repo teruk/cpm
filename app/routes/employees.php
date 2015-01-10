@@ -7,9 +7,14 @@ Route::group(['prefix' => 'employees', 'before' => 'auth'], function ()
 		'uses' => 'EmployeesController@index'
 		]);
 
-	Route::get('{employee}/showEmployee', [
-		'as' => 'showEmployee_path',
-		'uses' => 'EmployeesController@show'
+	Route::get('{employee}/editEmployeeInformation', [
+		'as' => 'editEmployeeInformation_path',
+		'uses' => 'EmployeesController@edit'
+		]);
+
+	Route::get('{employee}/showEmployeeCourseHistory', [
+		'as' => 'showEmployeeCourseHistory_path',
+		'uses' => 'EmployeesController@showHistory'
 		]);
 
 	Route::delete('{employee}/deleteEmployee', [
