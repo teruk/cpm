@@ -1,3 +1,4 @@
+@extends('layouts.main')
 <!--  scripts -->
 @section('scripts')
 	@include('layouts.partials.datatables-script')
@@ -25,7 +26,7 @@
 <!-- main content -->
 @section('main')
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_researchgroup'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_researchgroup'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Arbeitsbereich hinzufügen'])
 	@endif
 
@@ -39,22 +40,29 @@
 		                  <th>Name</th>
 		                  <th>Verantwortlich</th>
 		                  <th>Fachbereich</th>
-		                  <th>Optionen</th>
+		                  <th>Option</th>
 		                </tr>
 		          	</thead>
 		          	<tbody>
 						@foreach( $researchgroups as $researchgroup )
 							<tr>
 								<td>{{ $researchgroup->short }}</td>
-								<td>{{ link_to_route('showResearchgroup_path', $researchgroup->name, $researchgroup->id) }}</td>
+								<td>
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_researchgroup'))
+										{{ link_to_route('showResearchgroup_path', $researchgroup->name, $researchgroup->id) }}
+									@else
+										{{ $researchgroup->name }}
+									@endif
+								</td>
 								<td>N.N.</td>
 								<td>{{ $listofdepartments[$researchgroup->department_id] }}</td>
 								<td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteResearchgroup_path', $researchgroup->id))) }}
-										{{ HTML::decode(link_to_route('showResearchgroup_path', '<i class="glyphicon glyphicon-edit"></i>', array($researchgroup->id), array('class' => 'btn btn-xs btn-warning'))) }}
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_researchgroup'))
+										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteResearchgroup_path', $researchgroup->id))) }}
 
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Arbeitsbereich löschen', 'data-message' => 'Wollen Sie den Arbeitsbereich wirklich löschen?')) }}
-									{{ Form::close() }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Arbeitsbereich löschen', 'data-message' => 'Wollen Sie den Arbeitsbereich wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						@endforeach

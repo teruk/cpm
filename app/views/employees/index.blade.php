@@ -26,7 +26,7 @@
 
 @section('main')
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_employee'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_employee'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Mitarbeiter hinzufügen'])
 	@endif
 	
@@ -57,14 +57,14 @@
 								<tr>
 							@endif
 								<td>
-									@if (Entrust::hasRole('Admin') || Entrust::can('edit_employee'))
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_employee'))
 										{{ link_to_route('editEmployeeInformation_path', $employee->present(), $employee->id) }}
 									@else
 										{{ $employee->present() }}
 									@endif
 								</td>
 								<td>
-									@if (Entrust::hasRole('Admin') || Entrust::can('edit_researchgroup'))
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_researchgroup'))
 										{{ link_to_route('showResearchgroup_path', $employee->researchgroup->short, $employee->researchgroup_id) }}
 									@else
 										{{ $employee->researchgroup->short }}
@@ -81,7 +81,7 @@
 									@endif
 								</td>
 								<td>
-									@if (Entrust::hasRole('Admin') || Entrust::can('delete_employee'))
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_employee'))
 										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteEmployee_path', $employee->id))) }}
 											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Mitarbeiter löschen', 'data-message' => 'Wollen Sie den Mitarbeiter wirklich löschen?')) }}
 										{{ Form::close() }}

@@ -7,9 +7,19 @@ Route::group(['prefix' => 'researchgroups', 'before' => 'auth'], function()
 		'uses' => 'ResearchgroupsController@index'
 		]);
 
-	Route::get('{researchgroup}/showResearchgroup', [
-		'as' => 'showResearchgroup_path',
-		'uses' => 'ResearchgroupsController@show'
+	Route::get('{researchgroup}/editResearchgroupInformation', [
+		'as' => 'editResearchgroupInformation_path',
+		'uses' => 'ResearchgroupsController@edit'
+		]);
+
+	Route::get('{researchgroup}/showResearchgroupEmployees', [
+		'as' => 'showResearchgroupEmployees_path',
+		'uses' => 'ResearchgroupsController@showEmployees'
+		]);
+
+	Route::get('{researchgroup}/showResearchgroupCourses', [
+		'as' => 'showResearchgroupCourses_path',
+		'uses' => 'ResearchgroupsController@showCourses'
 		]);
 
 	Route::delete('{researchgroup}/deleteResearchgroup', [

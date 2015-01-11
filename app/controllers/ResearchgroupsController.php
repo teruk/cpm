@@ -25,7 +25,7 @@ class ResearchgroupsController extends BaseController{
 		{
 			$listofdepartments = array_add($listofdepartments, $department->id, $department->name);
 		}
-		$this->layout->content = View::make('researchgroups.index', compact('researchgroups', 'listofdepartments'));
+		return View::make('researchgroups.index', compact('researchgroups', 'listofdepartments'));
 	}
 	
 	/**
@@ -67,7 +67,7 @@ class ResearchgroupsController extends BaseController{
 	 * @param ResearchGroup $researchgroup
 	 * @return Response
 	 */
-	public function show(Researchgroup $researchgroup)
+	public function edit(Researchgroup $researchgroup)
 	{
 		$employees = Employee::where('researchgroup_id', '=', $researchgroup->id)->get();
 		$departments = Department::all();
@@ -76,7 +76,7 @@ class ResearchgroupsController extends BaseController{
 		{
 			$listofdepartments = array_add($listofdepartments, $department->id, $department->name);
 		}
-		$this->layout->content = View::make('researchgroups.show', compact('researchgroup', 'employees', 'listofdepartments'));
+		return View::make('researchgroups.editInformation', compact('researchgroup', 'employees', 'listofdepartments'));
 	}
 	
 	/**
@@ -131,5 +131,25 @@ class ResearchgroupsController extends BaseController{
 		
 		Flash::error('Der Arbeitsbereich kann nicht gelöscht werden, da ihm noch Mitarbeiter zugeordnet sind.');
 		return Redirect::back();
+	}
+
+	/**
+	 * show research group courses
+	 * @param  ResearchGroup $researchgroup [description]
+	 * @return [type]                       [description]
+	 */
+	public function showCourses(ResearchGroup $researchgroup)
+	{
+		return View::make('researchgroups.courses', compact('researchgroup'));
+	}
+
+	/**
+	 * show research group employees
+	 * @param  ResearchGroup $researchgroup [description]
+	 * @return [type]                       [description]
+	 */
+	public function showEmployees(ResearchGroup $researchgroup)
+	{
+		return View::make('researchgroups.employees', compact('researchgroup'));
 	}
 }
