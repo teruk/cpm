@@ -14,7 +14,7 @@ class RoomsController extends BaseController {
 	{
 		$rooms = Room::all();
 		$listofroomtypes = RoomType::orderBy('name','ASC')->lists('name','id');
-		$this->layout->content = View::make('rooms.index', compact('rooms','listofroomtypes'));
+		return View::make('rooms.index', compact('rooms','listofroomtypes'));
 	}
 
 	/**
@@ -45,10 +45,10 @@ class RoomsController extends BaseController {
 	 * @param  int  Room $room
 	 * @return Response
 	 */
-	public function show(Room $room)
+	public function edit(Room $room)
 	{	
 		$listofroomtypes = RoomType::orderBy('name','ASC')->lists('name','id');
-		$this->layout->content = View::make('rooms.show', compact('room', 'listofroomtypes'));
+		return View::make('rooms.editInformation', compact('room', 'listofroomtypes'));
 	}
 
 	/**

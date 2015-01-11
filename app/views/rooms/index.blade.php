@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -21,13 +23,8 @@
 @stop
 
 @section('main')
-<!-- 	<h2>Raummanagement 
-		<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">
-	  	<span class="glyphicon glyphicon-plus"></span>
-		</button>
-	</h2> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_room'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_room'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Raum hinzufügen'])
 	@endif
 
@@ -52,10 +49,16 @@
 						@foreach( $rooms as $room )
 				
 							<tr>
-		    					<td>{{ link_to_route('showRoom_path', $room->name, $room->id) }}</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('add_room'))
+		    							{{ link_to_route('editRoomInformation_path', $room->name, $room->id) }}
+		    						@else
+		    							{{ $room->name }}
+		    						@endif
+		    					</td>
 		    					<td>{{ $room->location }}</td>
 		    					<td>{{ $room->seats }}</td>
-		    					<td>{{ $listofroomtypes[$room->room_type_id] }}</td>
+		    					<td>{{ $listofroomtypes[$room->roomtype_id] }}</td>
 		    					@if ($room->beamer)
 		    						<td>ja</td>
 		    					@else
@@ -77,10 +80,11 @@
 		    						<td>nein</td>
 		    					@endif
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoom_path', $room->id))) }}
-										{{ HTML::decode(link_to_route('showRoom_path', '<i class="glyphicon glyphicon-edit"></i>', array($room->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raum löschen', 'data-message' => 'Wollen Sie den Raum wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_room'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoom_path', $room->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raum löschen', 'data-message' => 'Wollen Sie den Raum wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						

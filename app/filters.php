@@ -135,3 +135,6 @@ Entrust::routeNeedsRoleOrPermission('modules/*',array('Admin'),array('add_module
 
 /** researchgroup filter */
 Entrust::routeNeedsRoleOrPermission('researchgroups/*',array('Admin'),array('add_researchgroup', 'edit_researchgroup', 'delete_researchgroup'), Redirect::to('index'),false);
+
+/** room filter */
+Entrust::routeNeedsRoleOrPermission('rooms/*',array('Admin'),array('add_room', 'edit_room', 'delete_room'), Redirect::to('index'),false);

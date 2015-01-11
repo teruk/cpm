@@ -8,9 +8,9 @@ Route::group(['prefix' => 'rooms', 'before' => 'auth'], function()
 		'uses' => 'RoomsController@index'
 		]);
 
-	Route::get('{room}/showRoom', [
-		'as' => 'showRoom_path',
-		'uses' => 'RoomsController@show'
+	Route::get('{room}/editRoomInformation', [
+		'as' => 'editRoomInformation_path',
+		'uses' => 'RoomsController@edit'
 		]);
 
 	Route::delete('{room}/deleteRoom', [
