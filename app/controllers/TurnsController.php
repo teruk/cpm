@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 class TurnsController extends BaseController {
 	
+	/**
+	 * [index description]
+	 * @return [type] [description]
+	 */
 	public function index()
 	{
 		$turns = Turn::all();
@@ -11,7 +15,7 @@ class TurnsController extends BaseController {
 		 * generating a list of available turns
 		 */
 		$availableturns = Turn::getListofAvailableTurns();
-		$this->layout->content = View::make('turns.index', compact('turns','availableturns'));
+		return View::make('turns.index', compact('turns','availableturns'));
 	}
 	
 	/**
@@ -38,9 +42,9 @@ class TurnsController extends BaseController {
 	/**
 	* show detail auf a turn
 	*/
-	public function show(Turn $turn)
+	public function edit(Turn $turn)
 	{
-		$this->layout->content = View::make('turns.show', compact('turn'));
+		return View::make('turns.editInformation', compact('turn'));
 	}
 	
 	/**

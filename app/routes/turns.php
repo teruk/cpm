@@ -7,9 +7,9 @@ Route::group(['prefix' => 'turns', 'before' => 'auth'], function()
 		'uses' => 'TurnsController@index'
 		]);
 
-	Route::get('{turn}/showTurn', [
-		'as' => 'showTurn_path',
-		'uses' => 'TurnsController@show'
+	Route::get('{turn}/editTurnInformation', [
+		'as' => 'editTurnInformation_path',
+		'uses' => 'TurnsController@edit'
 		]);
 
 	Route::delete('{turn}/deleteTurn', [

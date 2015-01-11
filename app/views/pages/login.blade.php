@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('main')
 	<div class="row" >
 		<div class="col-sm-6">

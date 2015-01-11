@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 <!--  scripts -->
 @section('scripts')
 	@include('layouts.partials.datatables-script')
@@ -29,7 +31,7 @@
 		</button>
 	</h2> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_turn'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_turn'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Semester hinzufügen'])
 	@endif
 
@@ -48,15 +50,21 @@
 		          	<tbody>
 						@foreach( $turns as $turn )
 							<tr>
-								<td>{{ link_to_route('showTurn_path', $turn->present(), $turn->id) }}</td>
-								<td>{{ $turn->semester_start }}</td>
-								<td>{{ $turn->semester_end }}</td>
 								<td>
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteTurn_path', $turn->id))) }}
-										{{ HTML::decode(link_to_route('showTurn_path', '<i class="glyphicon glyphicon-edit"></i>', array($turn->id), array('class' => 'btn btn-xs btn-warning'))) }}
-
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Semester löschen', 'data-message' => 'Wollen Sie das Semester wirklich löschen?')) }}
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_turn'))
+										{{ link_to_route('editTurnInformation_path', $turn->present(), $turn->id) }}
+									@else
+										{{ $turn->present() }}
+									@endif
+								</td>
+								<td>{{ date('d.m.Y', strtotime($turn->semester_startdate)) }}</td>
+								<td>{{ date('d.m.Y', strtotime($turn->semester_enddate)) }}</td>
+								<td>
+									@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_turn'))
+										{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteTurn_path', $turn->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Semester löschen', 'data-message' => 'Wollen Sie das Semester wirklich löschen?')) }}
 										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						@endforeach

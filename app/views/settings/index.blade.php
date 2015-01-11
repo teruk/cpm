@@ -1,37 +1,42 @@
-@section('scripts')
-@stop
+@extends('layouts.main')
 
-@section('breadcrumbs')
-	<ol class="breadcrumb">
-		<li class="active">Administration</li>
-		<li class="active">Einstellungen</li>
-	</ol>
-@stop
+@include('settings.partials.breadcrumb', ['breadcrumbTitle' => 'Übersicht'])
 
 @section('main')
+	
 	<div class="row">
-		<div class="col-sm-12">
-			<div class="panel panel-primary">
-	            <div class="panel-body">
-					{{ Form::model(new Turn, ['method' => 'PATCH', 'route' => ['updateCurrentTurn_path'], 'class' => "form-horizontal"]) }}
-						<fieldset>
-							<legend>Aktuelles Semester</legend>
-							<div class="form-group">
-		        				{{ Form::label('current_turn', 'Aktuelles Semester:', array('class' => "col-lg-4 control-label", 'id' => "current_turn")) }}
-		        				<div class="col-lg-8">
-		        					{{ Form::select('current_turn', $listofturns, Setting::setting('current_turn')->first()->value, array('id' => "current_turn", 'class' => 'form-control input-sm')) }}
-		        				</div>
-			        		</div>
+		@include('settings.partials.sidenav')
 
-			        		<div class="form-group">
-		      					<div class="col-lg-8 col-lg-offset-4" style="text-align: right">
-			      					@if (Entrust::hasRole('Admin') || Entrust::can('change_setting_current_turn'))
-				      					{{ Form::button('<i class="glyphicon glyphicon-refresh"></i> Aktualisieren', array('type' => 'submit', 'class' => 'btn btn-sm btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Aktuelles Semester aktualisieren')) }}
-				      				@endif
-		      					</div>
-		      				</div>
-		        		</fieldset>	
-					{{ Form::close() }}
+		<div class="col-md-9">
+			@include('settings.partials.heading', ['title' => 'Übersicht:'])
+
+			<p>Übersicht über die vorhandenen Einstellungen.</p>
+
+			<div class="panel panel-default">
+	            <div class="panel-body">
+					<table class="table table-striped table-condensed">
+						<caption>table title and/or explanatory text</caption>
+						<thead>
+							<tr>
+								<th>Anzeigenname</th>
+								<th>Name</th>
+								<th>Wert</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									@if ($currentUser->hasRole('Admin') OR $currentUser->can('change_setting_current_turn'))
+										{{ link_to_route('editSettingCurrentTurn_path', 'Aktuelles Semester') }}
+									@else
+										Aktuelles Semester
+									@endif
+								</td>
+								<td>current_turn</td>
+								<td>{{ $currentTurn->present() }}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

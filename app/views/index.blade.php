@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	<script type="text/javascript" class="init">
 		

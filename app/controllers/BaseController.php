@@ -16,7 +16,7 @@ class BaseController extends Controller {
 		// variables, that are available in all views
 		View::share('currentUser', Auth::user());
 		View::share('signedIn', Auth::user());
-		View::share('currentTurn', Setting::setting('current_turn')->first()->value);
+		View::share('currentTurn', Turn::findOrFail(Setting::setting('current_turn')->first()->value));
 	}
 	
 	/** 

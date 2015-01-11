@@ -10,8 +10,17 @@ class SettingsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$listofturns = Turn::getList();
-		$this->layout->content = View::make('settings.index', compact('listofturns'));
+		return View::make('settings.index', compact('listofturns'));
+	}
+
+	/**
+	 * show setting current turn
+	 * @return [type] [description]
+	 */
+	public function editCurrentTurn()
+	{
+		$turns = Turn::getList();
+		return View::make('settings.editCurrentTurn', compact('turns'));
 	}
 
 	/**

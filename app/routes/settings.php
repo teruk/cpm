@@ -9,6 +9,11 @@ Route::group(['prefix' => 'settings', 'before' => 'auth'], function()
 		'uses' => 'SettingsController@index'
 		]);
 
+	Route::get('editSettingCurrentTurn', [
+		'as' => 'editSettingCurrentTurn_path',
+		'uses' => 'SettingsController@editCurrentTurn'
+		]);
+
 	Route::patch('updateCurrentTurn', [
 		'as' => 'updateCurrentTurn_path',
 		'uses' => 'SettingsController@updateCurrentTurn'

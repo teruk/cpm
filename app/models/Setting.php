@@ -3,7 +3,7 @@
 use LaravelBook\Ardent\Ardent;
 class Setting extends Ardent {
 	
-	protected $fillable = ['name', 'value'];
+	protected $fillable = ['name', 'display_name', 'value'];
 	public static $rules = array(
 			'name' => 'required',
 			'value' => 'required'

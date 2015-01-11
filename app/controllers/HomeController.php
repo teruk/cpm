@@ -23,7 +23,7 @@ class HomeController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$this->layout->content = View::make('index');
+		return View::make('index');
 	}
 
 	/**
@@ -32,7 +32,7 @@ class HomeController extends BaseController {
 	 */
 	public function showLogin()
 	{
-		$this->layout->content = View::make('pages.login');
+		return View::make('pages.login');
 	}
 
 	/**

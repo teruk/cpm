@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
     <link rel="stylesheet" type="text/css" href="{{ url('css/dataTables.bootstrap.css')}}">
     <script type="text/javascript" language="javascript" src="{{ url('js/jquery.dataTables.min.js')}}"></script>

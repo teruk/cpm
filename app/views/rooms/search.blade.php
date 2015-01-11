@@ -49,7 +49,7 @@
               	<div class="form-group">
 	                {{ Form::label('turn_id', 'Semester*:', array('class' => "col-lg-5 control-label", 'id' => "turn_id")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::select('turn_id', $turns, $currentTurn, array('id' => "turn_id", 'required' => true, 'class' => "form-control input-sm")) }}
+	                  {{ Form::select('turn_id', $turns, $currentTurn->id, array('id' => "turn_id", 'required' => true, 'class' => "form-control input-sm")) }}
 	                </div>
               	</div>
 
