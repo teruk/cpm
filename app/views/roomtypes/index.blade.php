@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -21,13 +23,8 @@
 @stop
 
 @section('main')
-	<!-- <h2>Raumtypenmanagement 
-		<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">
-	  	<span class="glyphicon glyphicon-plus"></span>
-		</button>
-	</h2> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_roomtype'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_roomtype'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Raumtyp hinzufügen'])
 	@endif
 
@@ -39,20 +36,27 @@
 		       			<tr>
 		       				<th>Raumtypname</th>
 		       				<th>Beschreibung</th>
-		       				<th>Optionen</th>
+		       				<th>Option</th>
 		       			</tr>
 		       		</thead>
 		       		<tbody>
 						@foreach( $roomtypes as $roomtype )
 				
 							<tr>
-		    					<td>{{ link_to_route('showRoomtype_path', $roomtype->name, $roomtype->id) }}</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_roomtype'))
+		    							{{ link_to_route('editRoomtypeInformation_path', $roomtype->name, $roomtype->id) }}
+		    						@else
+		    							{{ $roomtype->name }}
+		    						@endif
+		    					</td>
 		    					<td>{{ $roomtype->description }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoomtype_path', $roomtype->id))) }}
-										{{ HTML::decode(link_to_route('showRoomtype_path', '<i class="glyphicon glyphicon-edit"></i>', array($roomtype->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raumtyp löschen', 'data-message' => 'Wollen Sie den Raumtyp wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_roomtype'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRoomtype_path', $roomtype->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Raumtyp löschen', 'data-message' => 'Wollen Sie den Raumtyp wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						@endforeach	
@@ -63,7 +67,7 @@
 	</div>
 
 	<!-- add form dialog -->
-	@include('roomtyps.partials.add-form')
+	@include('roomtypes.partials.add-form')
 
 	<!-- delete confirmation modal dialog -->
 	@include('layouts.partials.delete_confirm')

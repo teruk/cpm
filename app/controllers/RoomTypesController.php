@@ -12,7 +12,7 @@ class RoomtypesController extends BaseController {
 	public function index()
 	{
 		$roomtypes = Roomtype::all();
-		$this->layout->content = View::make('roomtypes.index', compact('roomtypes'));
+		return View::make('roomtypes.index', compact('roomtypes'));
 	}
 
 	/**
@@ -43,9 +43,9 @@ class RoomtypesController extends BaseController {
 	 * @param  int  Roomtype $roomtype
 	 * @return Response
 	 */
-	public function show(Roomtype $roomtype)
+	public function edit(Roomtype $roomtype)
 	{	
-		$this->layout->content = View::make('roomtypes.show', compact('roomtype'));
+		return View::make('roomtypes.editInformation', compact('roomtype'));
 	}
 
 	/**
@@ -83,5 +83,4 @@ class RoomtypesController extends BaseController {
 		Flash::success('Raumtyp erfolgreich gelöscht.');
 		return Redirect::back();
 	}
-
 }

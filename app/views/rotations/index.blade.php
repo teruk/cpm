@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -27,7 +29,7 @@
 		</button>
 	</h2> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_rotation'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_rotation'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Turnus hinzufügen'])
 	@endif
 
@@ -45,12 +47,19 @@
 						@foreach( $rotations as $rotation )
 				
 							<tr>
-	        					<td>{{ link_to_route('showRotation_path', $rotation->name, $rotation->id) }}</td>
 	        					<td>
-	        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRotation_path', $rotation->id))) }}
-										{{ HTML::decode(link_to_route('showRotation_path', '<i class="glyphicon glyphicon-edit"></i>', array($rotation->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Turnus löschen', 'data-message' => 'Wollen Sie den Turnus wirklich löschen?')) }}
-									{{ Form::close() }}
+	        						@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_rotation'))
+	        							{{ link_to_route('editRotationInformation_path', $rotation->name, $rotation->id) }}
+	        						@else
+	        							{{ $rotation->name }}
+	        						@endif
+	        					</td>
+	        					<td>
+	        						@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_rotation'))
+		        						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRotation_path', $rotation->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Turnus löschen', 'data-message' => 'Wollen Sie den Turnus wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 	        					</td>
 							</tr>
 						

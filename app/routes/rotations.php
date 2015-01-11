@@ -8,9 +8,9 @@ Route::group(['prefix' => 'rotations', 'before' => 'auth'], function()
 		'uses' => 'RotationsController@index'
 		]);
 
-	Route::get('{rotation}/showRotation', [
-		'as' => 'showRotation_path',
-		'uses' => 'RotationsController@show'
+	Route::get('{rotation}/editRotationInformation', [
+		'as' => 'editRotationInformation_path',
+		'uses' => 'RotationsController@edit'
 		]);
 
 	Route::delete('{rotation}/deleteRotation', [

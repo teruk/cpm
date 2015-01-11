@@ -7,9 +7,9 @@ Route::group(['prefix' => 'roomtypes', 'before' => 'auth'], function()
 		'uses' => 'RoomtypesController@index'
 		]);
 
-	Route::get('{roomtype}/showRoomtype', [
-		'as' => 'showRoomtype_path',
-		'uses' => 'RoomtypesController@show'
+	Route::get('{roomtype}/editRoomtypeInformation', [
+		'as' => 'editRoomtypeInformation_path',
+		'uses' => 'RoomtypesController@edit'
 		]);
 
 	Route::delete('{roomtype}/deleteRoomtype', [

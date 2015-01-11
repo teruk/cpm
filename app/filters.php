@@ -138,3 +138,9 @@ Entrust::routeNeedsRoleOrPermission('researchgroups/*',array('Admin'),array('add
 
 /** room filter */
 Entrust::routeNeedsRoleOrPermission('rooms/*',array('Admin'),array('add_room', 'edit_room', 'delete_room'), Redirect::to('index'),false);
+
+/** roomtype filter */
+Entrust::routeNeedsRoleOrPermission('roomtypes/*',array('Admin'),array('add_roomtype', 'edit_roomtype', 'delete_roomtype'), Redirect::to('index'),false);
+
+/** rotation filter */
+Entrust::routeNeedsRoleOrPermission('rotations/*',array('Admin'),array('add_rotation', 'edit_rotation', 'delete_rotation'), Redirect::to('index'),false);

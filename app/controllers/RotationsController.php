@@ -8,16 +8,16 @@ class RotationsController extends BaseController {
 	public function index()
 	{
 		$rotations = Rotation::all();
-		$this->layout->content = View::make('rotations.index', compact('rotations'));
+		return View::make('rotations.index', compact('rotations'));
 	}
 	
 	/**
 	 * 
 	 * @param Rotation $rotation
 	 */
-	public function show(Rotation $rotation)
+	public function edit(Rotation $rotation)
 	{
-		$this->layout->content = View::make('rotations.show', compact('rotation'));
+		return View::make('rotations.editInformation', compact('rotation'));
 	}
 	
 	/**
@@ -35,7 +35,7 @@ class RotationsController extends BaseController {
 		}
 
 		Flash::error($rotation->errors());
-		return Redirect::back();
+		return Redirect::back()->withInput();
 	}
 	
 	/**
@@ -44,8 +44,14 @@ class RotationsController extends BaseController {
 	 */
 	public function destroy(Rotation $rotation)
 	{
-		$rotation->delete();
-		Flash::success('Bereich erfolgreich gelöscht.');
+		if ($rotation->modules->count() == 0)
+		{
+			$rotation->delete();
+			Flash::success('Bereich erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Turnus konnte nicht gelöscht werden. Es existieren noch Module die diesen Turnus verwenden.');
+
 		return Redirect::back();
 	}
 	
