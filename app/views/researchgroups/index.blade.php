@@ -49,7 +49,7 @@
 								<td>{{ $researchgroup->short }}</td>
 								<td>
 									@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_researchgroup'))
-										{{ link_to_route('showResearchgroup_path', $researchgroup->name, $researchgroup->id) }}
+										{{ link_to_route('editResearchgroupInformation_path', $researchgroup->name, $researchgroup->id) }}
 									@else
 										{{ $researchgroup->name }}
 									@endif

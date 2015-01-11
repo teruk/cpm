@@ -8,9 +8,19 @@ Route::group(['prefix' => 'roles', 'before' => 'auth'], function()
 		'uses' => 'RolesController@index'
 		]);
 
-	Route::get('{role}/showRole', [
-		'as' => 'showRole_path',
-		'uses' => 'RolesController@show'
+	Route::get('{role}/editRoleInformation', [
+		'as' => 'editRoleInformation_path',
+		'uses' => 'RolesController@edit'
+		]);
+
+	Route::get('{role}/showRolePermissions', [
+		'as' => 'showRolePermissions_path',
+		'uses' => 'RolesController@showPermissions'
+		]);
+
+	Route::get('{role}/showRoleUsers', [
+		'as' => 'showRoleUsers_path',
+		'uses' => 'RolesController@showUsers'
 		]);
 
 	Route::delete('{role}/deleteRole', [

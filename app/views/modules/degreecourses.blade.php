@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@include('modules.partials.breadcrumb', ['breadcrumbTitle' => 'Zugehörige Lehrveranstaltungen'])
+@include('modules.partials.breadcrumb', ['breadcrumbTitle' => 'Zugeordnete Studiengänge'])
 
 @section('main')
 	
@@ -8,7 +8,7 @@
 		@include('modules.partials.sidenav')
 
 		<div class="col-md-9">
-			@include('modules.partials.heading', ['title' => 'Zugehörige Lehrveranstaltungen:'])
+			@include('modules.partials.heading', ['title' => 'Zugeordnete Studiengänge:'])
 
 			<p>Bearbeiten der Modulzugehörigkeit zu Studiengängen.</p>
 			<div class="panel panel-default">

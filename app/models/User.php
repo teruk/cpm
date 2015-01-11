@@ -10,7 +10,7 @@ use LaravelBook\Ardent\Ardent;
 class User extends Ardent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait, HasRole;
-	protected $fillable = ['name', 'username', 'password', 'email', 'remember_token', 'deactivated','last_login'];
+	protected $fillable = ['name', 'password', 'email', 'remember_token', 'deactivated','last_login'];
 	public static $rules = array(
 			'email' => 'required|unique:users',
 	);

@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -28,7 +30,7 @@
 		</button>
 	</h3> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_role'))
+	@if ($currentUser->hasRole('Admin') OR $currentUser->can('add_role'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Rolle hinzufügen'])
 	@endif
 	    	
@@ -47,12 +49,18 @@
 						@foreach( $roles as $role )
 				
 							<tr>
-		    					<td>{{ link_to_route('showRole_path', $role->name, $role-is) }}</td>
+		    					<td>
+		    						@if (($currentUser->hasRole('Admin') OR $currentUser->can('add_role')) AND $role->name != 'Admin')
+		    							{{ link_to_route('editRoleInformation_path', $role->name, $role->id) }}
+		    						@else
+		    							{{ $role->name }}
+		    						@endif
+		    					</td>
 		    					<td>{{ $role->description }}</td>
 		    					<td>
 		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteRole_path', $role->id))) }}
 		    						@if ($role->name != "Admin")
-			    						@if (Entrust::can('delete_role') || Entrust::hasRole('Admin'))
+			    						@if ($currentUser->can('delete_role') OR $currentUser->hasRole('Admin'))
 			        						{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Rolle löschen', 'data-message' => 'Wollen Sie die Rolle wirklich löschen?')) }}
 			        					@endif
 			        				@endif

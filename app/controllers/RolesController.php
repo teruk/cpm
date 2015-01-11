@@ -9,7 +9,7 @@ class RolesController extends BaseController {
 	public function index()
 	{
 		$roles = Role::all();
-		$this->layout->content = View::make('roles.index', compact('roles'));
+		return View::make('roles.index', compact('roles'));
 	}
 
 	/**
@@ -17,33 +17,9 @@ class RolesController extends BaseController {
 	 * @param  Role   $role [description]
 	 * @return [type]       [description]
 	 */
-	public function show(Role $role)
+	public function edit(Role $role)
 	{
-		// set nav tab
-		if (sizeof(Session::get('tabindex')) == "")
-			$tabindex = "home";
-		else
-			$tabindex = Session::get('tabindex');
-
-		// determe available permissions
-		$available_permissions = Permission::all();
-		$selected_permissions_ids = array();
-		$available_permissions_ids = array();
-		foreach ($role->perms as $p) {
-			array_push($selected_permissions_ids, $p->id);
-		}
-
-		foreach ($available_permissions as $x) {
-			array_push($available_permissions_ids, $x->id);
-		}
-
-		$available_permissions_ids = array_diff($available_permissions_ids, $selected_permissions_ids);
-		if (sizeof($available_permissions_ids) > 0)
-			$available_permissions = Permission::whereIn('id',$available_permissions_ids)->get();
-		else
-			$available_permissions = array();
-
-		$this->layout->content = View::make('roles.show', compact('role','available_permissions', 'tabindex'));
+		return View::make('roles.editInformation', compact('role'));
 	}
 
 	/**
@@ -137,5 +113,42 @@ class RolesController extends BaseController {
 
 		Flash::success('Die Berechtigung wurden erfolgreich aktualisiert.');
 		return Redirect::back()->with('tabindex', Input::get('tabindex'));
+	}
+
+	/**
+	 * show role permissions
+	 * @param  Role   $role [description]
+	 * @return [type]       [description]
+	 */
+	public function showPermissions(Role $role)
+	{
+		// determe available permissions
+		$availablePermissions = Permission::all();
+		$selectedPermissionIds = array();
+		$availablePermissionIds = array();
+		foreach ($role->perms as $p) {
+			array_push($selectedPermissionIds, $p->id);
+		}
+
+		foreach ($availablePermissions as $x) {
+			array_push($availablePermissionIds, $x->id);
+		}
+
+		$availablePermissionIds = array_diff($availablePermissionIds, $selectedPermissionIds);
+		if (sizeof($availablePermissionIds) > 0)
+			$availablePermissions = Permission::whereIn('id',$availablePermissionIds)->get();
+		else
+			$availablePermissions = array();
+		return View::make('roles.permissions', compact('role', 'availablePermissions'));
+	}
+
+	/**
+	 * show role users
+	 * @param  Role   $role [description]
+	 * @return [type]       [description]
+	 */
+	public function showUsers(Role $role)
+	{
+		return View::make('roles.users', compact('role'));
 	}
 }

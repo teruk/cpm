@@ -132,3 +132,6 @@ Entrust::routeNeedsRoleOrPermission('employees/*',array('Admin'),array('add_empl
 
 /** module filter */
 Entrust::routeNeedsRoleOrPermission('modules/*',array('Admin'),array('add_module', 'edit_module', 'delete_module', 'edit_mediumtermplanning', 'add_mediumtermplanning', 'delete_mediumtermplanning'), Redirect::to('index'),false);
+
+/** researchgroup filter */
+Entrust::routeNeedsRoleOrPermission('researchgroups/*',array('Admin'),array('add_researchgroup', 'edit_researchgroup', 'delete_researchgroup'), Redirect::to('index'),false);
