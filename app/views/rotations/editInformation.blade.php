@@ -19,7 +19,7 @@
 						<div class="form-group">
 							{{ Form::label('name', 'Name*:', ['class' => 'col-md-2 control-label']) }}
 							<div class="col-md-10">
-								{{ Form::text('name', $rotation->name, ['class' => 'form-control input-sm', 'required' => true, 'id' => 'name', 'min' => 3]) }}
+								{{ Form::text('name', $rotation->name, ['class' => 'form-control input-sm', 'placeholder' => 'Turnusname', 'required' => true, 'id' => 'name', 'min' => 3]) }}
 							</div>
 						</div>
 

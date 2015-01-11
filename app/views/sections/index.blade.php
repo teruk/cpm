@@ -1,3 +1,5 @@
+@extends('layouts.main')
+
 @section('scripts')
 	@include('layouts.partials.datatables-script')
 	<script type="text/javascript" class="init">
@@ -21,13 +23,8 @@
 @stop
 
 @section('main')
-	<!-- <h2>Bereichsmanagement 
-		<button class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">
-	  	<span class="glyphicon glyphicon-plus"></span>
-		</button>
-	</h2> -->
 
-	@if (Entrust::hasRole('Admin') || Entrust::can('add_section'))
+	@if ($currentUser->hasRole('Admin') || $currentUser->can('add_section'))
 		@include('layouts.partials.add-button-modal', ['buttonLabel' => 'Bereich hinzufügen'])
 	@endif
 
@@ -44,12 +41,19 @@
 		       		<tbody>
 						@foreach( $sections as $section )
 							<tr>
-		    					<td> {{ link_to_route('showSection_path', $section->name, $section->id) }}</td>
 		    					<td>
-		    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteSection_path', $section->id))) }}
-										{{ HTML::decode(link_to_route('showSection_path', '<i class="glyphicon glyphicon-edit"></i>', array($section->id), array('class' => 'btn btn-xs btn-warning'))) }}
-										{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Bereich löschen', 'data-message' => 'Wollen Sie den Bereich wirklich löschen?')) }}
-									{{ Form::close() }}
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_section'))
+		    							{{ link_to_route('editSectionInformation_path', $section->name, $section->id) }}
+		    						@else
+		    							{{ $section->name }}
+		    						@endif
+		    					</td>
+		    					<td>
+		    						@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_section'))
+			    						{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteSection_path', $section->id))) }}
+											{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger', 'data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Bereich löschen', 'data-message' => 'Wollen Sie den Bereich wirklich löschen?')) }}
+										{{ Form::close() }}
+									@endif
 		    					</td>
 							</tr>
 						@endforeach	

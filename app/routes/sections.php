@@ -7,9 +7,9 @@ Route::group(['prefix' => 'sections', 'before' => 'auth'], function()
 		'uses' => 'SectionsController@index'
 		]);
 
-	Route::get('{section}/showSection', [
-		'as' => 'showSection_path',
-		'uses' => 'SectionsController@show'
+	Route::get('{section}/editSectionInformation', [
+		'as' => 'editSectionInformation_path',
+		'uses' => 'SectionsController@edit'
 		]);
 
 	Route::delete('{section}/deleteSection', [

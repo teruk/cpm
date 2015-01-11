@@ -79,8 +79,14 @@ class RoomtypesController extends BaseController {
 	 */
 	public function destroy(Roomtype $roomtype)
 	{
-		$roomtype->delete();
-		Flash::success('Raumtyp erfolgreich gelöscht.');
+		if ($roomtype->rooms->count() == 0)
+		{
+			$roomtype->delete();
+			Flash::success('Raumtyp erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Der Raumtyp konnte nicht gelöscht werden! Es existieren noch Räume die diesen Raumtyp verwenden.');
+		
 		return Redirect::back();
 	}
 }

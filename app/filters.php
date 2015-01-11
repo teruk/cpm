@@ -144,3 +144,6 @@ Entrust::routeNeedsRoleOrPermission('roomtypes/*',array('Admin'),array('add_room
 
 /** rotation filter */
 Entrust::routeNeedsRoleOrPermission('rotations/*',array('Admin'),array('add_rotation', 'edit_rotation', 'delete_rotation'), Redirect::to('index'),false);
+
+/** section filter */
+Entrust::routeNeedsRoleOrPermission('sections/*',array('Admin'),array('add_section', 'edit_section', 'delete_section'), Redirect::to('index'),false);

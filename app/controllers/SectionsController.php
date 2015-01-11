@@ -8,16 +8,16 @@ class SectionsController extends BaseController {
 	public function index()
 	{
 		$sections = Section::all();
-		$this->layout->content = View::make('sections.index', compact('sections'));
+		return View::make('sections.index', compact('sections'));
 	}
 	
 	/**
 	 * 
 	 * @param Section $section
 	 */
-	public function show(Section $section)
+	public function edit(Section $section)
 	{
-		$this->layout->content = View::make('sections.show', compact('section'));
+		return View::make('sections.editInformation', compact('section'));
 	}
 	
 	/**
