@@ -8,9 +8,29 @@ Route::group(['prefix' => 'users', 'before' => 'auth'], function()
 		'uses' => 'UsersController@index'
 		]);
 
-	Route::get('{user}/showUser', [
-		'as' => 'showUser_path',
-		'uses' => 'UsersController@show'
+	Route::get('{user}/editUserInformation', [
+		'as' => 'editUserInformation_path',
+		'uses' => 'UsersController@edit'
+		]);
+
+	Route::get('{user}/editUserResearchgroups', [
+		'as' => 'editUserResearchgroups_path',
+		'uses' => 'UsersController@editResearchgroups'
+		]);
+
+	Route::get('{user}/editUserRoles', [
+		'as' => 'editUserRoles_path',
+		'uses' => 'UsersController@editRoles'
+		]);
+
+	Route::get('{user}/setUserPassword', [
+		'as' => 'setUserPassword_path',
+		'uses' => 'UsersController@editPassword'
+		]);
+
+	Route::get('{user}/setUserStatus', [
+		'as' => 'setUserStatus_path',
+		'uses' => 'UsersController@editStatus'
 		]);
 
 	Route::delete('{user}/deleteUser', [

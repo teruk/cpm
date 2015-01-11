@@ -8,18 +8,14 @@ class UsersController extends BaseController {
 	public function index()
 	{
 		$users = User::all();
-		$this->layout->content = View::make('users.index', compact('users'));
+		return View::make('users.index', compact('users'));
 	}
 
 	/**
 	*
 	*/
-	public function show(User $user)
+	public function edit(User $user)
 	{
-		// set nav tab
-		if (Session::get('users_tabindex') == "")
-			Session::set('users_tabindex', 'home');
-
 		// determe which roles can be assigned to the user
 		if (Entrust::hasRole('Admin'))
 			$available_roles = Role::lists('name','id');
@@ -37,13 +33,77 @@ class UsersController extends BaseController {
 
 		// determe the available researchgroups
 		$available_researchgroups = ResearchGroup::lists('name','id');
-		$selected_researchgroups = array();
+		$selectedResearchgroups = array();
 		foreach ($user->researchgroups() as $researchgroup) {
-			$selected_researchgroups = array_add($selected_researchgroups, $researchgroup->id, $researchgroup->name);
+			$selectedResearchgroups = array_add($selectedResearchgroups, $researchgroup->id, $researchgroup->name);
 		}
 
-		$available_researchgroups = array_diff($available_researchgroups, $selected_researchgroups);
-		$this->layout->content = View::make('users.show', compact('user','available_roles', 'available_researchgroups'));
+		$available_researchgroups = array_diff($available_researchgroups, $selectedResearchgroups);
+		return View::make('users.editInformation', compact('user','available_roles', 'available_researchgroups'));
+	}
+
+	/**
+	 * edit users researchgroups
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
+	public function editResearchgroups(User $user)
+	{
+		// determe the available researchgroups
+		$availableResearchgroups = ResearchGroup::lists('name','id');
+		$selectedResearchgroups = array();
+		foreach ($user->researchgroups() as $researchgroup) {
+			$selectedResearchgroups = array_add($selectedResearchgroups, $researchgroup->id, $researchgroup->name);
+		}
+
+		$availableResearchgroups = array_diff($availableResearchgroups, $selectedResearchgroups);
+
+		return View::make('users.editResearchgroups', compact('user', 'availableResearchgroups'));
+	}
+
+	/**
+	 * edit user roles
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
+	public function editRoles(User $user)
+	{
+		// determe which roles can be assigned to the user
+		if (Entrust::hasRole('Admin'))
+			$availableRoles = Role::lists('name','id');
+		elseif (Entrust::can('attach_user_role'))
+			$availableRoles = Role::where('name', '!=', 'Admin')->lists('name','id');
+		else
+			$availableRoles = array();
+
+		$selectedRoles = array();
+		foreach ($user->roles as $role) {
+			$selectedRoles = array_add($selectedRoles, $role->id, $role->name);
+		}
+
+		$availableRoles = array_diff($availableRoles, $selectedRoles);
+
+		return View::make('users.editRoles', compact('user', 'availableRoles'));
+	}
+
+	/**
+	 * shot set new password form
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
+	public function editPassword(User $user)
+	{
+		return View::make('users.password', compact('user'));
+	}
+
+	/**
+	 * show user status
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
+	public function editStatus(User $user)
+	{
+		return View::make('users.status', compact('user'));
 	}
 
 	/**

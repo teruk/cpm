@@ -95,7 +95,7 @@ Route::filter('csrf', function()
 |
 */
 /** user filter */
-Entrust::routeNeedsRoleOrPermission('users/*',array('Admin'),array('add_user', 'edit_user', 'delete_user'), Redirect::to('/'),false);
+Entrust::routeNeedsRoleOrPermission('users/*',array('Admin'),array('add_user', 'edit_user', 'delete_user', 'attach_user_role', 'detach_user_role', 'detach_user_researchgroup', 'attach_user_researchgroup', 'activate_user', 'deactivate_user'), Redirect::to('/'),false);
 
 /** role filter */
 Entrust::routeNeedsRoleOrPermission('roles/*',array('Admin'),array('add_role', 'edit_role', 'delete_role'), Redirect::to('/'),false);
