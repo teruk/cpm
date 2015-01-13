@@ -96,8 +96,14 @@ class CoursesController extends BaseController {
 	 */
 	public function destroy(Course $course)
 	{
-		$course->delete();
-		Flash::success('Lehrveranstaltung erfolgreich gelöscht.');
+		if ($couse->plannings->count() == 0)
+		{
+			$course->delete();
+			Flash::success('Die Lehrveranstaltung wurde erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Die Lehrveranstaltung konnte nicht gelöscht werden, da sie bereits in Planungen verwendet wird.');
+		
 		return Redirect::back();
 	}
 

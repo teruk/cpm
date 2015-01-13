@@ -130,13 +130,13 @@ class EmployeesController extends BaseController {
 	 * @param Employee $employee
 	 * @return Response
 	 */
-	public function delete(Employee $employee)
+	public function destroy(Employee $employee)
 	{
 		/*
 		 * checking if the employee is already assigned to a midterm planning
 		 * if yes, the employee can't be deleted
 		 */
-		if (sizeof($employee->mediumtermplannings) > 0 || sizeof($employee->plannings) > 0)
+		if ($employee->mediumtermplannings->count() > 0 || $employee->plannings->count() > 0)
 		{
 			Flash::error('Mitarbeiter kann nicht gelöscht werden, da er bereits in Planungen miteinbezogen wurde.');
 			return Redirect::back();

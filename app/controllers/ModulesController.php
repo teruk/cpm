@@ -178,9 +178,9 @@ class ModulesController extends \BaseController {
 		 * Check if there are courses assigned to this model
 		 * if yes, the module can't be deleted
 		 */
-		if (sizeof($module->courses()) > 0)
+		if ($module->courses->count() > 0 || $module->mediumtermplannings->count() > 0)
 		{
-			Flash::error('Das Modul konnte nicht gelöscht werden, da dem Modul noch Lehrveranstaltungen zugeordnet sind.');
+			Flash::error('Das Modul konnte nicht gelöscht werden, da dem Modul noch Lehrveranstaltungen bzw. mittelfristige Lehrplanungen zugeordnet sind.');
 			return Redirect::back();
 		}
 

@@ -52,9 +52,15 @@ class DegreesController extends BaseController {
 	 */
 	public function destroy(Degree $degree)
 	{
-		$degree->delete();
-
-		Flash::success('Bereich erfolgreich gelöscht.');
+		if ($degree->degreecourses->count() == 0 && $degree->modules->count() == 0)
+		{
+			$degree->delete();
+			Flash::success('Bereich erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Der Abschlusstyp konnte nicht gelöscht werden, da er mindestens von einem der folgenden Komponenten verwendet wird:
+						<br><ul><li>Modul</li><li>Studiengang</li></ul>');
+		
 		return Redirect::back();
 	}
 	

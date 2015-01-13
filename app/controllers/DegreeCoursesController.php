@@ -87,8 +87,14 @@ class DegreecoursesController extends \BaseController {
 	 */
 	public function destroy(Degreecourse $degreecourse)
 	{
-		$degreecourse->delete();
-		Flash::success('Studiengang erfolgreich gelöscht.');
+		if ($degreecourse->modules() == 0)
+		{
+			$degreecourse->delete();
+			Flash::success('Studiengang erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Der Studiengang konnte nicht gelöscht werden, da ihm noch Module zugeordnet sind.');
+		
 		return Redirect::back();
 	}
 
