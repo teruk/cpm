@@ -39,7 +39,7 @@
 								<td>{{ $module->short }}</td>
 								<td>
 									@if ($currentUser->hasRole('Admin') OR $currentUser->can('edit_module'))
-										{{ link_to_route('showModule_path', $module->name, $module->id) }}
+										{{ link_to_route('editModuleInformation_path', $module->name, $module->id) }}
 									@else
 										{{ $module->name }}
 									@endif
