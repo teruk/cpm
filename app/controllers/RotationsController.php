@@ -30,7 +30,7 @@ class RotationsController extends BaseController {
 		
 		if ($rotation->save())
 		{
-			Flash::success('Bereich erfolgreich angelegt.');
+			Flash::success('Der Turnus wurde erfolgreich angelegt.');
 			return Redirect::back();
 		}
 
@@ -47,7 +47,7 @@ class RotationsController extends BaseController {
 		if ($rotation->modules->count() == 0)
 		{
 			$rotation->delete();
-			Flash::success('Bereich erfolgreich gelöscht.');
+			Flash::success('Der Turnus wurde erfolgreich gelöscht.');
 		}
 		else
 			Flash::error('Turnus konnte nicht gelöscht werden. Es existieren noch Module die diesen Turnus verwenden.');
@@ -65,7 +65,7 @@ class RotationsController extends BaseController {
 		$rotation->fill($input);
 		if ($rotation->updateUniques())
 		{
-			Flash::success('Der Abschluss wurde aktualisiert.');
+			Flash::success('Der Turnus wurde aktualisiert.');
 			return Redirect::back();
 		}
 		

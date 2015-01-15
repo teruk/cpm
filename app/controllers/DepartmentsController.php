@@ -80,14 +80,18 @@ class DepartmentsController extends BaseController {
 		 * Check if there a degree courses or research groups assigned to the department
 		 * if yes, the department can't be deleted
 		 */
-		if (sizeof($department->researchgroups) > 0 || sizeof($department->degreecourses) > 0)
+		if ($department->researchgroups->count() == 0 
+			&& $department->degreecourses->count() == 0 
+			&& $department->courses->count() == 0 
+			&& $department->modules->count() == 0)
 		{
-			Flash::error('Der Fachbereich kann nicht gelöscht werden, da ihm bereits Arbeitsbereich und/oder Studiengänge zugeordnet sind.');
-			return Redirect::back();
+			$department->delete();
+			Flash::success('Fachbereich erfolgreich gelöscht.');
 		}
+		else
+			Flash::error('Der Fachbereich kann nicht gelöscht werden, da ihm bereits min. einer der folgenden Komponten zugeordnet ist:<br>
+							<ul><li>Arbeitsbereich</li><li>Lehrveranstaltung</li><li>Modul</li><li>Studiengang</li>');
 
-		$department->delete();
-		Flash::success('Fachbereich erfolgreich gelöscht.');
 		return Redirect::back();
 	}
 }

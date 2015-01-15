@@ -84,8 +84,14 @@ class CoursetypesController extends BaseController {
 	 */
 	public function destroy(Coursetype $coursetype)
 	{
-		$coursetype->delete();
-		Flash::success('Kurstyp erfolgreich gelöscht.');
+		if ($coursetype->courses->count() == 0)
+		{
+			$coursetype->delete();
+			Flash::success('Kurstyp erfolgreich gelöscht.');
+		}
+		else
+			Flash::error('Der Kurstyp konnte nicht gelöscht werden, da er bereits von Lehrveranstaltungen verwendet wird.');
+		
 		return Redirect::back();
 	}
 
