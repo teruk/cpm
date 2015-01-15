@@ -10,19 +10,40 @@ class Turn extends Ardent {
 	);
 	public $timestamps = false;
 	
+	/**
+	 * returns a list of related medium term plannings
+	 * @return [type] [description]
+	 */
 	public function mediumtermplannings()
 	{
 		return $this->hasMany('Mediumtermplanning');
 	}
 	
+	/**
+	 * returns a list of related plannings
+	 * @return [type] [description]
+	 */
 	public function plannings()
 	{
 		return $this->hasMany('Planning');
 	}
 
+	/**
+	 * returns a list of related modules
+	 * @return [type] [description]
+	 */
 	public function modules()
 	{
 		return $this->belongsToMany('Module')->withPivot('exam');
+	}
+
+	/**
+	 * returns a list of related specialist regulations
+	 * @return [type] [description]
+	 */
+	public function specialistregualtions()
+	{
+		return $this->hasMany('Specialistregulation');
 	}
 
 	/**

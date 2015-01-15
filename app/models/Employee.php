@@ -14,7 +14,7 @@ class Employee extends Ardent {
 	);
 	
 	/**
-	 * [researchgroup description]
+	 * returns a list of related research groups
 	 * @return [type] [description]
 	 */
 	public function researchgroup()
@@ -23,7 +23,7 @@ class Employee extends Ardent {
 	}
 	
 	/**
-	 * [mediumtermplannings description]
+	 * returns a list of related mediumterm plannings
 	 * @return [type] [description]
 	 */
 	public function mediumtermplannings()
@@ -32,7 +32,7 @@ class Employee extends Ardent {
 	}
 	
 	/**
-	 * [plannings description]
+	 * returns a list of related plannings
 	 * @return [type] [description]
 	 */
 	public function plannings()

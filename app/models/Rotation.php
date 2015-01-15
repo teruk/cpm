@@ -8,6 +8,7 @@ class Rotation extends Ardent {
 			'name' => 'required|unique:rotations',
 	);
 	
+	/** returns a list of related modules */
 	public function modules()
 	{
 		return $this->hasMany('Module');

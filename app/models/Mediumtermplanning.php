@@ -9,16 +9,28 @@ class Mediumtermplanning extends Ardent {
 			
 	);
 	
+	/**
+	 * returns a list of related modules
+	 * @return [type] [description]
+	 */
 	public function module() 
 	{
 		return $this->belongsTo('Module');
 	}
 	
+	/**
+	 * returns a list of related turns
+	 * @return [type] [description]
+	 */
 	public function turn()
 	{
 		return $this->belongsTo('Turn');
 	}
 	
+	/**
+	 * returns a list of related employees
+	 * @return [type] [description]
+	 */
 	public function employees()
 	{
 		return $this->belongsToMany('Employee')->withPivot('semester_periods_per_week','annulled');

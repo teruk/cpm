@@ -11,7 +11,7 @@ class Announcement extends Ardent {
 	);
 	
 	/**
-	* Relation to user
+	* Returns the user relation
 	* @return User $user
 	*/
 	public function user()

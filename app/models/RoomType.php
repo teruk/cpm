@@ -12,7 +12,7 @@ class Roomtype extends Ardent {
 	public $timestamps = false;
 	
 	/**
-	 * [rooms description]
+	 * returns a list of related rooms
 	 * @return [type] [description]
 	 */
 	public function rooms()

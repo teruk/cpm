@@ -8,11 +8,19 @@ class Degree extends Ardent {
 			'name' => 'required|unique:degrees',
 	);
 	
+	/**
+	 * returns the related degreecoures
+	 * @return [type] [description]
+	 */
 	public function degreecourses()
 	{
 		return $this->hasMany('Degreecourse');
 	}
 	
+	/**
+	 * returns the related modules
+	 * @return [type] [description]
+	 */
 	public function modules()
 	{
 		return $this->hasMany('Module');

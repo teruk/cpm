@@ -10,21 +10,37 @@ class Department extends Ardent {
 			'short'=> 'required|min:2',
 	);
 	
+	/**
+	 * return a list of related modules
+	 * @return [type] [description]
+	 */
 	public function modules()
 	{
 		return $this->hasMany('Module');
 	}
 	
+	/**
+	 * returns a list of related research groups
+	 * @return [type] [description]
+	 */
 	public function researchgroups()
 	{
 		return $this->hasMany('Researchgroup')->orderBy('name', 'asc');
 	}
 	
+	/**
+	 * returns a list of related degree courses
+	 * @return [type] [description]
+	 */
 	public function degreecourses()
 	{
 		return $this->hasMany('DegreeCourse')->orderBy('degree_id','asc')->orderBy('name','asc');
 	}
-	
+
+	/**
+	 * returns a list of related courses
+	 * @return [type] [description]
+	 */
 	public function courses()
 	{
 		return $this->hasMany('Course');

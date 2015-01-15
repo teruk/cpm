@@ -26,21 +26,37 @@ class Course extends Ardent {
 		
 	protected $table = 'courses';
 	
+	/**
+	 * returns the course type relation
+	 * @return [type] [description]
+	 */
 	public function coursetype()
 	{
 		return $this->belongsTo('Coursetype');
 	}
 	
+	/**
+	 * returns the module relation
+	 * @return [type] [description]
+	 */
 	public function module()
 	{
 		return $this->belongsTo('Module');
 	}
 	
+	/**
+	 * returns the department relation
+	 * @return [type] [description]
+	 */
 	public function department()
 	{
 		return $this->belongsTo('Department');
 	}
 
+	/**
+	 * returns the related plannings
+	 * @return [type] [description]
+	 */
 	public function plannings()
 	{
 		return $this->hasMany('Planning');

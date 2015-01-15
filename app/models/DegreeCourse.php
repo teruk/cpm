@@ -15,6 +15,7 @@ class Degreecourse extends Ardent {
 
 	/**
 	 * Returns a list of modules which are assigned to the degree course
+	 * @return [type] [description]
 	 */
 	public function modules()
 	{
@@ -23,6 +24,7 @@ class Degreecourse extends Ardent {
 	
 	/**
 	 * returns the department object which this degree course belongs to
+	 * @return [type] [description]
 	 */
 	public function department()
 	{
@@ -31,10 +33,20 @@ class Degreecourse extends Ardent {
 	
 	/**
 	 * return the degree object which this degree course belongs to
+	 * @return [type] [description]
 	 */
 	public function degree()
 	{
 		return $this->belongsTo('Degree');
+	}
+
+	/**
+	 * returns a list of related specialist regulations
+	 * @return [type] [description]
+	 */
+	public function specialistregualtions()
+	{
+		return $this->hasMany('Specialistregulation');
 	}
 
 	/**

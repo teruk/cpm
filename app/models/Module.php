@@ -31,36 +31,55 @@ class Module extends Ardent {
 			'department_id' => 'required',
 	);
 	
+	/**
+	 * returns a list of related degree courses
+	 * @return [type] [description]
+	 */
 	public function degreecourses()
 	{
 		return $this->belongsToMany('Degreecourse')->withPivot('section','semester');
 	}
 	
+	/**
+	 *  return a list of related mediumtermplannings
+	 * @return [type] [description]
+	 */
 	public function mediumtermplannings()
 	{
 		return $this->hasMany('Mediumtermplanning');
 	}
 	
+	/** returns a list of related departments */
 	public function department()
 	{
 		return $this->belongsTo('Department');
 	}
 
+	/** returns a list of related degrees */
 	public function degree()
 	{
 		return $this->belongsTo('Degree');
 	}
 
+	/**
+	 * returns a list of related rotations
+	 * @return [type] [description]
+	 */
 	public function rotation()
 	{
 		return $this->belongsTo('Rotation');
 	}
 	
+	/**
+	 * returns a list of related courses
+	 * @return [type] [description]
+	 */
 	public function courses()
 	{
 		return $this->hasMany('Course');
 	}
 
+	/** returns a list of related turns */
 	public function turns()
 	{
 		return $this->belongsToMany('Turn')->withPivot('exam');

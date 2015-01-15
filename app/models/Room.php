@@ -17,7 +17,7 @@ class Room extends Ardent {
 	protected $table = 'rooms';
 	
 	/**
-	 * [roomtype description]
+	 * returns a list of related room types
 	 * @return [type] [description]
 	 */
 	public function roomtype()
@@ -26,7 +26,7 @@ class Room extends Ardent {
 	}
 	
 	/**
-	 * [plannings description]
+	 * returns a list of related plannings
 	 * @return [type] [description]
 	 */
 	public function plannings()
