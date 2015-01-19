@@ -125,26 +125,26 @@ class ModulesController extends \BaseController {
 	 */
 	public function attachDegreecourse(Module $module)
 	{
-		if($module->saveDegreeCourse($input = Input::all()))
+		if($module->saveDegreecourse(Input::all()))
 		{
 			Flash::success('Das Modul wurde dem Studiengang zugeordnet.');
-			return Redirect::back()->with('tabindex',$input['tabindex']);
+			return Redirect::back();
 		}
 		
 		Flash::error('Die Kombination aus Modul-Studiengang-Semester existiert bereits.');
-		return Redirect::back()->with('tabindex',$input['tabindex']);
+		return Redirect::back();
 	}
 	
 	/**
 	 * Detach a module from a degree course
 	 * @param Module $module
 	 */
-	public function detachDegreecourse(Module $module)
+	public function detachDegreecourse(Module $module, Specialistregulation $specialistregulation)
 	{
-		$module->degreecourses()->detach(Input::get('degree_course_id'));
+		$module->specialistregulations()->detach($specialistregulation->id);
 
 		Flash::success('Die Zuordnung wurde erfolgreich aufgehoben.');
-		return Redirect::back()->with('tabindex',Input::get('tabindex'));
+		return Redirect::back();
 	}
 	
 	/**
@@ -153,16 +153,16 @@ class ModulesController extends \BaseController {
 	 * @param  Module $module [description]
 	 * @return [type]         [description]
 	 */
-	public function updateDegreecourse(Module $module)
+	public function updateDegreecourse(Module $module, Specialistregulation $specialistregulation)
 	{
-		$module->degreecourses()
-				->updateExistingPivot(Input::get('degreecourse_id'), array(
+		$module->specialistregulations()
+				->updateExistingPivot($specialistregulation->id, array(
 					'semester' => Input::get('semester'), 
 					'section' => Input::get('section'), 
 					'updated_at' => new Datetime), false);
 
 		Flash::success('Die Zuordnung wurde erfolgreich aktualisiert.');
-		return Redirect::back()->with('tabindex',Input::get('tabindex'));
+		return Redirect::back();
 	}
 
 	/**
@@ -207,10 +207,10 @@ class ModulesController extends \BaseController {
 	 */
 	public function showDegreecourses(Module $module)
 	{
-		$degreecourses = Degreecourse::getList();
-		$sections = Section::lists('id','name');
+		$sections = Section::lists('name', 'id');
+		$specialistregulations = Specialistregulation::getList();
 
-		return View::make('modules.degreecourses', compact('module', 'degreecourses', 'sections'));
+		return View::make('modules.degreecourses', compact('module', 'degreecourses', 'sections', 'specialistregulations'));
 	}
 
 	/**

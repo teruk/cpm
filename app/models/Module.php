@@ -39,6 +39,19 @@ class Module extends Ardent {
 	{
 		return $this->belongsToMany('Degreecourse')->withPivot('section','semester');
 	}
+
+	/**
+	 * return a list of related specialist regulations
+	 * @return [type] [description]
+	 */
+	public function specialistregulations()
+	{
+		return $this->belongsToMany('Specialistregulation')
+					->withPivot('section', 'semester')
+					->orderBy('specialistregulations_id', 'asc')
+					->orderBy('semester','asc')
+					->orderBy('section','asc');
+	}
 	
 	/**
 	 *  return a list of related mediumtermplannings
@@ -108,15 +121,19 @@ class Module extends Ardent {
 	 */
 	public function saveDegreeCourse($data)
 	{
-		foreach ($this->degreecourses as $degreecourse) {
-			if ($degreecourse->id == $data['id'])
+		foreach ($this->specialistregulations as $specialistregulation) {
+			if ($specialistregulation->id == $data['specialistregulationId'])
 			{
-				if ($degreecourse->pivot->semester == $data['semester'])
+				if ($specialistregulation->pivot->semester == $data['semester'])
 					return false;
 			}
 		}
 		// attaching degree course to module
-		$this->degreecourses()->attach($data['id'], array('section' => $data['section'], 'semester' => $data['semester'], 'created_at' => new Datetime));
+		$this->specialistregulations()->attach($data['specialistregulationId'], [
+				'section' => $data['section'],
+				'semester' => $data['semester'],
+				'created_at' => new Datetime
+				]);
 		return true;
 	}
 }

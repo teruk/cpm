@@ -4,14 +4,18 @@ class SpecialistregulationsController extends \BaseController {
 
 	/**
 	 * show specialist regulation edit form
+	 * 
 	 * @param  Degreecourse         $degreecourse         [description]
 	 * @param  Specialistregulation $specialistregulation [description]
 	 * @return [type]                                     [description]
 	 */
 	public function edit(Degreecourse $degreecourse, Specialistregulation $specialistregulation)
 	{
-		$turns = Turn::getList();
-		return View::make('degreecourses.editSpecialistregulation', compact('degreecourse', 'specialistregulation', 'turns'));
+		$idsOfNotAvailableTurns = array_fetch($degreecourse->specialistregulations->toArray(), 'turn_id');
+		$availableTurns = Turn::getAvailableTurns($idsOfNotAvailableTurns);
+		$availableTurns = array_add($availableTurns, $specialistregulation->turn_id, $specialistregulation->turn->present());
+
+		return View::make('degreecourses.editSpecialistregulation', compact('degreecourse', 'specialistregulation', 'availableTurns'));
 	}
 
 	/**
@@ -19,25 +23,30 @@ class SpecialistregulationsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Degreecourse $degreecourse)
 	{
 		$input = Input::all();
 		$specialistregulation = new Specialistregulation();
+		$input = array_add($input,'degreecourseId',$degreecourse->id);
 
 		$numberOfDuplicates = Specialistregulation::where('degreecourse_id', '=', $degreecourse->id)
-													->where('turn_id', '=', $input['turn_id'])
+													->where('turn_id', '=', $input['turnId'])
 													->count();
-		if ($numberOfDuplicates == 0)
-			$specialistregulation =  $this->save($specialistregulation, $input, 'Die Fachspezischen Bestimmungen wurden erfolgreich gespeichert!');
-		else
-			Flash::error('Die Fachspezifischen Bestimmungen (FSB) konnten nicht gespeichert werden, 
-							da für dieses Startsemester schon eine FSB existiert.');
+		if ($numberOfDuplicates == 0){
+			if ($this->save($specialistregulation, $input, 'Die Fachspezischen Bestimmungen wurden erfolgreich gespeichert!'))
+				return Redirect::back();
 
+			return Redirect::back()->withInput();
+		}
+			
+		Flash::error('Die Fachspezifischen Bestimmungen (FSB) konnten nicht gespeichert werden, 
+							da für dieses Startsemester schon eine FSB existiert.');
 		return Redirect::back()->withInput();
 	}
 
 	/**
 	 * update Information of a specialist regulation
+	 * 
 	 * @param  Degreecourse         $degreecourse         [description]
 	 * @param  Specialistregulation $specialistregulation [description]
 	 * @return [type]                                     [description]
@@ -51,12 +60,15 @@ class SpecialistregulationsController extends \BaseController {
 													->where('degreecourse_id', '=', $degreecourse->id)
 													->where('turn_id', '=', $input['turnId'])
 													->count();
-		if ($numberOfDuplicates == 0)
-			$specialistregulation = $this->save($specialistregulation, $input, 'Die Fachspezischen Bestimmungen wurden erfolgreich aktualisiert!');
-		else
-			Flash::error('Die Fachspezifischen Bestimmungen (FSB) konnten nicht aktualisiert werden, 
-							da für dieses Startsemester schon eine FSB besteht!');
+		if ($numberOfDuplicates == 0){
+			if ($this->save($specialistregulation, $input, 'Die Fachspezischen Bestimmungen wurden erfolgreich aktualisiert!'))
+				return Redirect::back();
 
+			return Redirect::back()->withInput();
+		}
+
+		Flash::error('Die Fachspezifischen Bestimmungen (FSB) konnten nicht aktualisiert werden, 
+							da für dieses Startsemester schon eine FSB besteht!');
 		return Redirect::back()->withInput();
 	}
 
@@ -78,6 +90,7 @@ class SpecialistregulationsController extends \BaseController {
 
 	/**
 	 * validates and if successful, save the specialist regulation
+	 * 
 	 * @param  Specialistregulation $specialistregulation [description]
 	 * @param  [type]               $input                [description]
 	 * @param  string               $successMessage       [description]
@@ -96,12 +109,12 @@ class SpecialistregulationsController extends \BaseController {
 
 		if ($validator->fails()) {
 			Flash::error($validator->messages());
-		} else {
-			$specialistregulation->save();
-			Flash::success($successMessage);
+			return false;
 		}
 
-		return $specialistregulation;
+		$specialistregulation->save();
+		Flash::success($successMessage);
+		return true;
 	}
 
 }

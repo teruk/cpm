@@ -103,7 +103,8 @@ class DegreecoursesController extends \BaseController {
 	{
 		$listofsections = Section::lists('name','id');
 		$listofrotations = Rotation::lists('name','id');
-		return View::make('degreecourses.modules', compact('degreecourse', 'listofsections', 'listofrotations'));
+		$specialistregulations = $degreecourse->specialistregulations;
+		return View::make('degreecourses.modules', compact('degreecourse', 'listofsections', 'listofrotations', 'specialistregulations'));
 	}
 
 	/**
@@ -113,7 +114,10 @@ class DegreecoursesController extends \BaseController {
 	 */
 	public function showSpecialistregulations(Degreecourse $degreecourse)
 	{
-		return View::make('degreecourses.specialistregulations', compact('degreecourse'));
+		$idsOfNotAvailableTurns = array_fetch($degreecourse->specialistregulations->toArray(), 'turn_id');
+		$availableTurns = Turn::getAvailableTurns($idsOfNotAvailableTurns);
+
+		return View::make('degreecourses.specialistregulations', compact('degreecourse', 'availableTurns'));
 	}
 
 }

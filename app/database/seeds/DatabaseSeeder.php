@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder {
         'appointeddays',
         'announcements',
         'planninglogs',
+        'specialistregulations',
     ];
 
     protected $seeders = [
@@ -43,8 +44,9 @@ class DatabaseSeeder extends Seeder {
         'DepartmentsTableSeeder',
         'TurnsTableSeeder',
         'DegreeCoursesTableSeeder',
+        'SpecialistregulationsTableSeeder',
         'ModulesTableSeeder',
-        'DegreeCourseModuleTableSeeder',
+        'ModuleSpecialistregulationTableSeeder',
         'ResearchGroupsTableSeeder',
         'EmployeesTableSeeder',
         'RoomTypesTableSeeder',

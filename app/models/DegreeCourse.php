@@ -44,7 +44,7 @@ class Degreecourse extends Ardent {
 	 * returns a list of related specialist regulations
 	 * @return [type] [description]
 	 */
-	public function specialistregualtions()
+	public function specialistregulations()
 	{
 		return $this->hasMany('Specialistregulation');
 	}

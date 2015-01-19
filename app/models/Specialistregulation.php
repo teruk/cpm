@@ -40,6 +40,30 @@ class Specialistregulation extends Eloquent
 	}
 
 	/**
+	 * return a presentable specialist regulation
+	 * @return [type] [description]
+	 */
+	public function present()
+	{
+		return $this->degreecourse->present().' (ab '.$this->turn->present().')';
+	}
+
+	/**
+	 * returns an array with active specialist regulations
+	 * @return [type] [description]
+	 */
+	public static function getList()
+	{
+		$specialistregulations = Specialistregulation::where('active', '=', 1)->orderBy('degreecourse_id')->orderBy('turn_id', 'asc')->get();
+		$activeSpecialistregulations = [];
+		foreach ($specialistregulations as $specialistregulation) {
+			$activeSpecialistregulations = array_add($activeSpecialistregulations, $specialistregulation->id, $specialistregulation->present());
+		}
+
+		return $activeSpecialistregulations;
+	}
+
+	/**
 	 * sets the specialist regualations active
 	 */
 	public function setSpecialistregulationActive()

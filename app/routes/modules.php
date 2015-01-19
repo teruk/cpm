@@ -44,7 +44,7 @@ Route::group(['prefix' => 'modules', 'before' => 'auth'], function()
 		]);
 
 	/** module degree course relationship routes */
-	Route::delete('{module}/detachDegreecourse', [
+	Route::delete('{module}/detachDegreecourse/{specialistregulation}', [
 		'as' => 'detachDegreecourseModule_path',
 		'uses' => 'ModulesController@detachDegreecourse'
 		]);
@@ -54,7 +54,7 @@ Route::group(['prefix' => 'modules', 'before' => 'auth'], function()
 		'uses' => 'ModulesController@attachDegreecourse'
 		]);
 
-	Route::patch('{module}/updateDegreecourse', [
+	Route::patch('{module}/updateDegreecourse/{specialistregulation}', [
 		'as' => 'updateDegreecourseModule_path',
 		'uses' => 'ModulesController@updateDegreecourse'
 		]);

@@ -41,7 +41,7 @@ class Turn extends Ardent {
 	 * returns a list of related specialist regulations
 	 * @return [type] [description]
 	 */
-	public function specialistregualtions()
+	public function specialistregulations()
 	{
 		return $this->hasMany('Specialistregulation');
 	}
@@ -102,38 +102,43 @@ class Turn extends Ardent {
 	}
 
 	/**
-	* Returns a list with name and year
-	* @return array
-	*/
-	public static function getList()
+	 * return a list of available turns by a given array of taken turns
+	 * 
+	 * @param  [type] $idsOfNotAvailableTurns [description]
+	 * @return [type]                         [description]
+	 */
+	public static function getAvailableTurns($idsOfNotAvailableTurns = [])
 	{
-		$list = array();
-		$turns = DB::table('turns')
-					->orderBy('year','asc')
-					->orderBy('name','asc')
-					->get();
-		foreach ($turns as $turn) {
-			$list = array_add($list, $turn->id, $turn->name.' '.$turn->year);
+		if (sizeof($idsOfNotAvailableTurns) > 0)
+			$rawAvailableTurns = Turn::whereNotIn('id', $idsOfNotAvailableTurns)->orderBy('year','asc')->orderBy('name', 'asc')->get();
+		else
+			$rawAvailableTurns = Turn::orderBy('year','asc')->orderBy('name', 'asc')->get();
+		
+		$availableTurns = [];
+
+		foreach ($rawAvailableTurns as $turn) {
+			$availableTurns = array_add($availableTurns, $turn->id, $turn->present());
 		}
-		return $list;
+
+		return $availableTurns;
 	}
 
 	/**
 	* Returns a list auf available turns
 	* only useful for creating new turns
+	* TODO: RENAME THE FUNCTION
 	* @return array
 	*/
 	public static function getListofAvailableTurns()
 	{
-		$list = array();
-		$availableturns = array();
+		$availableTurns = array();
 		for ($x = 2006; $x < (date('Y')+8); ++$x)
 		{
-			array_push($availableturns, "SoSe ".$x);
-			array_push($availableturns, "WiSe ".$x);
+			array_push($availableTurns, "SoSe ".$x);
+			array_push($availableTurns, "WiSe ".$x);
 		}
-		$list = array_diff($availableturns, static::getList());
-		return $list;
+		$availableTurns = array_diff($availableTurns, static::getAvailableTurns());
+		return $availableTurns;
 	}
 
 	/**

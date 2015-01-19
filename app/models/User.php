@@ -41,13 +41,10 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	 * retrieve an array of ids which the user belongs to
 	 * @return [type] [description]
 	 */
-	public function researchgroupIds()
+	public function getResearchgroupIds()
 	{
-		$rg_ids = array();
-		foreach ($this->researchgroups as $rg) {
-			array_push($rg_ids, $rg->id);
-		}
-		return $rg_ids;
+		$researchgroupIds = array_fetch($this->researchgroups, 'id');
+		return $researchgroupIds;
 	}
 
 	/**
@@ -65,7 +62,7 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	 */
 	public function activate()
 	{
-		$this->deactivated = 0;
+		$this->attributes['deactivated'] = 0;
 
 		if ($this->updateUniques())
 			return true;
@@ -77,7 +74,7 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	 */
 	public function deactivate()
 	{
-		$this->deactivated = 1;
+		$this->attributes['deactivated'] = 1;
 
 		if ($this->updateUniques())
 			return true;
@@ -90,8 +87,8 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	 */
 	public function updateUser($data)
 	{
-		$this->email = $data['email'];
-		$this->name = $data['name'];
+		$this->attributes['email'] = $data['email'];
+		$this->attributes['name'] = $data['name'];
 
 		if ($this->updateUniques())
 			return true;
@@ -99,7 +96,7 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 
 	public function changePassword($password)
 	{
-		$this->password = $password;
+		$this->attributes['password'] = $password;
 
 		if ($this->save())
 			return true;

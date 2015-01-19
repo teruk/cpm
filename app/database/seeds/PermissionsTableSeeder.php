@@ -96,6 +96,9 @@ class PermissionsTableSeeder extends Seeder
 			['name' => 'edit_turn', 'display_name' => 'Semester bearbeiten', 'description' => 'Ermöglicht Bearbeitung von Semestern.'],// 88
 			['name' => 'delete_turn', 'display_name' => 'Semester löschen', 'description' => 'Ermöglicht Löschen von Semestern.'],// 89
 			['name' => 'change_planning_status', 'display_name' => 'Planungsstatus ändern', 'description' => 'Ermöglicht Ändern der Planungsstatus.'],// 90 only for course planer
+			['name' => 'add_specialistregulation', 'display_name' => 'Fachspezifische Bestimmungen erstellen', 'description' => 'Ermöglicht das Anlegen von Fachspezifischen Bestimmungen für einen Studiengang.'],// 91
+			['name' => 'edit_specialistregulation', 'display_name' => 'Fachspezifische Bestimmungen bearbeiten', 'description' => 'Ermöglicht das Bearbeiten von Fachspezifischen Bestimmungen für einen Studiengang.'],// 92
+			['name' => 'delete_specialistregulation', 'display_name' => 'Fachspezifische Bestimmungen löschen', 'description' => 'Ermöglicht das Löschen von Fachspezifischen Bestimmungen für einen Studiengang.'],// 93
 		);
 		DB::table('permissions')->insert($permissions);
 	}

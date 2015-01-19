@@ -6,7 +6,7 @@
 	@endif
 	
 	@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_module'))
-		({{ link_to_route('showModule_path', $course->module->short, $course->module_id) }}</a>)
+		({{ link_to_route('editModuleInformation_path', $course->module->short, $course->module_id) }}</a>)
 	@else
 		({{ $course->module->short }})
 	@endif

@@ -61,21 +61,6 @@ class BaseController extends Controller {
 	}
 
 	/**
-	 * Extract the ids from an array of objects
-	 * 
-	 * @param  [type] $data [description]
-	 * @return [type]       [description]
-	 */
-	public function getIds($data)
-	{
-		$ids = array();
-		foreach ($data as $key) {
-			array_push($ids, $key->id);
-		}
-		return $ids;
-	}
-
-	/**
 	 * fetch array of turns for turn navigation
 	 * @param  Turn   $displayTurn [description]
 	 * @return [type]              [description]
@@ -96,6 +81,12 @@ class BaseController extends Controller {
 		return $turns;
 	}
 
+	/**
+	 * check if the user is responsible for the given planning
+	 * @param  Turn     $turn     [description]
+	 * @param  Planning $planning [description]
+	 * @return [type]             [description]
+	 */
 	public function checkPlanningResponsibility(Turn $turn, Planning $planning)
 	{
 		// check if user is responsible for this course or has the role room planer, admin or course planer
