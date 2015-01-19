@@ -33,12 +33,12 @@
 		                </tr>
 		          	</thead>
 		          	<tbody>
-						@foreach( $degreecourses as $degreecourse )
+						@foreach( $specialistregulations as $specialistregulation )
 							<tr>
 								<td>
-									{{ link_to_route('showOverviewSelectedDegreecourse_path', $degreecourse->present(), $degreecourse->id) }}
-								<td>{{ $degreecourse->short }}</td>
-								<td>{{ $degreecourse->department->name }}</td>
+									{{ link_to_route('showOverviewSelectedDegreecourse_path', $specialistregulation->present(), $specialistregulation->id) }}
+								<td>{{ $specialistregulation->presentShort() }}</td>
+								<td>{{ $specialistregulation->degreecourse->department->name }}</td>
 							</tr>
 						@endforeach
 					</tbody>

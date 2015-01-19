@@ -96,15 +96,15 @@
 		                </tr>
 		          	</thead>
 		          	<tbody>
-						@foreach( $module->degreecourses as $degreecourse )
+						@foreach( $module->specialistregulations as $specialistregulation )
 							<tr>
 								<td>
-									{{ link_to_route('showOverviewSelectedDegreecourse_path', $degreecourse->present(), $degreecourse->id)}}
+									{{ link_to_route('showOverviewSelectedDegreecourse_path', $specialistregulation->present(), $specialistregulation->id)}}
 								</td>
-								<td>{{ $degreecourse->short }}</td>
-								<td>{{ $degreecourse->department->name }}</td>
-								<td>{{ $degreecourse->pivot->semester }}</td>
-								<td>{{ $listofsections[$degreecourse->pivot->section] }}</td>
+								<td>{{ $specialistregulation->presentShort() }}</td>
+								<td>{{ $specialistregulation->degreecourse->department->name }}</td>
+								<td>{{ $specialistregulation->pivot->semester }}</td>
+								<td>{{ $listofsections[$specialistregulation->pivot->section] }}</td>
 							</tr>
 						@endforeach
 					</tbody>

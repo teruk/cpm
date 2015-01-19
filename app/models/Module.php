@@ -48,9 +48,9 @@ class Module extends Ardent {
 	{
 		return $this->belongsToMany('Specialistregulation')
 					->withPivot('section', 'semester')
-					->orderBy('specialistregulations_id', 'asc')
-					->orderBy('semester','asc')
-					->orderBy('section','asc');
+					->orderBy('specialistregulation_id', 'ASC')
+					->orderBy('semester','ASC')
+					->orderBy('section','ASC');
 	}
 	
 	/**

@@ -2,7 +2,7 @@
 	<ol class="breadcrumb">
 		<li class="active">Übersichten</li>
 		<li>{{ link_to_route('showOverviewDegreecourses_path', 'Studiengänge') }}</li>
-		<li class="active">{{ $degreecourse->present() }}</li>
+		<li class="active">{{ $specialistregulation->present() }}</li>
 	</ol>
 @stop
 
@@ -22,7 +22,7 @@
 		                </tr>
 		          	</thead>
 		          	<tbody>
-						@foreach( $degreecourse->modules as $module )
+						@foreach( $specialistregulation->modules as $module )
 							@if($listofsections[$module->pivot->section] != "Pflicht")
 								@if($listofsections[$module->pivot->section] != "Wahlpflicht")
 									<tr class="warning">

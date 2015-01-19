@@ -9,8 +9,10 @@ class OverviewController extends BaseController {
 	 */
 	public function showDegreecourses()
 	{
-		$degreecourses = DegreeCourse::orderBy('degree_id','ASC')->orderBy('name','ASC')->get();
-		$this->layout->content = View::make('overviews.degreecourses', compact('degreecourses'));
+		$specialistregulations = Specialistregulation::orderBy('degreecourse_id','ASC')
+													->orderBy('turn_id', 'ASC')
+													->get();
+		$this->layout->content = View::make('overviews.degreecourses', compact('specialistregulations'));
 	}
 
 	/**
@@ -18,10 +20,10 @@ class OverviewController extends BaseController {
 	 * @param  DegreeCourse $degreecourse [description]
 	 * @return [type]                     [description]
 	 */
-	public function showSelectedDegreecourse(DegreeCourse $degreecourse)
+	public function showSelectedDegreecourse(Specialistregulation $specialistregulation)
 	{
 		$listofsections = Section::lists('name','id');
-		$this->layout->content = View::make('overviews.degreecourse', compact('degreecourse','listofsections'));
+		$this->layout->content = View::make('overviews.degreecourse', compact('specialistregulation','listofsections'));
 	}
 
 	/**

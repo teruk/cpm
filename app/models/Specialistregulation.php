@@ -49,6 +49,15 @@ class Specialistregulation extends Eloquent
 	}
 
 	/**
+	 * return a short presentable specialist regulation
+	 * @return [type] [description]
+	 */
+	public function presentShort()
+	{
+		return $this->degreecourse->short.' (ab '.$this->turn->present().')';
+	}
+
+	/**
 	 * returns an array with active specialist regulations
 	 * @return [type] [description]
 	 */

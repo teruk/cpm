@@ -32,7 +32,7 @@ Route::get('showDegreecourses', [
 	'uses' => 'OverviewController@showDegreecourses'
 	]);
 
-Route::get('showDegreecourses/{degreecourse}', [
+Route::get('showDegreecourses/{specialistregulation}', [
 	'as' => 'showOverviewSelectedDegreecourse_path',
 	'uses' => 'OverviewController@showSelectedDegreecourse'
 	]);
