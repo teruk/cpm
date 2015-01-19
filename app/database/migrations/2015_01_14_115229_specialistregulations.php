@@ -19,6 +19,7 @@ class Specialistregulations extends Migration {
 			$table->foreign('degreecourse_id')->references('id')->on('degreecourses')->onDelete('cascade');
 			$table->integer('turn_id')->unsigned()->index();
 			$table->foreign('turn_id')->references('id')->on('turns')->onDelete('cascade');
+			$table->text('description');
 			$table->boolean('active');
 			$table->unique(['degreecourse_id', 'turn_id']);
 			$table->timestamps();

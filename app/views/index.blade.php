@@ -16,6 +16,7 @@
 					<li>Verwaltung von Studiengängen</li>
 					<li>Verwaltung von Modulen und Lehrveranstaltungen, Zuordnung zu Studiengängen</li>
 					<li>Verwaltung von Arbeitsbereichen und Mitarbeitern</li>
+					<li>Verwaltung von Benutzeraccounts, Zuweisung von Rollen und Berechtigungen, vier Standardrollen (Admin, Lehrplanung, Raumplanung und Lokale Lehrplanung)
 				</ul>
 			</li>
 			<li>Mittelfristige Lehrplanung</li>
@@ -33,10 +34,10 @@
 			<li>
 				Weitere Funktionen:
 				<ul>
-					<li>Suche nach freien Räumen</li>
-					<li>Generierung von Studenplänen für einzelne Studiengänge nach Fachsemester</li>
-					<li>Generierung von Raumbelegungsplänen</li>
-					<li>Verschiedene Übersichten, wie z.B. Veranstaltungsaufstellung sortiert nach Arbeitsbereich, {{ link_to_route('showStudentAssistants_path', 'SHK-Übersicht', $currentTurn->id) }}</li>
+					<li>{{ link_to_route('showRoomSearchForm_path', 'Suche nach freien Räumen') }}</li>
+					<li>{{ link_to_route('showDefaultSchedule_path', 'Generierung von Studenplänen für einzelne Studiengänge nach Fachsemester', $currentTurn->id)}} </li>
+					<li>{{ link_to_route('showDefaultRoomOccupation_path', 'Generierung von Raumbelegungsplänen', $currentTurn->id) }}</li>
+					<li>Verschiedene Übersichten, wie z.B. {{ link_to_route('showPlanningsOrderByResearchgroup_path', 'Veranstaltungsaufstellung sortiert nach Arbeitsbereich', $currentTurn->id) }} , {{ link_to_route('showStudentAssistants_path', 'SHK-Übersicht', $currentTurn->id) }}</li>
 				</ul>
 			</li>
 		</ul>

@@ -32,4 +32,30 @@ Route::group(['prefix' => 'degreecourses', 'before' => 'auth'], function()
 		'as' => 'saveDegreecourse_path',
 		'uses' => 'DegreecoursesController@store'
 		]);
+
+	/** manage specialist regulations */
+	Route::get('{degreecourse}/editDegreecourseSpecialistregulations', [
+		'as' => 'editDegreecourseSpecialistregulations_path',
+		'uses' => 'DegreecoursesController@showSpecialistregulations'
+		]);
+
+	Route::get('{degreecourse}/editSpecialistregualtion/{specialistregulation}', [
+		'as' => 'editSpecialistregulation_path',
+		'uses' => 'SpecialistregulationsController@edit'
+		]);
+
+	Route::delete('{degreecourse}/deleteSpecialistregualtion/{specialistregulation}', [
+		'as' => 'deleteSpecialistregualtion_path',
+		'uses' => 'SpecialistregulationsController@destroy'
+		]);
+
+	Route::patch('{degreecourse}/updateSpecialistregulation/{specialistregulation}', [
+		'as' => 'updateSpecialistregulation_path',
+		'uses' => 'SpecialistregulationsController@update'
+		]);
+
+	Route::post('{degreecourse}/saveSpecialistregulation', [
+		'as' => 'saveSpecialistregulation_path',
+		'uses' => 'SpecialistregulationsController@store'
+		]);
 });

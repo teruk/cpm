@@ -24,6 +24,7 @@ Route::model('role','Role');
 Route::model('permission','Permission');
 Route::model('announcement','Announcement');
 Route::model('appointedday','Appointedday');
+Route::model('specialistregulation', 'Specialistregulation');
 
 /**
  * Protecting from csrf

@@ -29,8 +29,7 @@ class DegreecoursesController extends \BaseController {
 		$input = Input::all();
 		$degreecourse = new Degreecourse($input);
 		
-		if ( $degreecourse->save() )
-		{
+		if ( $degreecourse->save() ) {
 			Flash::success('Studiengang erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -68,8 +67,7 @@ class DegreecoursesController extends \BaseController {
 		$input = Input::all();
 		$degreecourse->fill($input);
  
-		if ( $degreecourse->updateUniques() )
-		{
+		if ( $degreecourse->updateUniques() ) {
 			Flash::success('Der Studiengang wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -87,12 +85,10 @@ class DegreecoursesController extends \BaseController {
 	 */
 	public function destroy(Degreecourse $degreecourse)
 	{
-		if ($degreecourse->modules() == 0)
-		{
+		if ($degreecourse->modules->count() == 0) {
 			$degreecourse->delete();
 			Flash::success('Studiengang erfolgreich gelöscht.');
-		}
-		else
+		} else 
 			Flash::error('Der Studiengang konnte nicht gelöscht werden, da ihm noch Module zugeordnet sind.');
 		
 		return Redirect::back();
@@ -108,6 +104,16 @@ class DegreecoursesController extends \BaseController {
 		$listofsections = Section::lists('name','id');
 		$listofrotations = Rotation::lists('name','id');
 		return View::make('degreecourses.modules', compact('degreecourse', 'listofsections', 'listofrotations'));
+	}
+
+	/**
+	 * shows related specialist regulations
+	 * @param  Degreecourse $degreecourse [description]
+	 * @return [type]                     [description]
+	 */
+	public function showSpecialistregulations(Degreecourse $degreecourse)
+	{
+		return View::make('degreecourses.specialistregulations', compact('degreecourse'));
 	}
 
 }

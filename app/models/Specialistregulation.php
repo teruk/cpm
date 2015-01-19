@@ -2,9 +2,9 @@
 
 use Eloquent;
 
-class Specialistregulations extends Eloquent 
+class Specialistregulation extends Eloquent 
 {
-	protected $fillable = ['degreecourse_id', 'turn_id', 'active'];
+	protected $fillable = ['degreecourse_id', 'turn_id', 'description', 'active'];
 
 	public $rules = [
 		'degreecourse_id' => 'required',
@@ -63,6 +63,6 @@ class Specialistregulations extends Eloquent
 	{
 		$this->attributes['degreecourse_id'] = $input['degreecourseId'];
 		$this->attributes['turn_id'] = $input['turnId'];
-		$this->attributes['active'] = $input['active'];
+		$this->attributes['description'] = $input['description'];
 	}
 }
