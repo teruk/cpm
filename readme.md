@@ -21,7 +21,8 @@ The CPM prototype is based on the [Laravel Framework](http://laravel.com) v. 4.2
 - [Datatables](http://www.datatables.net/)
 - [FullCalendar](http://fullcalendar.io/)
 
-### Current Version
+Current Version
+-----------------------------
 The current version of CPM is an early-stage prototype, which contains only a few fully functional features.
 
 **Core data management**
@@ -35,7 +36,8 @@ The current version of CPM is an early-stage prototype, which contains only a fe
 -  assign or copy lecturer and rooms to plannings
 -  generate schedule for a specific semester of a degree course
 
-### License
+License
+-----------------------------
 The Course Planning Management System is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
 
 
@@ -61,7 +63,8 @@ Der LPM-Prototyp basiert auf der Version 4.2 des [Laravel Frameworks](http://lar
 - [Datatables](http://www.datatables.net/)
 - [FullCalendar](http://fullcalendar.io/)
 
-### Aktuelle Version
+Aktuelle Version
+-----------------------------
 
 Die aktuelle Version des LPM-Prototyps befindet sich in einer frühen Entwicklungsphase. Er besitzt nur einen begrenzten Funktionsumfang.
 
@@ -76,5 +79,6 @@ Die aktuelle Version des LPM-Prototyps befindet sich in einer frühen Entwicklun
 - Zuweisen von Lehrenden, Räumen und Uhrzeiten
 - Generieren von Stundenplänen
 
-### Lizenz
+Lizenz
+-----------------------------
 Die Lehrplanungsmanagement-Software ist veröffentlicht unter der [MIT-Lizenz](http://opensource.org/licenses/MIT)
