@@ -1,13 +1,18 @@
 <footer>
 	<div class="row" style="border-top: 1px solid; border-color: #dddddd; margin-top: 5px;">
-		<div class="col-lg-12">
+		<!-- <div class="col-lg-12"> -->
 
 			<ul class="list-unstyled">
 				<li class="pull-right"><a href="#top">Nach oben</a></li>
+				<li>
+					<a href="https://github.com/teruk/cpm">Github</a>
+				</li>
 			</ul>
-	    	<p>&copy; Universtät Hamburg, Fachbereich Informatik 2014</p>
-	    	<p>Basierend auf dem PHP-Framework <a href="http://laravel.com/">Laravel</a></p>
-	    	<p>Verwendetes <a href="http://bootswatch.com/">Bootswatch</a>-Theme: <a href="http://bootswatch.com/readable/">Readable</a></p>
-    	</div>
+	    	Copyright &copy; 2014 <a href="http://www.inf.uni-hamburg.de">Fachbereich Informatik</a> der Universität & Sebastian Meyer<br>
+	    	Basierend auf dem PHP-Framework <a href="http://laravel.com/">Laravel</a> und 
+	    	<a href="https://github.com/twbs/bootstrap">Bootstrap</a>. 
+	    	Theme: <a href="http://bootswatch.com/readable/">Bootswatch Readable</a><br>
+	    	Veröffentlicht unter der <a href="https://github.com/teruk/cpm/blob/master/LICENSE.md">MIT-Lizenz</a>.
+    	<!-- </div> -->
 	</div>
 </footer>
