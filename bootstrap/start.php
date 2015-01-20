@@ -24,17 +24,11 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
+$env = $app->detectEnvironment(array(
 
-$env = $app->detectEnvironment(function()
-{
-	return 'local'; // preventing hardcoding the database information in the config files
-});
+	'local' => array('homestead'),
 
-// $env = $app->detectEnvironment(array(
-
-// 	'local' => array('your-machine-name'),
-
-// ));
+));
 
 /*
 |--------------------------------------------------------------------------
