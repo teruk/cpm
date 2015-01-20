@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => true, // TODO turn of in production environment
+	'debug' => false, // TODO turn of in production environment
 
 	/*
 	|--------------------------------------------------------------------------
@@ -122,7 +122,6 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider', // Generators
-		'Cviebrock\EloquentSluggable\SluggableServiceProvider', // Slug helper
 		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // IDE Helpers
 		'Zizaco\Entrust\EntrustServiceProvider', // Entrust
 		'Laracasts\Flash\FlashServiceProvider',
@@ -192,9 +191,8 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-		'Sluggable'		  => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
 		'Entrust'		  => 'Zizaco\Entrust\EntrustFacade',
-		'Flash'				=> 'Laracasts\Flash\Flash',
+		'Flash'			  => 'Laracasts\Flash\Flash',
 
 	),
 

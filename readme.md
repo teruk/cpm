@@ -11,6 +11,7 @@ The CPMS is based on the [Laravel Framework](http://laravel.com) v. 4.2 and [Boo
 - [Laracasts/Flash](https://github.com/laracasts/flash)
 - [Zizaco/Entrust](https://github.com/zizaco/entrust)
 - [Laravelbook/Ardent](https://github.com/laravelbook/ardent)
+- [Jeffrey Way/Laravel-4-Generators](https://github.com/JeffreyWay/Laravel-4-Generators)
 
 ### Further extensions
 - [Datatables](http://www.datatables.net/)
