@@ -1,6 +1,6 @@
 <?php
-class TurnsTableSeeder extends Seeder {
-	
+class TurnsTableSeeder extends Seeder 
+{	
 	public function run()
 	{
 		$turns = array(

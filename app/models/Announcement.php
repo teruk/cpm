@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Announcement extends Ardent {
+class Announcement extends Ardent 
+{
 	
 	protected $fillable = ['subject', 'content', 'read_more', 'user_id'];
 	public static $rules = array(

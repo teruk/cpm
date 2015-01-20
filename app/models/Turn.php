@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Turn extends Ardent {
+class Turn extends Ardent 
+{
 	
 	protected $fillable = ['name', 'year', 'semester_start', 'semester_end'];
 	public static $rules = array(

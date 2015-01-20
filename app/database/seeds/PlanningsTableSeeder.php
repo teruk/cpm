@@ -1,6 +1,7 @@
 <?php
 
-class PlanningsTableSeeder extends Seeder {
+class PlanningsTableSeeder extends Seeder 
+{
 
 	public function run()
 	{
@@ -133,8 +134,6 @@ class PlanningsTableSeeder extends Seeder {
 			['turn_id' => 6, 'course_id' => 14,'group_number' => 20, 'researchgroup_status' => 0, 'board_status' => 0, 'language' => 0, 'comment' => '', 'course_number' => '64-081', 'course_title' => 'Übung Grundlagen von Datenbanken', 'course_title_eng' => '- Fehlt! -', 'semester_periods_per_week' => 0, 'user_id' => 1, 'teaching_assignment' => 0, 'room_preference' => 'Leer', 'created_at' => new DateTime, 'updated_at' => new DateTime],
 		);
 
-		DB::table('plannings')->insert($plannings2);
-		
+		DB::table('plannings')->insert($plannings2);	
 	}
-
 }

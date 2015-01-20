@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class appointeddaysController extends BaseController {
+class appointeddaysController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -26,8 +27,7 @@ class appointeddaysController extends BaseController {
 		$input = Input::all();
 		$appointedday = new Appointedday();
 
-		if ($appointedday->publish($input))
-		{
+		if ($appointedday->publish($input)) {
 			Flash::success('Der Termin wurde erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -63,8 +63,7 @@ class appointeddaysController extends BaseController {
 	{
 		$input = Input::all();
  
-		if ( $appointedday->updateInformation($input) )
-		{
+		if ( $appointedday->updateInformation($input) ) {
 			Flash::success('Der Termin wurde aktualisiert.');
 			return Redirect::back();
 		}

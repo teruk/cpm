@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Planning extends Ardent {
+class Planning extends Ardent 
+{
 	
 	protected $fillable = ['turn_id', 'course_id','group_number', 'board_status', 'researchgroup_status', 'language', 'comment','user_id','course_title','course_title_eng','course_number', 'room_preference'];
 	public static $rules = array(
@@ -313,42 +314,39 @@ class Planning extends Ardent {
 	{
 		// get all the degree courses where the target module is mandatory
 		$conflictplannings = array();
-		$degreecourses = DB::table('degreecourse_module')
-							->join('sections', 'sections.id','=', 'degreecourse_module.section') 
-							->select('degreecourse_module.degreecourse_id', 'degreecourse_module.semester')
+		$specialistregulations = DB::table('module_specialistregulation')
+							->join('sections', 'sections.id','=', 'module_specialistregulation.section')
+							->join('specialistregulations', 'specialistregulations.id', '=', 'module_specialistregulation.specialistregulation_id')
+							->select('module_specialistregulation.specialistregulation_id', 'module_specialistregulation.semester')
 							->where('sections.name','=', 'Pflicht')
-							->where('degreecourse_module.module_id','=',$this->course->module_id) // TODO it needs to be checked, if the course belongs to a module
+							->where('specialistregulations.active', '=', 1) // only active specialist regulations should be considered
+							->where('module_specialistregulation.module_id','=',$this->course->module_id) // TODO it needs to be checked, if the course belongs to a module
 							->get();
 		// get all modules which in the same semester as the target module and also mandatory
 		$modules = array();
-		foreach ($degreecourses as $dg)
-		{
-			$result = DB::table('degreecourse_module')
+		foreach ($specialistregulations as $specialistregulation) {
+			$result = DB::table('module_specialistregulation')
 						->select('module_id')
-						->where('degreecourse_id','=',$dg->degreecourse_id)
-						->where('semester','=',$dg->semester)
+						->where('specialistregulation_id','=',$specialistregulation->specialistregulation_id)
+						->where('semester','=',$specialistregulation->semester)
 						->where('section', '=', 1)
 						->where('module_id','!=', $this->course->module_id)
 						->get();
-			foreach ($result as $r)
-			{
+			foreach ($result as $r) {
 				array_push($modules, $r->module_id);
 			}
 		}
 		// remove the duplicates
 		$modules = array_unique($modules);
 		// get all lectures
-		if (sizeof($modules) > 0)
-		{
+		if (sizeof($modules) > 0) {
 			$courses = Course::whereIn('module_id',$modules)
 							->where('coursetype_id','=',1) // Check before if it's a "Vorlesung"
 							->get();
 			$conflictplannings = array();
-			if (sizeof($courses) > 0)
-			{
+			if (sizeof($courses) > 0) {
 				$courserange = array();
-				foreach ($courses as $course)
-				{
+				foreach ($courses as $course) {
 					array_push($courserange, $course->id);
 				}
 				$conflictplannings = Planning::courseRangeTurn($courserange,$this->turn_id)->get();
@@ -444,6 +442,13 @@ class Planning extends Ardent {
 			return true;
 	}
 
+	/**
+	 * sets the attributes for a planning
+	 * @param  Turn   $turn        [description]
+	 * @param  Course $course      [description]
+	 * @param  [type] $groupNumber [description]
+	 * @return [type]              [description]
+	 */
 	public function generatePlanning(Turn $turn, Course $course, $groupNumber)
 	{
 		$this->turn_id = $turn->id;

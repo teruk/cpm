@@ -11,32 +11,27 @@ class EmployeesController extends BaseController {
 	 */
 	public function index()
 	{
-		$rg_ids = array();
+		$researchgroupIds = array();
 		if (Entrust::hasRole('Admin'))
-			$rg_ids = Researchgroup::lists('id');
+			$researchgroupIds = Researchgroup::lists('id');
 		elseif (Entrust::can('add_employee'))
-		{
-			foreach (Entrust::user()->researchgroups as $rg) {
-				array_push($rg_ids, $rg->id);
-			}
-		}
+			$researchgroupIds = Entrust::user()->getResearchgroupIds();
 
-		$employees = Employee::whereIn('researchgroup_id',$rg_ids)
+		$employees = Employee::whereIn('researchgroup_id', $researchgroupIds)
 							->where('firstname','!=','SHK')
 							->where('firstname','!=','N.N.')
 							->get();
-		$listofresearchgroups = array();
+		$researchgroups = array();
 		// Loading the research groups for less querys in the view
 		if (Entrust::hasRole('Admin'))
-			$listofresearchgroups = Researchgroup::lists('name', 'id');
-		elseif (Entrust::can('add_employee'))
-		{
-			foreach (Entrust::user()->researchgroups as $rg) {
-				$listofresearchgroups = array_add($listofresearchgroups, $rg->id, $rg->name);
+			$researchgroups = Researchgroup::lists('name', 'id');
+		elseif (Entrust::can('add_employee')) {
+			foreach (Entrust::user()->researchgroups as $researchgroup) {
+				$researchgroups = array_add($researchgroups, $researchgroup->id, $researchgroup->name);
 			}
 		}
 
-		return View::make('employees.index', compact('employees', 'listofresearchgroups'));
+		return View::make('employees.index', compact('employees', 'researchgroups'));
 	}
 	
 	/**
@@ -51,8 +46,7 @@ class EmployeesController extends BaseController {
 		$employee = new Employee($input);
 		$employee->inactive = 0;
 		
-		if ( $employee->save() )
-		{
+		if ( $employee->save() ) {
 			Flash::success('Mitarbeiter erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -74,26 +68,20 @@ class EmployeesController extends BaseController {
 		$allowed = false;
 		if (Entrust::hasRole('Admin'))
 			$allowed = true;
-		else
-		{
-			if (Entrust::can('add_employee'))
-			{
-				foreach (Entrust::user()->researchgroups as $rg) 
-				{
-					if ($rg->id == $employee->researchgroup_id)
+		else {
+			if (Entrust::can('add_employee')) {
+				foreach (Entrust::user()->researchgroups as $researchgroup) {
+					if ($researchgroup->id == $employee->researchgroup_id)
 						$allowed = true;
 				}
 			}
 		}
 
-		if ($allowed)
-		{
+		if ($allowed) {
 			// Loading the research groups for less querys in the view
-			$listofresearchgroups = Researchgroup::lists('name', 'id');
-			return View::make('employees.editInformation', compact('employee', 'listofresearchgroups'));
-		}
-		else
-		{
+			$researchgroups = Researchgroup::lists('name', 'id');
+			return View::make('employees.editInformation', compact('employee', 'researchgroups'));
+		} else {
 			Flash::error('Zugriff verweigert! Sie besitzen nicht die nötigen Berechtigungen.');
 			return Redirect::back();
 		}
@@ -113,8 +101,7 @@ class EmployeesController extends BaseController {
 		if (Input::get('inactive') == 1)
 			$employee->inactive = 1;
 
-		if ( $employee->updateUniques() )
-		{
+		if ( $employee->updateUniques() ) {
 			Flash::success('Das Modul wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -136,8 +123,7 @@ class EmployeesController extends BaseController {
 		 * checking if the employee is already assigned to a midterm planning
 		 * if yes, the employee can't be deleted
 		 */
-		if ($employee->mediumtermplannings->count() > 0 || $employee->plannings->count() > 0)
-		{
+		if ($employee->mediumtermplannings->count() > 0 || $employee->plannings->count() > 0) {
 			Flash::error('Mitarbeiter kann nicht gelöscht werden, da er bereits in Planungen miteinbezogen wurde.');
 			return Redirect::back();
 		}
@@ -157,11 +143,8 @@ class EmployeesController extends BaseController {
 		$plannings = array();
 		if (sizeof($employee->plannings) > 0)
 		{
-			$planning_ids = array();
-			foreach ($employee->plannings as $p) {
-				array_push($planning_ids, $p->id);
-			}
-			$plannings = Planning::whereIn('id',$planning_ids)->orderBy('turn_id','DESC')->get();
+			$planningIds = array_fetch($employee->plannings->toArray(), 'id');
+			$plannings = Planning::whereIn('id',$planningIds)->orderBy('turn_id','DESC')->get();
 		}
 		return View::make('employees.history', compact('employee', 'plannings'));
 	}

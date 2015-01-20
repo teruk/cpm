@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Module extends Ardent {
+class Module extends Ardent 
+{
 	
 	/*
 	 * added through automatic model

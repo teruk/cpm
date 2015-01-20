@@ -30,7 +30,7 @@
         		<div class="form-group">
     				{{ Form::label('researchgroup_id', 'Arbeitsbereich*:', array('class' => "col-lg-4 control-label", 'id' => "researchgroup_id")) }}
     				<div class="col-lg-8">
-    					{{ Form::select('researchgroup_id', $listofresearchgroups, 1, array('id' => "researchgroup_id", 'class' => "form-control input-sm")) }}
+    					{{ Form::select('researchgroup_id', $researchgroups, 1, array('id' => "researchgroup_id", 'class' => "form-control input-sm")) }}
     				</div>
     			</div>
     			

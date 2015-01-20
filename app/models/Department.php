@@ -2,7 +2,8 @@
 
 
 use LaravelBook\Ardent\Ardent;
-class Department extends Ardent {
+class Department extends Ardent 
+{
 	 
 	protected $fillable = ['name', 'short'];
 	public static $rules = array(

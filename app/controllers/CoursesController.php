@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
-class CoursesController extends BaseController {
+class CoursesController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -31,8 +32,7 @@ class CoursesController extends BaseController {
 		$course = new Course($input);
 		$course->semester_periods_per_week = Input::get('semester_periods_per_week');
 		$course->department_id = 1;
-		if ( $course->save() )
-		{
+		if ( $course->save() ) {
 			Flash::success('Lehrveranstaltung erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -50,8 +50,7 @@ class CoursesController extends BaseController {
 	 */
 	public function edit(Course $course)
 	{	
-		if (Entrust::hasRole('Admin') || Entrust::can('edit_course'))
-		{
+		if (Entrust::hasRole('Admin') || Entrust::can('edit_course')) {
 			$listofcoursetypes = Coursetype::lists('name','id');
 			$listofmodules = Module::orderBy('name','ASC')->lists('name','id');		
 			
@@ -77,8 +76,7 @@ class CoursesController extends BaseController {
 		$course->semester_periods_per_week = Input::get('semester_periods_per_week');
 		$course->department_id = 1;
  
-		if ( $course->updateUniques() )
-		{
+		if ( $course->updateUniques() ) {
 			Flash::success('Der Lehrveranstaltung wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -96,8 +94,7 @@ class CoursesController extends BaseController {
 	 */
 	public function destroy(Course $course)
 	{
-		if ($couse->plannings->count() == 0)
-		{
+		if ($couse->plannings->count() == 0) {
 			$course->delete();
 			Flash::success('Die Lehrveranstaltung wurde erfolgreich gelöscht.');
 		}
@@ -124,5 +121,4 @@ class CoursesController extends BaseController {
 	// 	$courses = Course::all();
 	// 	$this->layout->content = View::make('courses.export', compact('courses'));
 	// }
-
 }

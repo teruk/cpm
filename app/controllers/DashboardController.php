@@ -12,66 +12,61 @@ class DashboardController extends BaseController {
 		$announcements = Announcement::orderBy('created_at','DESC')->take(3)->get();
 		$appointeddays = Appointedday::where('date', '>=', date('Y-m-d'))->orderBy('date', 'ASC')->take(6)->get();
 		// getting employees
-		$employees = array();
+		$employees = [];
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning')) // todo replace role Lehrplanung with permission
 			$employees = Employee::all();
-		else 
-		{
-			if (sizeof(Entrust::user()->researchgroups) > 0)
-			{
-				$rg_ids = array();
-				foreach (Entrust::user()->researchgroups as $rg) {
-					array_push($rg_ids, $rg->id);
-				}
-				$employees = Employee::whereIn('researchgroup_id',$rg_ids)->orderBy('name','ASC')->get();
+		else {
+			if (sizeof(Entrust::user()->getResearchgroupIds()) > 0) {
+				$researchgroupsIds = Entrust::user()->getResearchgroupIds();
+				$employees = Employee::whereIn('researchgroup_id',$researchgroupsIds)->orderBy('name','ASC')->get();
 			}
 		}
 
 		// getting course plannings for current semester
-		$planned_courses = array();
+		$plannedCourses = array();
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
-			$planned_courses = Planning::turnCourses($turn)->get();
-		else
-		{
-			if (sizeof(Entrust::user()->researchgroups) > 0)
-			{
-				$rg_ids = array();
-				foreach (Entrust::user()->researchgroups as $rg) {
-					array_push($rg_ids, $rg->id);
+			$plannedCourses = Planning::turnCourses($turn)->get();
+		else {
+			if (sizeof(Entrust::user()->researchgroups) > 0) {
+				$researchgroupsIds = array();
+				foreach (Entrust::user()->researchgroups as $researchgroup) {
+					array_push($researchgroupsIds, $researchgroup->id);
 				}
-				$planned_courses = DB::table('plannings')
+				$plannedCourses = DB::table('plannings')
 					->join('employee_planning','employee_planning.planning_id', '=', 'plannings.id')
 					->join('employees', 'employees.id','=','employee_planning.employee_id')
 					->join('researchgroups', 'researchgroups.id', '=', 'employees.researchgroup_id')
 					->select('plannings.id')
-					->whereIn('researchgroups.id',$rg_ids)
+					->whereIn('researchgroups.id', $researchgroupsIds)
 					->where('plannings.turn_id','=', $turn->id)
 					->groupBy('plannings.id')
 					->get();
-				$planning_ids = array();
-				if (sizeof($planned_courses) > 0)
-				{
-					foreach ($planned_courses as $p) {
-						array_push($planning_ids, $p->id);
+				$planningIds = array();
+
+				if (sizeof($plannedCourses) > 0) {
+					foreach ($plannedCourses as $p) {
+						array_push($planningIds, $p->id);
 					}
+				} else {
+					$plannedCourses = array();
 				}
-				else {
-					$planned_courses = array();
-				}
-				$planned_courses_user = Planning::where('user_id','=',Entrust::user()->id)->where('turn_id','=',$turn->id)->groupBy('id')->get();
-				if (sizeof($planned_courses_user) > 0)
-				{
-					foreach ($planned_courses_user as $p) {
-						if (!array_key_exists($p->id, $planning_ids))
-						{
-							array_push($planning_ids, $p->id);
+
+				$plannedCoursesByUser = Planning::where('user_id','=',Entrust::user()->id)
+											->where('turn_id','=',$turn->id)
+											->groupBy('id')
+											->get();
+
+				if (sizeof($plannedCoursesByUser) > 0) {
+					foreach ($plannedCoursesByUser as $p) {
+						if (!array_key_exists($p->id, $planningIds)) {
+							array_push($planningIds, $p->id);
 						}
 					}
 				}
 				// plannings by medium-term planning
 				// the target is to find plannings, where two pr more research groups are involved
 				// if one of the research groups creates the planning, the other ones have to see it
-				$planned_courses_mediumtermplanning = DB::table('plannings')
+				$plannedCoursesByMediumtermplanning = DB::table('plannings')
 														->join('courses','courses.id','=','plannings.course_id')
 														->join('mediumtermplannings','mediumtermplannings.module_id','=','courses.module_id')
 														->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
@@ -79,19 +74,18 @@ class DashboardController extends BaseController {
 														->select('plannings.id')
 														->where('plannings.turn_id','=',$turn->id)
 														->where('user_id','!=', Entrust::user()->id)
-														->whereIn('employees.researchgroup_id',$rg_ids)
+														->whereIn('employees.researchgroup_id',$researchgroupsIds)
 														->groupBy('plannings.id')
 														->get();
-				if (sizeof($planned_courses_mediumtermplanning) > 0)
-				{
-					foreach ($planned_courses_mediumtermplanning as $p) {
-						if (!in_array($p->id, $planning_ids))
-							array_push($planning_ids, $p->id);
+				if (sizeof($plannedCoursesByMediumtermplanning) > 0) {
+					foreach ($plannedCoursesByMediumtermplanning as $p) {
+						if (!in_array($p->id, $planningIds))
+							array_push($planningIds, $p->id);
 					}
 				}
 
-				if (sizeof($planning_ids) > 0)
-					$planned_courses = Planning::related($planning_ids)->get();
+				if (sizeof($planningIds) > 0)
+					$plannedCourses = Planning::related($planningIds)->get();
 			}
 		}
 		$listofcoursetypes = CourseType::lists('short','id');
@@ -112,12 +106,14 @@ class DashboardController extends BaseController {
 		}
 
 		// make view
-		return View::make('pages.home', compact('turn', 'turns','announcements','appointeddays','employees','planned_courses','listofcoursetypes', 'mtpgrid', 'planninglog','deleted_planninglogs'));
+		return View::make('pages.home', compact('turn', 'turns','announcements','appointeddays','employees','plannedCourses','listofcoursetypes', 'mtpgrid', 'planninglog','deleted_planninglogs'));
 	}
 
 	/**
-	* 
-	*/
+	 * sorts mediumterm plannings by module
+	 * @param  [type] $employees [description]
+	 * @return [type]            [description]
+	 */
 	private function sortModules($employees)
 	{
 		/*
@@ -129,77 +125,97 @@ class DashboardController extends BaseController {
 		/*
 		 * selecting the medium-term plannings
 		 */
-		$turn_ids = array();
+		$turnIds = array();
 		foreach ($turns as $t) {
-			array_push($turn_ids, $t->id);
+			array_push($turnIds, $t->id);
 		}
-		$employee_ids = array();
+
+		$employeeIds = array();
 		foreach ($employees as $e) {
-			array_push($employee_ids, $e->id);
+			array_push($employeeIds, $e->id);
 		}
 		// $mediumtermplannings = Mediumtermplanning::whereIn('turn_id',$turn_ids)->get();
 		$mediumtermplannings = DB::table('mediumtermplannings')
 									->join('employee_mediumtermplanning','employee_mediumtermplanning.mediumtermplanning_id','=','mediumtermplannings.id')
 									->select('mediumtermplannings.turn_id','mediumtermplannings.module_id','mediumtermplannings.id')
-									->whereIn('mediumtermplannings.turn_id', $turn_ids)
-									->whereIn('employee_mediumtermplanning.employee_id', $employee_ids)
+									->whereIn('mediumtermplannings.turn_id', $turnIds)
+									->whereIn('employee_mediumtermplanning.employee_id', $employeeIds)
 									->get();
 		
 		/*
 		 * creating a list of medium-term planning with the module_id as key
 		 * and value is an array with turn as key and as value the mediumtermplanning_id
 		 */
-		$listofmtps = array();
-		foreach ($mediumtermplannings as $mtp)
+		$listOfMediumtermplannings = array();
+		foreach ($mediumtermplannings as $mediumtermplanning)
 		{
-			if (!array_key_exists($mtp->module_id, $listofmtps))
-				$listofmtps = array_add($listofmtps, $mtp->module_id, array($mtp->turn_id => $mtp->id));
+			if (!array_key_exists($mediumtermplanning->module_id, $listOfMediumtermplannings))
+				$listOfMediumtermplannings = array_add(
+					$listOfMediumtermplannings, 
+					$mediumtermplanning->module_id, 
+					array($mediumtermplanning->turn_id => $mediumtermplanning->id)
+					);
 			else
-				$listofmtps[$mtp->module_id] = array_add($listofmtps[$mtp->module_id], $mtp->turn_id, $mtp->id);
+				$listOfMediumtermplannings[$mediumtermplanning->module_id] = array_add(
+					$listOfMediumtermplannings[$mediumtermplanning->module_id],
+					$mediumtermplanning->turn_id,
+					$mediumtermplanning->id
+					);
 		
 		}
 			
 		/*
 		 * Grouping the employees with the same mediumtermplanning_id
 		*/
-		$emps = DB::table('employee_mediumtermplanning')
-				->select('employee_id', 'mediumtermplanning_id', 'annulled', 'semester_periods_per_week')
-				->whereIn('employee_id', $employee_ids)
-				->get();
-		$listofemps = array();
-		foreach ($emps as $emp)
-		{
-			if (!array_key_exists($emp->mediumtermplanning_id,$listofemps))
-				$listofemps = array_add($listofemps, $emp->mediumtermplanning_id, array(
-						$emp->employee_id => array(
-								'id' => $emp->employee_id,
-								'semester_periods_per_week' => $emp->semester_periods_per_week,
-								'annulled' => $emp->annulled)));
-			else
-				$listofemps[$emp->mediumtermplanning_id] = array_add($listofemps[$emp->mediumtermplanning_id], $emp->employee_id, array(
-						'id' => $emp->employee_id,
-						'semester_periods_per_week' => $emp->semester_periods_per_week,
-						'annulled' => $emp->annulled));
+		$employeeMediumtermplannings = DB::table('employee_mediumtermplanning')
+										->select('employee_id', 'mediumtermplanning_id', 'annulled', 'semester_periods_per_week')
+										->whereIn('employee_id', $employeeIds)
+										->get();
+		$listOfEmployeeMediumtermplannings = array();
+		foreach ($employeeMediumtermplannings as $employeeMediumtermplanning) {
+			if (!array_key_exists($employeeMediumtermplanning->mediumtermplanning_id,$listOfEmployeeMediumtermplannings)) {
+				$listOfEmployeeMediumtermplannings = array_add(
+					$listOfEmployeeMediumtermplannings, 
+					$employeeMediumtermplanning->mediumtermplanning_id, 
+					array(
+						$employeeMediumtermplanning->employee_id => array(
+							'id' => $employeeMediumtermplanning->employee_id,
+							'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+							'annulled' => $employeeMediumtermplanning->annulled
+							)
+						)
+					);
+			} else {
+				$listOfEmployeeMediumtermplannings[$employeeMediumtermplanning->mediumtermplanning_id] = array_add(
+					$listOfEmployeeMediumtermplannings[$employeeMediumtermplanning->mediumtermplanning_id], 
+					$employeeMediumtermplanning->employee_id, 
+					array(
+						'id' => $employeeMediumtermplanning->employee_id,
+						'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+						'annulled' => $employeeMediumtermplanning->annulled
+						)
+					);
+			}
 		}
 		
 		$modules = array();
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
 			$modules = Module::all();
-		else
-		{
+		else {
 
-			$module_ids = array();
+			$moduleIds = array();
 			foreach ($mediumtermplannings as $mtp) {
-				array_push($module_ids, $mtp->module_id);
+				array_push($moduleIds, $mtp->module_id);
 			}
 			$modules = array();
-			if (sizeof($module_ids) > 0)
-				$modules = Module::whereIn('id',$module_ids)->get();
+
+			if (sizeof($moduleIds) > 0)
+				$modules = Module::whereIn('id',$moduleIds)->get();
 		}
 		
 		
 		// employees
-		$listofemployees = Employee::getList();
+		$listOfEmployees = Employee::getList();
 			
 		/*
 		 * building the array for the data grid
@@ -208,50 +224,51 @@ class DashboardController extends BaseController {
 		* 2nd layer are the turns
 		* 3rd layer are the planned employees
 		*/
-		$mtpgrid = array();
-		if (sizeof($modules) > 0 && sizeof($listofemployees) > 0)
-		{
-			foreach ($modules as $module)
-			{
-				$moduledata = array();
-				$lastmpid = -1;
+		$mediumtermplanningGrid = array();
+		if (sizeof($modules) > 0 && sizeof($listOfEmployees) > 0) {
+
+			foreach ($modules as $module) {
+				$moduleData = array();
+				$lastMediumtermplanningId = -1;
 				// search through the turns, if the module is planned
-				foreach ($turns as $turn)
-				{
+				foreach ($turns as $turn) {
+
 					$employee = array();
-					if (array_key_exists($module->id, $listofmtps))
-					{
-						if (array_key_exists($turn->id, $listofmtps[$module->id]))
-						{
-							$mpid = $listofmtps[$module->id][$turn->id]; // get the mediumtermplanning_id
+					if (array_key_exists($module->id, $listOfMediumtermplannings)) {
+
+						if (array_key_exists($turn->id, $listOfMediumtermplannings[$module->id])) {
+							$mediumtermplanningId = $listOfMediumtermplannings[$module->id][$turn->id]; // get the mediumtermplanning_id
 							// Check if this medium-term planning has employees assigned to it
-							if (array_key_exists($mpid, $listofemps))
-							{
-								foreach ( $listofemps[$mpid] as $emp )
-								{
-									$employee = array_add($employee, $emp['id'], array(
-											'employee_id' => $emp['id'],
-											'name' => $listofemployees[$emp['id']],
-											'semester_periods_per_week' => $emp['semester_periods_per_week'],
-											'annulled' => $emp['annulled'],
-									));
+							// 
+							if (array_key_exists($mediumtermplanningId, $listOfEmployeeMediumtermplannings)) {
+								foreach ( $listOfEmployeeMediumtermplannings[$mediumtermplanningId] as $employeeMediumtermplanning ) {
+									$employee = array_add(
+										$employee, 
+										$employeeMediumtermplanning['id'], 
+										array(
+											'employee_id' => $employeeMediumtermplanning['id'],
+											'name' => $listOfEmployees[$employeeMediumtermplanning['id']],
+											'semester_periods_per_week' => $employeeMediumtermplanning['semester_periods_per_week'],
+											'annulled' => $employeeMediumtermplanning['annulled'],
+											)
+										);
 								}
-								$lastmpid = $mpid;
+								$lastMediumtermplanningId = $mediumtermplanningId;
 							}							
 						}
 					}
-					$moduledata = array_add($moduledata, $turn->id, $employee);
+					$moduleData = array_add($moduleData, $turn->id, $employee);
 				}
-				$mtpgrid = array_add($mtpgrid, $module->id, array(
+				$mediumtermplanningGrid = array_add($mediumtermplanningGrid, $module->id, array(
 						'id' => $module->id,
 						'short' => $module->short,
-						'last_mpid' => $lastmpid,
-						'turns'=> $moduledata,
+						'last_mpid' => $lastMediumtermplanningId,
+						'turns'=> $moduleData,
 				));
 			}
 		}
 		
-		return $mtpgrid;
+		return $mediumtermplanningGrid;
 	}
 
 	/**

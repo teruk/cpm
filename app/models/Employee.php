@@ -2,7 +2,8 @@
 
 
 use LaravelBook\Ardent\Ardent;
-class Employee extends Ardent {
+class Employee extends Ardent 
+{
 	
 	protected $fillable = ['firstname', 'name', 'title', 'researchgroup_id', 'teaching_load', 'employed_since', 'employed_till', 'inactive'];
 	public static $rules = array(

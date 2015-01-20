@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class AnnouncementsController extends BaseController {
+class AnnouncementsController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -26,8 +27,7 @@ class AnnouncementsController extends BaseController {
 		$input = Input::all();
 		$announcement = new Announcement();
 		
-		if ($announcement->publish($input))
-		{
+		if ($announcement->publish($input))	{
 			Flash::success('Ankündigung wurde erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -58,8 +58,7 @@ class AnnouncementsController extends BaseController {
 	public function update(Announcement $announcement)
 	{
 		$input = Input::all();
-		if ($announcement->updateInformation($input))
-		{
+		if ($announcement->updateInformation($input)) {
 			Flash::success('Die Ankündigung wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -81,5 +80,4 @@ class AnnouncementsController extends BaseController {
 		Flash::success('Die Ankündigung erfolgreich gelöscht.');
 		return Redirect::back();
 	}
-
 }

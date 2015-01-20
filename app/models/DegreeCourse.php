@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Degreecourse extends Ardent {
+class Degreecourse extends Ardent 
+{
 	
 	protected $fillable = ['name', 'short', 'degree_id', 'department_id'];
 	public static $rules = array(

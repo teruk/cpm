@@ -1,6 +1,7 @@
 <?php
 
-class MediumtermplanningsTableSeeder extends Seeder {
+class MediumtermplanningsTableSeeder extends Seeder 
+{
 	
 	public function run()
 	{

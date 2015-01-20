@@ -1,6 +1,7 @@
 <?php
 
-class ModulesTableSeeder extends Seeder {
+class ModulesTableSeeder extends Seeder 
+{
 
 	public function run()
 	{
@@ -101,5 +102,4 @@ class ModulesTableSeeder extends Seeder {
 		// Uncomment the below to run the seeder
 		DB::table('modules')->insert($modules);
 	}
-
 }

@@ -2,7 +2,8 @@
 
 
 use LaravelBook\Ardent\Ardent;
-class Researchgroup extends Ardent {
+class Researchgroup extends Ardent 
+{
 	
 	protected $fillable = ['name', 'short', 'department_id','created_at', 'updated_at'];
 	

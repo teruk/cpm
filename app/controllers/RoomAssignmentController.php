@@ -56,10 +56,8 @@ class RoomAssignmentController extends \BaseController {
 		$room = Room::findOrFail($input['room_id']);
 		// $starttime = date('H:i:s', strtotime(Input::get('start_time')));
 		// $endtime = date('H:i:s', strtotime(Input::get('end_time')));
-		if ($input['start_time'] < $input['end_time'])
-		{
-			if (Planning::checkRoomAvailability($turn->id, $input['room_id'], $input['weekday'], $input['start_time'], $input['end_time'])->count() == 0)
-			{
+		if ($input['start_time'] < $input['end_time']) {
+			if (Planning::checkRoomAvailability($turn->id, $input['room_id'], $input['weekday'], $input['start_time'], $input['end_time'])->count() == 0) {
 				$planning->rooms()->attach($room->id, array(
 							'weekday'=>($input['weekday']),
 							'start_time'=>$input['start_time'],
@@ -100,13 +98,10 @@ class RoomAssignmentController extends \BaseController {
 
 		$input = Input::all();
 
-		if ($input['room_id_old'] == $input['room_id']) 
-		{
+		if ($input['room_id_old'] == $input['room_id']) {
 			$room = Room::findOrFail($input['room_id']);
 			$oldroom = $room;
-		}
-		else
-		{
+		} else {
 			$room = Room::findOrFail($input['room_id']);
 			$oldroom = Room::findOrFail($input['room_id_old']);
 		}
@@ -122,10 +117,16 @@ class RoomAssignmentController extends \BaseController {
 							->first();
 		$input['start_time'] = date('H:i:s', strtotime($input['start_time']));
 		$input['end_time'] = date('H:i:s', strtotime($input['end_time']));
-		if ($input['start_time'] < $input['end_time'])
-		{
-			if (Planning::checkRoomAvailabilityUpdate($turn->id, $room->id, $input['weekday'], $input['start_time'], $input['end_time'], $planningroomid->id)->count() == 0)
-			{
+		if ($input['start_time'] < $input['end_time']) {
+			if (Planning::checkRoomAvailabilityUpdate(
+					$turn->id, 
+					$room->id, 
+					$input['weekday'], 
+					$input['start_time'], 
+					$input['end_time'], 
+					$planningroomid->id
+					)->count() == 0) {
+
 				$planninglog = new Planninglog();
 				$planninglog->logUpdatedPlanningRoom($planning, $turn, $room, $input, $oldroom);
 
@@ -168,8 +169,7 @@ class RoomAssignmentController extends \BaseController {
 		$endtime = date('H:i:s', strtotime($planning_room->end_time));
 		// checking if the room is occupied at that day and time
 		// TODO check for conflicts with other compulsory modules, when course belongs to compulsory module and is a lecture
-		if (Planning::checkRoomAvailability($turn->id, $room->id, $planning_room->weekday, $starttime, $endtime)->count() == 0)
-		{
+		if (Planning::checkRoomAvailability($turn->id, $room->id, $planning_room->weekday, $starttime, $endtime)->count() == 0) {
 			$planning->rooms()->attach($room->id, array(
 						'weekday'=>($planning_room->weekday),
 						'start_time'=>$planning_room->start_time,
@@ -208,16 +208,15 @@ class RoomAssignmentController extends \BaseController {
 	{
 		$similarrooms = Room::similar($room)->get();
 		$message = "Alternative Räume: ";
-		if (sizeof($similarrooms) > 0)
-		{
+		if (sizeof($similarrooms) > 0) {
 			foreach ($similarrooms as $sr) {
 				if (Planning::checkRoomAvailability($turn->id, $sr->id, $input['weekday'], $input['start_time'], $input['end_time'])->count() == 0)
 					$message .= $sr->name.' (Plätze: '.$sr->seats.'); ';
 			}
 			return $message;
 		}
-		else
-			return "Keine Alternativen vorhanden!";
+
+		return "Keine Alternativen vorhanden!";
 	}
 
 

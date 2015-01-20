@@ -1,8 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Roomtype extends Ardent {
-	
+class Roomtype extends Ardent 
+{
 	protected $fillable = ['name', 'description'];
 
 	public static $rules = array(

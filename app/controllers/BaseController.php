@@ -1,6 +1,7 @@
 <?php
 
-class BaseController extends Controller {
+class BaseController extends Controller 
+{
 
 	protected $layout = 'layouts.main';
 	/**
@@ -33,8 +34,7 @@ class BaseController extends Controller {
 		if (date('w', time()) == 0)
 			$todaySunday = true;
 
-		switch ($weekday)
-		{
+		switch ($weekday) {
 			case 0:
 				$day = date("Y-m-d", (($todaySunday == true)? strtotime('last monday'):strtotime('monday this week')));
 				break;
@@ -95,8 +95,7 @@ class BaseController extends Controller {
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || $planning->user_id == Entrust::user()->id)
 			$responsible = true;
 
-		if (!Entrust::hasRole('Admin') && !Entrust::can('view_planning') && $planning->user_id != Entrust::user()->id && !$responsible)
-		{
+		if (!Entrust::hasRole('Admin') && !Entrust::can('view_planning') && $planning->user_id != Entrust::user()->id && !$responsible) {
 			foreach (Entrust::user()->researchgroups as $rg) {
 				foreach ($planning->employees as $e) {
 					if ($e->researchgroup_id == $rg->id)
@@ -104,9 +103,10 @@ class BaseController extends Controller {
 				}
 			}
 			// medium-term planning check
-			$mediumtermplanning = Mediumtermplanning::where('turn_id','=',$turn->id)->where('module_id','=',$planning->course->module_id)->first();
-			if (sizeof($mediumtermplanning) > 0)
-			{
+			$mediumtermplanning = Mediumtermplanning::where('turn_id','=',$turn->id)
+													->where('module_id','=',$planning->course->module_id)
+													->first();
+			if (sizeof($mediumtermplanning) > 0) {
 				foreach ($mediumtermplanning->employees as $e) {
 					foreach (Entrust::user()->researchgroups as $rg) {
 						if ($e->researchgroup_id == $rg->id)

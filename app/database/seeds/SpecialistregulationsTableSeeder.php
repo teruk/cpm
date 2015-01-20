@@ -1,5 +1,6 @@
 <?php
-class SpecialistregulationsTableSeeder extends Seeder {
+class SpecialistregulationsTableSeeder extends Seeder 
+{
 	
 	public function run()
 	{

@@ -162,7 +162,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($planned_courses as $p)
+                            @foreach($plannedCourses as $p)
                                 <tr>
                                     <td>{{ $p->course_number }}</td>
                                     <td>{{ $p->course_title }}</td>

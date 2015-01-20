@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Room extends Ardent {
+class Room extends Ardent 
+{
 	
 	protected $fillable = ['name','location', 'seats', 'roomtype_id', 'beamer', 'blackboard', 'overheadprojector','accessible'];
 	

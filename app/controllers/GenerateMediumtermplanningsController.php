@@ -1,6 +1,7 @@
 <?php
 
-class GenerateMediumtermplanningsController extends \BaseController {
+class GenerateMediumtermplanningsController extends \BaseController 
+{
 
 	/**
 	 * generates planning from medium term planning for a specific turn
@@ -12,28 +13,24 @@ class GenerateMediumtermplanningsController extends \BaseController {
 		// nice midtermplannings scopeModules(Turn turn), but mediumterms have to be changed for that
 		if (Entrust::hasRole('Admin') || Entrust::can('generate_planning_midterm_all')) // role Lehrplanung has to be changed to a permission
 			$mediumtermplannings = Mediumtermplanning::specificTurn($turn)->get();
-		else
-		{
+		else {
 			// fetch medium term planning which belong to the research group
-			$rg_ids = Entrust::user()->researchgroupIds();
-			$mediumtermplanningIds = Mediumtermplanning::forSpecificResearchGroups($turn, $rg_ids)->get();
+			$researchgroupIds = Entrust::user()->getResearchgroupIds();
+			$mediumtermplanningIds = Mediumtermplanning::forSpecificResearchGroups($turn, $researchgroupIds)->get();
 		}
 		$warnmessage = "Es konnten nicht alle Veranstaltungen aus der mittelfristige Lehrplanung kopiert werden,
 					da diese bereits im aktuellen Semester geplant wurden.<br> Folgende Veranstaltungen konnten nicht kopiert werden: ";
 		$module = "";
 
-		if (sizeof($mediumtermplannings) > 0)
-		{
-			foreach ($mediumtermplannings as $mediumtermplanning)
-			{
+		if (sizeof($mediumtermplannings) > 0) {
+			foreach ($mediumtermplannings as $mediumtermplanning) {
+
 				// check if courses are already planned for this turn
-				foreach ($mediumtermplanning->module->courses as $course)
-				{
-					if ($course->coursetype->name == "Vorlesung")
-					{
-						// $plannings = Planning::courseTurn($course,$turn)->get();					
-						if (Planning::courseTurn($course,$turn)->count() == 0)
-						{
+				foreach ($mediumtermplanning->module->courses as $course) {
+
+					if ($course->coursetype->name == "Vorlesung") {
+						
+						if (Planning::courseTurn($course,$turn)->count() == 0) 	{
 							// the course isn't planned yet for this turn
 							$planning = new Planning;
 							$planning->generatePlanning($turn, $course, 1);
@@ -48,39 +45,32 @@ class GenerateMediumtermplanningsController extends \BaseController {
 							$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 							$turn->saveExam($planning->course->module);
 							// check if there employees assigned to the module
-							if ($mediumtermplanning->employees->count() > 0)
-							{
-								foreach ($mediumtermplanning->employees as $employee)
-								{
+							if ($mediumtermplanning->employees->count() > 0) {
+								foreach ($mediumtermplanning->employees as $employee) {
 									// if the employee is annulled, he/she can be left out
-									if ($employee->pivot->annulled == 0)
-									{
-										$planning->employees()->attach($employee->id,array(
+									if ($employee->pivot->annulled == 0) {
+										$planning->employees()->attach(
+											$employee->id, 
+											array(
 												'semester_periods_per_week' => 0,
-										));
+											)
+										);
 										// log
 										$planninglog = new Planninglog();
 										$planninglog->logAssignedPlanningEmployee($planning, $turn, $employee, 0);
 									}
 								}
 							}
-						}
-						else
+						} else
 							$module .= $course->course_number.' ('.$mediumtermplanning->module->short.');';
-					}
-					
-					else
-					{
+					} else {
 						// generate the number of courses that are needed to match the participant number of the lecture
 						$lecture = Course::relatedLecture($course)->first();
-						if (sizeof($lecture) > 0) 
-						{
+						if (sizeof($lecture) > 0)  {
 							$numberOfGroups = ceil($lecture->participants / $course->participants);
-							for ($i=1; $i <= $numberOfGroups; $i++) 
-							{ 
+							for ($i=1; $i <= $numberOfGroups; $i++) { 
 								// $plannings = Planning::courseTurnGroup($course,$turn,$i)->get();					
-								if (Planning::courseTurnGroup($course,$turn,$i)->count() == 0)
-								{
+								if (Planning::courseTurnGroup($course,$turn,$i)->count() == 0) {
 									// the course isn't planned yet for this turn
 									$planning = new Planning;
 									$planning->generatePlanning($turn, $course, $i);
@@ -93,16 +83,12 @@ class GenerateMediumtermplanningsController extends \BaseController {
 
 									$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 									$turn->saveExam($planning->course->module);
-								}
-								else
+								} else
 									$module .= $course->course_number.' ('.$mediumtermplanning->module->short.');';
 							}
-						}
-						else
-						{
+						} else {
 							// $plannings = Planning::courseTurn($course,$turn)->get();					
-							if (Planning::courseTurn($course,$turn)->count() == 0)
-							{
+							if (Planning::courseTurn($course,$turn)->count() == 0) {
 								// the course isn't planned yet for this turn
 								$planning = new Planning;
 								$planning->generatePlanning($turn, $course, 1);
@@ -117,31 +103,30 @@ class GenerateMediumtermplanningsController extends \BaseController {
 								$turn = Turn::findOrFail($turn->id); // refresh turn to get the current modules()
 								$turn->saveExam($planning->course->module);
 								// check if there employees assigned to the module
-								if (sizeof($mediumtermplanning->employees) > 0)
-								{
-									foreach ($mediumtermplanning->employees as $employee)
-									{
+								if (sizeof($mediumtermplanning->employees) > 0) {
+									foreach ($mediumtermplanning->employees as $employee) {
 										// if the employee is annulled, he/she can be left out
-										if ($employee->pivot->annulled == 0)
-										{
-											$planning->employees()->attach($employee->id,array(
+										if ($employee->pivot->annulled == 0) {
+											$planning->employees()->attach(
+												$employee->id,
+												array(
 													'semester_periods_per_week' => 0,
-											));
+												)
+											);
 											// log
 											$planninglog = new Planninglog();
 											$planninglog->logAssignedPlanningEmployee($planning, $turn, $employee, 0);
 										}
 									}
 								}
-							}
-							else
+							} else
 								$module .= $course->course_number.' ('.$mediumtermplanning->module->short.');';
 						}
 					}
 				}
 			}
-			if ($module == "")
-			{
+
+			if ($module == "") {
 				Flash::success('Lehrveranstaltungen erfolgreich aus der mittelfristigen Lehrplanung generiert.');
 				return Redirect::back();
 			}	

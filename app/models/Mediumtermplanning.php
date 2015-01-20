@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Mediumtermplanning extends Ardent {
+class Mediumtermplanning extends Ardent 
+{
 	
 	protected $fillable = ['module_id', 'turn_id'];
 	

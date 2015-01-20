@@ -1,6 +1,7 @@
 <?php
 
-class DegreeCoursesTableSeeder extends Seeder {
+class DegreeCoursesTableSeeder extends Seeder 
+{
 
 	public function run()
 	{
@@ -20,5 +21,4 @@ class DegreeCoursesTableSeeder extends Seeder {
 		// Uncomment the below to run the seeder
 		DB::table('degreecourses')->insert($degree_courses);
 	}
-
 }

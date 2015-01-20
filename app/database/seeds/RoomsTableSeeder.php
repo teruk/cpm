@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-class RoomsTableSeeder extends Seeder {
-	
+class RoomsTableSeeder extends Seeder 
+{	
 	public function run()
 	{
 		$rooms = array(

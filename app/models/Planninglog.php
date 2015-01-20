@@ -12,7 +12,8 @@ define('CATEGORY_PLANNING_ROOM', 2);
 define('CATEGORY_PLANNING_EXAM', 3);
 define('CATEGORY_PLANNING_STATUS', 4);
 
-class Planninglog extends Ardent {
+class Planninglog extends Ardent 
+{
 	
 	protected $fillable = ['planning_id', 'action','category', 'username', 'action_type', 'turn_id'];
 

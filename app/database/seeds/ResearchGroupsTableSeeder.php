@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-class ResearchGroupsTableSeeder extends Seeder {
+class ResearchGroupsTableSeeder extends Seeder 
+{
 	
 	public function run()
 	{

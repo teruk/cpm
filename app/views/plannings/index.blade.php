@@ -83,7 +83,7 @@
 		           			</tr>
 		           		</thead>
 		           		<tbody>
-							@foreach( $planned_courses as $planning )
+							@foreach( $plannedCourses as $planning )
 								<tr>
 									<td>{{ $planning->course_number }}</td>
 									<td>{{ $listofcoursetypes[$planning->course->coursetype_id] }}</td>

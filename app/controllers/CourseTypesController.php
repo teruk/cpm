@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class CoursetypesController extends BaseController {
+class CoursetypesController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -27,8 +28,7 @@ class CoursetypesController extends BaseController {
 		$input = Input::all();
 		$coursetype = new Coursetype($input);
 		
-		if ( $coursetype->save() )
-		{
+		if ( $coursetype->save() ) {
 			Flash::success('Kurstyp erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -65,8 +65,7 @@ class CoursetypesController extends BaseController {
 		$input = Input::all();
 		$coursetype->fill($input);
  
-		if ( $coursetype->updateUniques() )
-		{
+		if ( $coursetype->updateUniques() ) {
 			Flash::success('Der Kurstyp wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -84,8 +83,7 @@ class CoursetypesController extends BaseController {
 	 */
 	public function destroy(Coursetype $coursetype)
 	{
-		if ($coursetype->courses->count() == 0)
-		{
+		if ($coursetype->courses->count() == 0) {
 			$coursetype->delete();
 			Flash::success('Kurstyp erfolgreich gelöscht.');
 		}
@@ -94,5 +92,4 @@ class CoursetypesController extends BaseController {
 		
 		return Redirect::back();
 	}
-
 }

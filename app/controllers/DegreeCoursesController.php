@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class DegreecoursesController extends \BaseController {
+class DegreecoursesController extends \BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -119,5 +120,4 @@ class DegreecoursesController extends \BaseController {
 
 		return View::make('degreecourses.specialistregulations', compact('degreecourse', 'availableTurns'));
 	}
-
 }

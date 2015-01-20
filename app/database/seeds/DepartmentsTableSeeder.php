@@ -1,14 +1,4 @@
 <?php
-/*
- * Schema::create('departments', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->string('name');
-			$table->string('short');
-			$table->unique(array('name','short'));
-			$table->timestamps();
-		});
- */
 use Illuminate\Database\Seeder;
 class DepartmentsTableSeeder extends Seeder
 {

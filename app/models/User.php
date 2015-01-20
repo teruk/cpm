@@ -7,7 +7,8 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 use Zizaco\Entrust\HasRole;
 use LaravelBook\Ardent\Ardent;
 
-class User extends Ardent implements UserInterface, RemindableInterface {
+class User extends Ardent implements UserInterface, RemindableInterface 
+{
 
 	use UserTrait, RemindableTrait, HasRole;
 	protected $fillable = ['name', 'password', 'email', 'remember_token', 'deactivated','last_login'];
@@ -43,7 +44,7 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	 */
 	public function getResearchgroupIds()
 	{
-		$researchgroupIds = array_fetch($this->researchgroups, 'id');
+		$researchgroupIds = array_fetch($this->researchgroups->toArray(), 'id');
 		return $researchgroupIds;
 	}
 

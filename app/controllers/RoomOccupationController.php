@@ -3,8 +3,10 @@
 class RoomOccupationController extends \BaseController {
 
 	/**
-	* returns the schedule of a room
-	*/
+	 * returns the schedule of a room
+	 * 
+	 * @return [type] [description]
+	 */
 	public function fetchRoom()
 	{
 		$input = Input::all();
@@ -14,8 +16,11 @@ class RoomOccupationController extends \BaseController {
 	}
 
 	/**
-	* returns the schedule of a room
-	*/
+	 * returns the schedule of a given turn and room
+	 * @param  Turn   $turn [description]
+	 * @param  Room   $room [description]
+	 * @return [type]       [description]
+	 */
 	public function getSpecificRoom(Turn $turn, Room $room)
 	{
 		$this->setRoomOccupationSession($turn->id, $room->id);
@@ -82,8 +87,7 @@ class RoomOccupationController extends \BaseController {
 				
 			$e['start'] = $day.'T'.$event->start_time;
 			$e['end'] = $day.'T'.$event->end_time;
-			if ($event->short == "VL")
-			{
+			if ($event->short == "VL") {
 				$e['backgroundColor'] = '#32CD32';
 				$e['borderColor'] = '#228B22';
 			}

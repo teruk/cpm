@@ -1,6 +1,7 @@
 <?php
 
-class DatabaseSeeder extends Seeder {
+class DatabaseSeeder extends Seeder 
+{
 
 	protected $tables = [
         'settings', 
@@ -80,8 +81,7 @@ class DatabaseSeeder extends Seeder {
 
 		$this->cleanDatabase();
 
-		foreach ($this->seeders as $seedClass)
-        {
+		foreach ($this->seeders as $seedClass) {
             $this->call($seedClass);
         }
 	}
@@ -95,8 +95,7 @@ class DatabaseSeeder extends Seeder {
         // TODO: needs to removed before going live
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        foreach ($this->tables as $table)
-        {
+        foreach ($this->tables as $table) {
             DB::table($table)->truncate();
         }
 

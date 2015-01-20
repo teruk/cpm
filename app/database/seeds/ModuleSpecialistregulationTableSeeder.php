@@ -1,18 +1,6 @@
 <?php
-/*
- * Schema::create('degree_course_module', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('specialistregulation_id')->unsigned()->index();
-			$table->foreign('specialistregulation_id')->references('id')->on('degree_courses')->onDelete('cascade');
-			$table->integer('module_id')->unsigned()->index();
-			$table->foreign('module_id')->references('id')->on('modules')->onDelete('cascade');
-			$table->integer('semester');
-			$table->integer('section');
-			$table->timestamps();
-		});
- */
-class ModuleSpecialistregulationTableSeeder extends Seeder {
+class ModuleSpecialistregulationTableSeeder extends Seeder 
+{
 
 	public function run()
 	{

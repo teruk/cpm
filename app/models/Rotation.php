@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Rotation extends Ardent {
+class Rotation extends Ardent 
+{
 	
 	protected $fillable = ['name'];
 	public static $rules = array(

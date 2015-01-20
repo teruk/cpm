@@ -1,6 +1,7 @@
 <?php
 
-class EditPlanningController extends \BaseController {
+class EditPlanningController extends \BaseController 
+{
 
 	/**
 	 * display general planning information
@@ -11,8 +12,7 @@ class EditPlanningController extends \BaseController {
 	public function showInformation(Turn $turn, Planning $planning)
 	{
 		// check if current user is allowed to access this planning
-		if (!$this->checkPlanningResponsibility($turn, $planning))
-		{
+		if (!$this->checkPlanningResponsibility($turn, $planning)) {
 			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
 			return Redirect::route('home');
 		}
@@ -41,8 +41,7 @@ class EditPlanningController extends \BaseController {
 		$duplicate = false;
 		$input = Input::all();
 		// check if the group number has changed
-		if ($input['group_number'] != $planning->group_number)
-		{
+		if ($input['group_number'] != $planning->group_number) {
 			// number has changed, check for a duplicate
 			if (Planning::checkDuplicate($planning->course_id, $turn->id, $input['group_number'])->count() == 0)
 				$planning->group_number = $input['group_number'];
@@ -50,8 +49,7 @@ class EditPlanningController extends \BaseController {
 				$duplicate = true;
 		}
 
-		if ($planning->updateInformation($input))
-		{
+		if ($planning->updateInformation($input)) {
 			// updating comment and room preferences to all related plannings in the same turn
 			Planning::where('turn_id','=',$turn->id)->where('course_number','=',$planning->course_number)->update(array(
 				'comment' => $planning->comment, 'room_preference' => $planning->room_preference));
@@ -59,8 +57,7 @@ class EditPlanningController extends \BaseController {
 			$planninglog = new Planninglog();
 			$planninglog->logUpdatedPlanning($planning, $turn);
 
-			if (!$duplicate)
-			{
+			if (!$duplicate) {
 				Flash::success('Veranstaltung erfolgreich aktualisiert.');
 				return Redirect::back();
 			}
@@ -82,8 +79,7 @@ class EditPlanningController extends \BaseController {
 	public function showProtocol(Turn $turn, Planning $planning)
 	{
 		// check if current user is allowed to access this planning
-		if (!$this->checkPlanningResponsibility($turn, $planning))
-		{
+		if (!$this->checkPlanningResponsibility($turn, $planning)) {
 			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
 			return Redirect::route('home');
 		}
@@ -105,8 +101,7 @@ class EditPlanningController extends \BaseController {
 	public function showExam(Turn $turn, Planning $planning)
 	{
 		// check if current user is allowed to access this planning
-		if (!$this->checkPlanningResponsibility($turn, $planning))
-		{
+		if (!$this->checkPlanningResponsibility($turn, $planning)) {
 			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
 			return Redirect::route('home');
 		}
@@ -132,12 +127,11 @@ class EditPlanningController extends \BaseController {
 	 */
 	public function updateExam(Turn $turn, Planning $planning)
 	{
-		foreach ($turn->modules as $m) {
-			if ($m->id == Input::get('module_id'))
-				$oldExamType = $m->pivot->exam;
+		foreach ($turn->modules as $module) {
+			if ($module->id == Input::get('module_id'))
+				$oldExamType = $module->pivot->exam;
 		}
-		if ($oldExamType != Input::get('exam_type'))
-		{
+		if ($oldExamType != Input::get('exam_type')) {
 			$turn->modules()->updateExistingPivot(Input::get('module_id'), array('exam' => Input::get('exam_type'), 'updated_at' => new Datetime));
 
 			// log

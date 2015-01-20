@@ -9,31 +9,32 @@ use Illuminate\Support\Facades\Input;
 class PlanningsController extends BaseController {
 
 	/**
-	*
-	*/
+	 * return planned courses by given turn
+	 * @param  Turn   $turn [description]
+	 * @return [type]       [description]
+	 */
 	public function index(Turn $turn)
 	{
-		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || Entrust::user()->researchgroups->count() > 0)
-		{
+		if (Entrust::hasRole('Admin') || Entrust::can('view_planning') || Entrust::user()->researchgroups->count() > 0)	{
 			// turn navigation
 			$turnNav = $this->getTurnNav($turn);
 
-			$planned_courses = $turn->getMyPlannings();
+			$plannedCourses = $turn->getMyPlannings();
 
 			$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
 
 			// checking if the predecessor turn contains planned courses
 			$predecessorturn = $turn->getPredecessor();
 			$pastcourses = 0;
+
 			if (!is_numeric($predecessorturn))
 				$pastcourses = Planning::where('turn_id', '=', $predecessorturn->id)->count();
+
 			$lists = $this->getCoursetypes($turn);
-			$this->layout->content = View::make('plannings.index', compact('turnNav','planned_courses', 'lists', 'pastcourses', 'listofcoursetypes'));
-		}
-		else
-		{
-		Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
-		return Redirect::back();
+			$this->layout->content = View::make('plannings.index', compact('turnNav','plannedCourses', 'lists', 'pastcourses', 'listofcoursetypes'));
+		} else {
+			Flash::error('Sie besitzen nicht die nötigen Rechte, um diesen Bereich zu betreten.');
+			return Redirect::back();
 		}
 	}
 	
@@ -46,64 +47,64 @@ class PlanningsController extends BaseController {
 	public function showall(Turn $turn)
 	{
 		$listofcoursetypes = Coursetype::orderBy('short', 'ASC')->lists('short','id');
-		$listofturns = Turn::getList();
+		$listofturns = Turn::getAvailableTurns();
 		$plannings = array();
+
 		if (Entrust::hasRole('Admin') || Entrust::can('copy_planning_all'))
 			$plannings = Planning::all();
-		else
-		{
-			$planning_ids = array();
+		else {
+			$planningIds = array();
 			// three kinds of plannings needed to be fetched from the db
 			// 1. course plannings, which were thought by members of the research group
-			$rg_ids = Entrust::user()->researchgroupIds();
+			$researchgroupIds = Entrust::user()->getResearchgroupIds();
 			// foreach (Entrust::user()->researchgroups as $rg) {
 			// 	array_push($rg_ids, $rg->id);
 			// }
-			if (sizeof($rg_ids) > 0)
-			{
-				$planned_courses_rg = DB::table('plannings')
+			// 
+			if (sizeof($researchgroupIds) > 0) {
+				$plannedCoursesByResearchgroup = DB::table('plannings')
 					->join('employee_planning','employee_planning.planning_id', '=', 'plannings.id')
 					->join('employees', 'employees.id','=','employee_planning.employee_id')
 					->select('plannings.id')
-					->whereIn('employees.researchgroup_id',$rg_ids)
+					->whereIn('employees.researchgroup_id',$researchgroupIds)
 					->get();
-				if (sizeof($planned_courses_rg) > 0)
-				{
-					foreach ($planned_courses_rg as $p) {
-						array_push($planning_ids, $p->id);
+
+				if (sizeof($plannedCoursesByResearchgroup) > 0) {
+					foreach ($plannedCoursesByResearchgroup as $p) {
+						array_push($planningIds, $p->id);
 					}
 				}
 
 				// 2. old courses plannings, which the research group is assigned to through the medium-term planning
-				$planned_courses_mtp = DB::table('plannings')
+				$plannedCoursesByMediumtermplanning = DB::table('plannings')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
 					->join('mediumtermplannings','mediumtermplannings.module_id','=','courses.module_id')
 					->join('employee_mediumtermplanning','mediumtermplannings.id','=','employee_mediumtermplanning.mediumtermplanning_id')
 					->join('employees', 'employees.id','=','employee_mediumtermplanning.employee_id')
 					->select('plannings.id')
-					->whereIn('employees.researchgroup_id',$rg_ids)
+					->whereIn('employees.researchgroup_id',$researchgroupIds)
 					->where('mediumtermplannings.turn_id','=',$turn->id)
 					->get();
 				
-				if (sizeof($planned_courses_mtp) > 0)
-				{
-					foreach ($planned_courses_mtp as $p) {
-						array_push($planning_ids, $p->id);
+				if (sizeof($plannedCoursesByMediumtermplanning) > 0) {
+
+					foreach ($plannedCoursesByMediumtermplanning as $p) {
+						array_push($planningIds, $p->id);
 					}
 				}
 				
 			}
 			// 3. course, which where created by the user
-			$planned_courses_user = Planning::where('user_id', '=', Entrust::user()->id)->get();
-			if (sizeof($planned_courses_user) > 0)
-			{
-				foreach ($planned_courses_user as $p) {
-					array_push($planning_ids, $p->id);
+			$plannedCoursesByUser = Planning::where('user_id', '=', Entrust::user()->id)->get();
+			if (sizeof($plannedCoursesByUser) > 0) {
+
+				foreach ($plannedCoursesByUser as $p) {
+					array_push($planningIds, $p->id);
 				}
 			}
 			// get all plannings
-			if (sizeof($planning_ids) > 0)
-				$plannings = Planning::related($planning_ids)->get();
+			if (sizeof($planningIds) > 0)
+				$plannings = Planning::related($planningIds)->get();
 		}
 		
 		$this->layout->content = View::make('plannings.select', compact('plannings', 'listofturns','listofcoursetypes', 'turn'));
@@ -125,13 +126,14 @@ class PlanningsController extends BaseController {
 	*/
 	public function updateStatus(Turn $turn)
 	{
-		if (sizeof(Input::get('selected')) > 0)
-		{
+		if (sizeof(Input::get('selected')) > 0) {
 			$plannings = Planning::whereIn('id',Input::get('selected'))->get();
+
 			foreach ($plannings as $planning) {
 				$oldResearchGroupStatus = $planning->researchgroup_status;
 				$oldBoardStatus = $planning->board_status;
 
+				/** TODO attributes shouldn't be set directly in the controller */
 				$planning->board_status = Input::get('board_status');
 				$planning->researchgroup_status = Input::get('researchgroup_status');
 				$planning->save();
@@ -139,6 +141,7 @@ class PlanningsController extends BaseController {
 				$planninglog = new Planninglog();
 				$planninglog->logUpdatedPlanningStatus($planning, $turn, $oldBoardStatus, $oldResearchGroupStatus);
 			}
+
 			Flash::success('Die Status wurden erfolgreich aktualisiert.');
 			return Redirect::route('showAllPlanningsStats_path', $turn->id);
 		}
@@ -160,13 +163,13 @@ class PlanningsController extends BaseController {
 		$planning->rooms()->detach();
 		// delete exam type
 		// check if the planning is for the last course of this module
-		$remaining_courses = DB::table('plannings')
+		$remainingCourses = DB::table('plannings')
 								->join('courses', 'courses.id', '=', 'plannings.course_id')
 								->select('plannings.id')
 								->where('courses.module_id', '=', $planning->course->module_id)
 								->where('plannings.turn_id', '=', $turn->id)
 								->get();
-		if (sizeof($remaining_courses) <= 1)
+		if (sizeof($remainingCourses) <= 1)
 			$turn->modules()->detach($planning->course->module_id);
 
 		// delete planning
@@ -185,48 +188,71 @@ class PlanningsController extends BaseController {
 	private function getCoursetypes(Turn $turn)
 	{
 		// getting planed modules grouped by module
-		$planned_modules = Planning::with(array('course' => function($query)
+		$plannedModules = Planning::with(array('course' => function($query)
 			{
 				$query->groupBy('module_id');
-			}))->where('turn_id', '=', $turn->id)->get();
+			}))
+			->where('turn_id', '=', $turn->id)
+			->get();
 
-		if (sizeof($planned_modules) > 0)
-		{
-			$planned_modules_ids = $this->getIds($planned_modules);
+		if (sizeof($plannedModules) > 0) {
+			$plannedModulesIds = array_fetch($plannedModules->toArray(), 'id');
 
-			$lists['bachelor'] = Module::where('degree_id','=',1)->where('individual_courses','=',0)->whereNotIn('id',$planned_modules_ids)->orderBy('name')->lists('name','id'); // TODO ids are hard coded
-			$lists['master'] = Module::where('degree_id','=',2)->where('individual_courses','=',0)->whereNotIn('id',$planned_modules_ids)->orderBy('name')->lists('name','id');
-		}
-		else
-		{
-			$lists['bachelor'] = Module::where('degree_id','=',1)->where('individual_courses','=',0)->orderBy('name')->lists('name','id'); // TODO ids are hard coded
-			$lists['master'] = Module::where('degree_id','=',2)->where('individual_courses','=',0)->orderBy('name')->lists('name','id');
+			$lists['bachelor'] = Module::where('degree_id','=', 1)
+										->where('individual_courses','=', 0)
+										->whereNotIn('id',$plannedModulesIds)
+										->orderBy('name')
+										->lists('name', 'id'); // TODO ids are hard coded
+			$lists['master'] = Module::where('degree_id','=', 2)
+									->where('individual_courses','=', 0)
+									->whereNotIn('id',$plannedModulesIds)
+									->orderBy('name')
+									->lists('name', 'id');
+		} else {
+			$lists['bachelor'] = Module::where('degree_id','=', 1)
+										->where('individual_courses','=', 0)
+										->orderBy('name')
+										->lists('name', 'id'); // TODO ids are hard coded
+			$lists['master'] = Module::where('degree_id','=', 2)
+									->where('individual_courses','=', 0)
+									->orderBy('name')
+									->lists('name', 'id');
 		}
 		$plannings = Planning::where('turn_id','=',$turn->id)->get();
-		$course_ids = array();
+		$courseIds = array();
 		foreach ($plannings as $p) {
-			array_push($course_ids, $p->course_id);
+			array_push($courseIds, $p->course_id);
 		}
 		
 		//lectures
 		
-		if (sizeof($course_ids) > 0)
-			$lectures = Course::whereIn('coursetype_id',array(1,8))->whereNotIn('id',$course_ids)->where('department_id','=',1)->orderBy('name','ASC')->get();
+		if (sizeof($courseIds) > 0)
+			$lectures = Course::whereIn('coursetype_id',array(1, 8))
+								->whereNotIn('id',$courseIds)
+								->where('department_id','=',1)
+								->orderBy('name', 'ASC')
+								->get();
 		else
-			$lectures = Course::whereIn('coursetype_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get();
+			$lectures = Course::whereIn('coursetype_id',array(1, 8))
+								->where('department_id','=',1)
+								->orderBy('name', 'ASC')
+								->get();
 
 		if (sizeof($lectures) > 0)
 		{
-			$lecture_list = array();
+			$listOfLectures = array();
 			foreach ($lectures as $l) {
-				$lecture_list = array_add($lecture_list, $l->id, $l->name .' ('.$l->module->short.')');
+				$listOfLectures = array_add($listOfLectures, $l->id, $l->name .' ('.$l->module->short.')');
 			}
-			$lists['lecture'] = $lecture_list;
+			$lists['lecture'] = $listOfLectures;
 		}
 		else
 			$lists['lecture'] = array();
 
-		$courses = Course::whereNotIn('coursetype_id',array(1,8))->where('department_id','=',1)->orderBy('name','ASC')->get(); // TODO remove hard coded ids
+		$courses = Course::whereNotIn('coursetype_id',array(1, 8))
+						->where('department_id','=', 1)
+						->orderBy('name', 'ASC')
+						->get(); // TODO remove hard coded ids
 		$lists['seminar'] =  array();
 		$lists['exercise'] =  array();
 		$lists['integrated_seminar'] =  array();

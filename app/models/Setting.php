@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Setting extends Ardent {
+class Setting extends Ardent 
+{
 	
 	protected $fillable = ['name', 'display_name', 'value'];
 	public static $rules = array(

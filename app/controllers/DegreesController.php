@@ -1,6 +1,7 @@
 <?php
 
-class DegreesController extends BaseController {
+class DegreesController extends BaseController 
+{
 	
 	/**
 	 * [index description]
@@ -35,8 +36,7 @@ class DegreesController extends BaseController {
 		$input = Input::all();
 		$degree = new Degree($input);
 		
-		if ($degree->save())
-		{
+		if ($degree->save()) {
 			Flash::success('Bereich erfolgreich angelegt.');
 			return Redirect::back();
 		}
@@ -52,12 +52,10 @@ class DegreesController extends BaseController {
 	 */
 	public function destroy(Degree $degree)
 	{
-		if ($degree->degreecourses->count() == 0 && $degree->modules->count() == 0)
-		{
+		if ($degree->degreecourses->count() == 0 && $degree->modules->count() == 0) {
 			$degree->delete();
 			Flash::success('Bereich erfolgreich gelöscht.');
-		}
-		else
+		} else
 			Flash::error('Der Abschlusstyp konnte nicht gelöscht werden, da er mindestens von einem der folgenden Komponenten verwendet wird:
 						<br><ul><li>Modul</li><li>Studiengang</li></ul>');
 		
@@ -73,14 +71,12 @@ class DegreesController extends BaseController {
 	{
 		$input = Input::all();
 		$degree->fill($input);
-		if ($degree->updateUniques())
-		{
+		if ($degree->updateUniques()) {
 			Flash::success('Der Bereich wurde aktualisiert.');
 			return Redirect::back();
 		}
 
 		Flash::error($degree->errors());
 		return Redirect::back()->withInput();
-	}
-	
+	}	
 }

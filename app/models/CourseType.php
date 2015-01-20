@@ -1,7 +1,8 @@
 <?php
 
 use LaravelBook\Ardent\Ardent;
-class Coursetype extends Ardent {
+class Coursetype extends Ardent 
+{
 	
 	protected $fillable = ['name', 'short', 'description'];
 
