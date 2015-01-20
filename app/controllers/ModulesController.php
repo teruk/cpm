@@ -3,14 +3,9 @@
 
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
-class ModulesController extends \BaseController {
+class ModulesController extends \BaseController 
+{
 
-	protected $module;
-
-	public function __construct(Module $module)
-	{
-		$this->module = $module;
-	}
 	/**
 	 * Display a listing of the resource.
 	 * GET /modules
@@ -36,11 +31,12 @@ class ModulesController extends \BaseController {
 	 */
 	public function store()
 	{
-		$this->module->fill(Input::all());
-		if (Input::get('individual_courses') == "")
-			$this->module->individual_courses = 0;
+		$module = new Module();
+		$module->fill(Input::all());
+		if (Input::has('individual_courses'))
+			$module->individual_courses = 1;
 		else
-			$this->module->individual_courses = 1;
+			$module->individual_courses = 0;
 		
 		// the ardent package is responsible for the validation
 		if ( $this->module->save() )
@@ -68,28 +64,10 @@ class ModulesController extends \BaseController {
 		$lists['degrees'] 		= Degree::orderBy('name','ASC')->lists('name','id');
 		$lists['sections'] 		= Section::orderBy('name','ASC')->lists('name','id');
 		$lists['coursetypes'] 	= Coursetype::orderBy('name','ASC')->lists('name','id');
-		$lists['degreecourses'] = Degreecourse::getList();
 		// get courses
-// 		$courses = DB::table('courses')->where('module_id','=',$module->id)->get();
 		$courses = $module->courses;
-
-		$mtp = Mediumtermplanning::where('module_id',$module->id)->orderBy('turn_id','ASC')->get();
-		$mtp_turn_ids = array();
-		$mtp_turns = array();
-		foreach ($mtp as $m) {
-			array_push($mtp_turn_ids, $m->turn_id);
-			$mtp_turns = array_add($mtp_turns, $m->id, $m->turn->name.' '.$m->turn->year);
-		}
-		if (sizeof($mtp_turn_ids) > 0)
-			$turns = Turn::whereNotIn('id',$mtp_turn_ids)->orderBy('year','DESC')->orderBy('name','DESC')->get();
-		else
-			$turns = Turn::where('id','>',0)->orderBy('year','DESC')->orderBy('name','DESC')->get();
-		$available_turns = array();
-		foreach ($turns as $t) {
-			$available_turns = array_add($available_turns,$t->id, $t->name.' '.$t->year);
-		}
 		
-		return View::make('modules.editInformation', compact('module', 'courses', 'lists', 'tabindex','mtp','available_turns','mtp_turns'));
+		return View::make('modules.editInformation', compact('module', 'courses', 'lists'));
 	}
 
 	/**
@@ -107,8 +85,7 @@ class ModulesController extends \BaseController {
 		else
 			$module->individual_courses = 1;
 
-		if ( $module->updateUniques() )
-		{
+		if ( $module->updateUniques() ) {
 			Flash::success('Das Modul wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -125,8 +102,7 @@ class ModulesController extends \BaseController {
 	 */
 	public function attachDegreecourse(Module $module)
 	{
-		if($module->saveDegreecourse(Input::all()))
-		{
+		if($module->saveDegreecourse(Input::all())) {
 			Flash::success('Das Modul wurde dem Studiengang zugeordnet.');
 			return Redirect::back();
 		}
@@ -178,8 +154,7 @@ class ModulesController extends \BaseController {
 		 * Check if there are courses assigned to this model
 		 * if yes, the module can't be deleted
 		 */
-		if ($module->courses->count() > 0 || $module->mediumtermplannings->count() > 0)
-		{
+		if ($module->courses->count() > 0 || $module->mediumtermplannings->count() > 0) {
 			Flash::error('Das Modul konnte nicht gelöscht werden, da dem Modul noch Lehrveranstaltungen bzw. mittelfristige Lehrplanungen zugeordnet sind.');
 			return Redirect::back();
 		}
@@ -220,22 +195,22 @@ class ModulesController extends \BaseController {
 	 */
 	public function showMediumtermplannings(Module $module)
 	{
-		$mtp = Mediumtermplanning::where('module_id',$module->id)->orderBy('turn_id','ASC')->get();
-		$mtp_turn_ids = array();
-		$mtp_turns = array();
-		foreach ($mtp as $m) {
-			array_push($mtp_turn_ids, $m->turn_id);
-			$mtp_turns = array_add($mtp_turns, $m->id, $m->turn->name.' '.$m->turn->year);
+		$mediumtermplannings = Mediumtermplanning::where('module_id',$module->id)->orderBy('turn_id','ASC')->get();
+		$mediumtermplanningTurnIds = array();
+		$mediumtermplanningTurns = array();
+		foreach ($mediumtermplannings as $m) {
+			array_push($mediumtermplanningTurnIds, $m->turn_id);
+			$mediumtermplanningTurns = array_add($mediumtermplanningTurns, $m->id, $m->turn->name.' '.$m->turn->year);
 		}
-		if (sizeof($mtp_turn_ids) > 0)
-			$turns = Turn::whereNotIn('id',$mtp_turn_ids)->orderBy('year','DESC')->orderBy('name','DESC')->get();
+		if (sizeof($mediumtermplanningTurnIds) > 0)
+			$turns = Turn::whereNotIn('id',$mediumtermplanningTurnIds)->orderBy('year','DESC')->orderBy('name','DESC')->get();
 		else
 			$turns = Turn::where('id','>',0)->orderBy('year','DESC')->orderBy('name','DESC')->get();
-		$available_turns = array();
-		foreach ($turns as $t) {
-			$available_turns = array_add($available_turns,$t->id, $t->name.' '.$t->year);
+		$availableTurns = array();
+		foreach ($turns as $turn) {
+			$availableTurns = array_add($availableTurns,$turn->id, $turn->name.' '.$turn->year);
 		}
-		return View::make('modules.mediumtermplannings', compact('module', 'available_turns', 'mtp', 'mtp_turns'));
+		return View::make('modules.mediumtermplannings', compact('module', 'availableTurns', 'mediumtermplannings', 'mediumtermplanningTurns'));
 	}
 	
 	// public function export()

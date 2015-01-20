@@ -1,6 +1,7 @@
 <?php
 
-class ResearchgroupWeeklyScheduleController extends \BaseController {
+class ResearchgroupWeeklyScheduleController extends \BaseController 
+{
 
 	/**
 	 * Display the specified resource.
@@ -44,5 +45,4 @@ class ResearchgroupWeeklyScheduleController extends \BaseController {
 		}
 		return $output;
 	}
-
 }

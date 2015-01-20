@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
-class RoomsController extends BaseController {
+class RoomsController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.

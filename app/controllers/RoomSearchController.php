@@ -1,6 +1,7 @@
 <?php
 
-class RoomSearchController extends \BaseController {
+class RoomSearchController extends \BaseController 
+{
 
 	/**
 	 * [showRoomSearch description]

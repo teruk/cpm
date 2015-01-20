@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
-class TurnsController extends BaseController {
+class TurnsController extends BaseController 
+{
 	
 	/**
 	 * [index description]
@@ -28,8 +29,7 @@ class TurnsController extends BaseController {
 		 * Check if there are midterm plannings for this turn
 		 * if yes, then the turn can't be deleted
 		 */
-		if (sizeof($turn->midtermplannings) > 0)
-		{
+		if (sizeof($turn->midtermplannings) > 0) {
 			Flash::error('Dieses Semester kann nicht gelöscht werden, da es bereits in die mittelfristige Lehrplanung miteinbezogen wurde.');
 			return Redirect::back();
 		}
@@ -73,10 +73,8 @@ class TurnsController extends BaseController {
 		$passed = $turn->checkLogic();
 
 		// if the logical check is passed and there are no duplicates, then try to save the turn
-		if ($passed['successful'] && sizeof($duplicate) == 0)
-		{
-			if ( $turn->save() )
-			{
+		if ($passed['successful'] && sizeof($duplicate) == 0) {
+			if ( $turn->save() ) {
 				Flash::success('Semester erfolgreich erstellt!');
 				return Redirect::back();
 			}
@@ -97,10 +95,8 @@ class TurnsController extends BaseController {
 		$turn->semester_start = Input::get('semester_start');
 		$turn->semester_end = Input::get('semester_end');
 		$passed = $turn->checkLogic();
-		if ($passed['successful'])
-		{
-			if ($turn->updateUniques())
-			{
+		if ($passed['successful']) {
+			if ($turn->updateUniques()) {
 				Flash::success('Das Semester wurde aktualisiert.');
 				return Redirect::back();
 			}

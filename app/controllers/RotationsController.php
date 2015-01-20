@@ -1,6 +1,7 @@
 <?php
 
-class RotationsController extends BaseController {
+class RotationsController extends BaseController 
+{
 	
 	/**
 	 * 
@@ -28,8 +29,7 @@ class RotationsController extends BaseController {
 		$input = Input::all();
 		$rotation = new Rotation($input);
 		
-		if ($rotation->save())
-		{
+		if ($rotation->save()) {
 			Flash::success('Der Turnus wurde erfolgreich angelegt.');
 			return Redirect::back();
 		}
@@ -44,8 +44,7 @@ class RotationsController extends BaseController {
 	 */
 	public function destroy(Rotation $rotation)
 	{
-		if ($rotation->modules->count() == 0)
-		{
+		if ($rotation->modules->count() == 0) {
 			$rotation->delete();
 			Flash::success('Der Turnus wurde erfolgreich gelöscht.');
 		}
@@ -63,8 +62,7 @@ class RotationsController extends BaseController {
 	{
 		$input = Input::all();
 		$rotation->fill($input);
-		if ($rotation->updateUniques())
-		{
+		if ($rotation->updateUniques()) {
 			Flash::success('Der Turnus wurde aktualisiert.');
 			return Redirect::back();
 		}

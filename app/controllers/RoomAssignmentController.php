@@ -1,6 +1,7 @@
 <?php
 
-class RoomAssignmentController extends \BaseController {
+class RoomAssignmentController extends \BaseController 
+{
 
 	/**
 	 * show room form
@@ -11,8 +12,7 @@ class RoomAssignmentController extends \BaseController {
 	public function showRooms(Turn $turn, Planning $planning)
 	{
 		// check if current user is allowed to access this planning
-		if (!$this->checkPlanningResponsibility($turn, $planning))
-		{
+		if (!$this->checkPlanningResponsibility($turn, $planning)) {
 			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
 			return Redirect::route('home');
 		}

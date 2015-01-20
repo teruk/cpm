@@ -1,6 +1,7 @@
 <?php
 
-class SpecialistregulationsController extends \BaseController {
+class SpecialistregulationsController extends \BaseController 
+{
 
 	/**
 	 * show specialist regulation edit form

@@ -1,6 +1,7 @@
 <?php
 
-class SettingsController extends \BaseController {
+class SettingsController extends \BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -30,8 +31,7 @@ class SettingsController extends \BaseController {
 	 */
 	public function updateCurrentTurn()
 	{
-		if (Input::get('current_turn') != Setting::setting('current_turn')->first()->value)
-		{
+		if (Input::get('current_turn') != Setting::setting('current_turn')->first()->value)	{
 			DB::table('settings')->where('name','=','current_turn')->update(array('value' => Input::get('current_turn')));
 			Flash::success('Die Einstellung aktuelles Semester erfolgreich aktualisiert.');
 			return Redirect::back();

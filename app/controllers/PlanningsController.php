@@ -6,7 +6,8 @@
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
 
-class PlanningsController extends BaseController {
+class PlanningsController extends BaseController 
+{
 
 	/**
 	 * return planned courses by given turn
@@ -238,8 +239,7 @@ class PlanningsController extends BaseController {
 								->orderBy('name', 'ASC')
 								->get();
 
-		if (sizeof($lectures) > 0)
-		{
+		if (sizeof($lectures) > 0) {
 			$listOfLectures = array();
 			foreach ($lectures as $l) {
 				$listOfLectures = array_add($listOfLectures, $l->id, $l->name .' ('.$l->module->short.')');
@@ -260,51 +260,37 @@ class PlanningsController extends BaseController {
 		$lists['project'] =  array();
 		$lists['practical_course'] = array();
 		$lists['other'] = array();
-		foreach ($courses as $c) {
-			switch ($c->coursetype_id)
-			{
+		foreach ($courses as $course) {
+			switch ($course->coursetype_id) {
 				case 2:
-					$lists['seminar'] = array_add($lists['seminar'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['seminar'] = array_add($lists['seminar'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 3:
-					$lists['integrated_seminar'] = array_add($lists['integrated_seminar'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['integrated_seminar'] = array_add($lists['integrated_seminar'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 4:
-					$lists['exercise'] = array_add($lists['exercise'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['exercise'] = array_add($lists['exercise'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 5:
-					$lists['proseminar'] = array_add($lists['proseminar'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['proseminar'] = array_add($lists['proseminar'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 6:
-					$lists['project'] = array_add($lists['project'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['project'] = array_add($lists['project'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 7:
-					$lists['practical_course'] = array_add($lists['practical_course'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['practical_course'] = array_add($lists['practical_course'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 8:
-					$lists['other'] = array_add($lists['other'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['other'] = array_add($lists['other'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 				case 9:
 				case 10:
 				case 11:
 				default:
-					$lists['other'] = array_add($lists['other'], $c->id, $c->name.' ('.$c->module->short.')');
+					$lists['other'] = array_add($lists['other'], $course->id, $course->name.' ('.$course->module->short.')');
 				break;
 			}
 		}
 		return $lists;
 	}
-	
-	/**
-	*
-	*/
-	// public function export()
-	// {
-	// 	$plannings = Planning::all();
-	// 	$employee_planning = DB::table('employee_planning')->select('*')->get();
-	// 	$planning_room = DB::table('planning_room')->select('*')->get();
-	// 	$planninglogs = Planninglog::all();
-	// 	$module_turn = DB::table('module_turn')->select('*')->get();
-	// 	$this->layout->content = View::make('plannings.export', compact('plannings','employee_planning', 'planning_room', 'planninglogs', 'module_turn'));
-	// }
 }

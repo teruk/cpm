@@ -1,6 +1,7 @@
 <?php
 
-class RoomPreferencesController extends \BaseController {
+class RoomPreferencesController extends \BaseController 
+{
 
 	/**
 	* show room preference
@@ -22,6 +23,4 @@ class RoomPreferencesController extends \BaseController {
 		$plannings = Planning::where('turn_id','=', $turn->id)->orderBy('course_number','ASC')->groupBy('course_number')->get();
 		$this->layout->content = View::make('plannings.room_preferences', compact('plannings', 'turnNav'));
 	}
-
-
 }

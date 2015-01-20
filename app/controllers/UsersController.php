@@ -12,34 +12,14 @@ class UsersController extends BaseController {
 	}
 
 	/**
-	*
-	*/
+	 * show edit user form
+	 * 
+	 * @param  User   $user [description]
+	 * @return [type]       [description]
+	 */
 	public function edit(User $user)
 	{
-		// determe which roles can be assigned to the user
-		if (Entrust::hasRole('Admin'))
-			$available_roles = Role::lists('name','id');
-		elseif (Entrust::can('attach_user_role'))
-			$available_roles = Role::where('name', '!=', 'Admin')->lists('name','id');
-		else
-			$available_roles = array();
-
-		$selected_roles = array();
-		foreach ($user->roles() as $role) {
-			$selected_roles = array_add($selected_roles, $role->id, $role->name);
-		}
-
-		$available_roles = array_diff($available_roles, $selected_roles);
-
-		// determe the available researchgroups
-		$available_researchgroups = ResearchGroup::lists('name','id');
-		$selectedResearchgroups = array();
-		foreach ($user->researchgroups() as $researchgroup) {
-			$selectedResearchgroups = array_add($selectedResearchgroups, $researchgroup->id, $researchgroup->name);
-		}
-
-		$available_researchgroups = array_diff($available_researchgroups, $selectedResearchgroups);
-		return View::make('users.editInformation', compact('user','available_roles', 'available_researchgroups'));
+		return View::make('users.editInformation', compact('user'));
 	}
 
 	/**
@@ -137,10 +117,7 @@ class UsersController extends BaseController {
 	 */
 	public function update(User $user)
 	{
-		Session::set('users_tabindex', 'home');
-
-		if ( $user->updateUser(Input::all()) )
-		{
+		if ( $user->updateUser(Input::all()) ) {
 			Flash::success('Die Benutzerinformationen wurden aktualisiert.');
 			return Redirect::back();
 		}
@@ -155,12 +132,9 @@ class UsersController extends BaseController {
 	*/
 	public function setNewPassword(User $user)
 	{
-		Session::set('users_tabindex', 'secret');
 		// check if both passwords are the same
-		if (Input::get('password') == Input::get('password_repeat'))
-		{
-			if ($user->changePassword(Hash::make(Input::get('password'))))
-			{
+		if (Input::get('password') == Input::get('password_repeat')) {
+			if ($user->changePassword(Hash::make(Input::get('password')))) {
 				Flash::success('Das Passwort wurde erfolgreich aktualisiert.');
 				return Redirect::back();
 			}
@@ -180,10 +154,7 @@ class UsersController extends BaseController {
 	 */
 	public function activate(User $user)
 	{
-		Session::set('users_tabindex', 'deactivation');
-
-		if ($user->activate())
-		{
+		if ($user->activate()) {
 			Flash::success('Der Benutzer wurde erfolgreich aktiviert!');
 			return Redirect::back();
 		}
@@ -198,9 +169,7 @@ class UsersController extends BaseController {
 	*/
 	public function deactivate(User $user)
 	{
-		Session::set('users_tabindex', 'deactivation');
-		if ($user->deactivate())
-		{
+		if ($user->deactivate()) {
 			Flash::success('Der Benutzer wurde erfolgreich deaktiviert!');
 			return Redirect::back();
 		}
@@ -216,8 +185,7 @@ class UsersController extends BaseController {
 	public function destroy(User $user)
 	{
 		// if user is has the role 'Admin', he can't be deleted
-		if (!$user->hasRole('Admin'))
-		{
+		if (!$user->hasRole('Admin')) {
 			$user->delete();
 			Flash::success('Der Benutzer wurde erfolgreich gelöscht!');
 			return Redirect::back();
@@ -233,8 +201,6 @@ class UsersController extends BaseController {
 	*/
 	public function attachRole(User $user)
 	{
-		Session::set('users_tabindex', 'roles');
-
 		$role = Role::findOrFail(Input::get('role_id'));
 		$user->attachRole($role);
 
@@ -248,13 +214,10 @@ class UsersController extends BaseController {
 	*/
 	public function detachRole(User $user)
 	{
-		Session::set('users_tabindex', 'roles');
-
 		$role = Role::findOrFail(Input::get('role_id'));
-		if ($role->name == "Admin")
-		{
-			if ($user->hasRole('Admin') && $user->id != Auth::id())
-			{
+		if ($role->name == "Admin") {
+
+			if ($user->hasRole('Admin') && $user->id != Auth::id()) {
 				$user->detachRole($role);
 				Flash::success('Die Zuordnung wurde erfolgreich aufgelöst.');
 				return Redirect::back();
@@ -275,8 +238,6 @@ class UsersController extends BaseController {
 	*/
 	public function attachResearchgroup(User $user)
 	{
-		Session::set('users_tabindex', 'researchgroups');
-
 		$researchgroup = ResearchGroup::find(Input::get('researchgroup_id'));
 		$user->researchgroups()->attach($researchgroup->id);
 
@@ -291,8 +252,6 @@ class UsersController extends BaseController {
 	 */
 	public function detachResearchgroup(User $user)
 	{
-		Session::set('users_tabindex', 'researchgroups');
-
 		$researchgroup = ResearchGroup::find(Input::get('researchgroup_id'));
 		$user->researchgroups()->detach($researchgroup->id);
 

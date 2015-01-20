@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Redirect;
  *
  */
 
-class ResearchgroupsController extends BaseController{
+class ResearchgroupsController extends BaseController
+{
 	
 	/**
 	 * Display a listing of the research groups
@@ -21,8 +22,7 @@ class ResearchgroupsController extends BaseController{
 		$researchgroups = Researchgroup::all();
 		$departments = Department::all();
 		$listofdepartments = array();
-		foreach ($departments as $department)
-		{
+		foreach ($departments as $department) {
 			$listofdepartments = array_add($listofdepartments, $department->id, $department->name);
 		}
 		return View::make('researchgroups.index', compact('researchgroups', 'listofdepartments'));
@@ -40,8 +40,7 @@ class ResearchgroupsController extends BaseController{
 		$researchgroup = new Researchgroup($input);
 		$researchgroup->department_id = 1;
 		
-		if ($researchgroup->save())
-		{
+		if ($researchgroup->save()) {
 			// default shk for researchgroup
 			$employee_shk = new Employee();
 			$employee_shk->saveDummyEmployee("SHK", $researchgroup, "");
@@ -72,8 +71,7 @@ class ResearchgroupsController extends BaseController{
 		$employees = Employee::where('researchgroup_id', '=', $researchgroup->id)->get();
 		$departments = Department::all();
 		$listofdepartments = array();
-		foreach ($departments as $department)
-		{
+		foreach ($departments as $department) {
 			$listofdepartments = array_add($listofdepartments, $department->id, $department->name);
 		}
 		return View::make('researchgroups.editInformation', compact('researchgroup', 'employees', 'listofdepartments'));
@@ -91,19 +89,17 @@ class ResearchgroupsController extends BaseController{
 		$input = Input::all();
 		// if the abbrevation of the research group changed, the shk and nn need to be updated
 		$researchgroup_short = $researchgroup->short;
-		if (Input::get('short') != $researchgroup_short)
-		{
+		if (Input::get('short') != $researchgroup_short) {
 			$employee_shk = Employee::where('name','=',$researchgroup->short)->where('firstname','=','SHK')->first();
 			$employee_shk->name = Input::get('short');
 			$employee_nn = Employee::where('name','=',$researchgroup->short)->where('firstname','=','N.N.')->first();
 			$employee_nn->name = Input::get('short');
 		}
 		$researchgroup->fill($input);
-		if ($researchgroup->updateUniques())
-		{
+
+		if ($researchgroup->updateUniques()) {
 			// the changes to the shk and nn can only be saved, if the researchgroup update is successful
-			if ($researchgroup->short != $researchgroup_short)
-			{
+			if ($researchgroup->short != $researchgroup_short) {
 				$employee_shk->updateUniques();
 				$employee_nn->updateUniques();
 			}
@@ -122,8 +118,7 @@ class ResearchgroupsController extends BaseController{
 	 */
 	public function destroy(Researchgroup $researchgroup)
 	{
-		if (sizeof($researchgroup->employees) == 0)
-		{
+		if (sizeof($researchgroup->employees) == 0) {
 			$researchgroup->delete();
 			Flash::success('Arbeitsbereich wurde erfolgreich gelöscht.');
 			return Redirect::back();

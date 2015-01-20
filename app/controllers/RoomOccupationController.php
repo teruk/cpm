@@ -1,6 +1,7 @@
 <?php
 
-class RoomOccupationController extends \BaseController {
+class RoomOccupationController extends \BaseController 
+{
 
 	/**
 	 * returns the schedule of a room
@@ -79,8 +80,7 @@ class RoomOccupationController extends \BaseController {
 					->where('planning_room.room_id','=', $room->id)
 					->get();
 		$output = array();
-		foreach ($events as $event)
-		{
+		foreach ($events as $event) {
 			$e = array();
 			$e['title'] = $event->course_number. ' '.$event->short.' '.$event->name.' Gruppe: '.$event->group_number;
 			$day = $this->getWeekdayDate($event->weekday);

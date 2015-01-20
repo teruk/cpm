@@ -55,26 +55,26 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach ($mtp as $m)
+					@foreach ($mediumtermplannings as $mediumtermplanning)
 						<tr>
-							<td>{{ $m->turn->present() }}</td>
+							<td>{{ $mediumtermplanning->turn->present() }}</td>
 							<td>
-								@foreach ($m->employees as $e)
-									@if ($e->pivot->annulled)
-										<p><s>{{ $e->firstname }} {{ $e->name }} ({{ $e->pivot->semester_periods_per_week }} SWS)</s></p>
+								@foreach ($mediumtermplanning->employees as $employee)
+									@if ($employee->pivot->annulled)
+										<p><s>{{ $employee->firstname }} {{ $employee->name }} ({{ $employee->pivot->semester_periods_per_week }} SWS)</s></p>
 									@else
-										<p>{{ $e->firstname }} {{ $e->name }} ({{ $e->pivot->semester_periods_per_week }} SWS)</p>
+										<p>{{ $employee->firstname }} {{ $employee->name }} ({{ $employee->pivot->semester_periods_per_week }} SWS)</p>
 									@endif
 								@endforeach
 							</td>
 							<td>
 								@if ($currentUser->hasRole('Admin') || $currentUser->can('edit_mediumtermplanning'))
-									{{ HTML::decode(link_to_route('editMediumtermplanning_path', '<i class="glyphicon glyphicon-edit"></i>', array($module->id, $m->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mittelfristige Lehrplanung bearbeiten'))) }}
+									{{ HTML::decode(link_to_route('editMediumtermplanning_path', '<i class="glyphicon glyphicon-edit"></i>', array($module->id, $mediumtermplanning->id), array('class' => 'btn btn-xs btn-warning', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mittelfristige Lehrplanung bearbeiten'))) }}
 								@endif
 							</td>
 							<td>
 								@if ($currentUser->hasRole('Admin') || $currentUser->can('delete_mediumtermplanning'))
-									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteMediumtermplanning_path', $module->id, $m->id))) }}
+									{{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('deleteMediumtermplanning_path', $module->id, $mediumtermplanning->id))) }}
 									{{ Form::button('<i class="glyphicon glyphicon-remove"></i>', array('type' => 'button', 'class' => 'btn btn-xs btn-danger','data-toggle' => 'modal', 'data-target' => '#confirmDelete', 'data-title' => 'Mittelfristige Lehrplanung löschen', 'data-message' => 'Wollen Sie die Mittelfristige Lehrplanung für dieses Semester wirklich löschen?')) }}
 									{{ Form::close() }}
 								@endif

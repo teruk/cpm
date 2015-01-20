@@ -1,6 +1,7 @@
 <?php
 
-class permissionsController extends BaseController {
+class permissionsController extends BaseController 
+{
 
 	/**
 	 * [index description]
@@ -34,8 +35,7 @@ class permissionsController extends BaseController {
 		$permission->name = Input::get('display_name');
 		$permission->description = Input::get('description');
 
-		if ( $permission->save() )
-		{
+		if ( $permission->save() ) {
 			Flash::success('Die Berechtigung wurde erfolgreich angelegt.');
 			return Redirect::back();
 		}
@@ -55,8 +55,7 @@ class permissionsController extends BaseController {
 		$permission->name = Input::get('name');
 		$permission->name = Input::get('display_name');
 		$permission->description = Input::get('description');
-		if ( $permission->save() )
-		{
+		if ( $permission->save() ) {
 			Flash::success('Die Berechtigung wurde aktualisiert.');
 			return Redirect::back();
 		}

@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class RoomtypesController extends BaseController {
+class RoomtypesController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -26,8 +27,7 @@ class RoomtypesController extends BaseController {
 		$input = Input::all();
 		$roomtype = new Roomtype($input);
 		
-		if ( $roomtype->save() )
-		{
+		if ( $roomtype->save() ) {
 			Flash::success('Raumtyp erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -60,8 +60,7 @@ class RoomtypesController extends BaseController {
 		$input = Input::all();
 		$roomtype->fill($input);
  
-		if ( $roomtype->updateUniques() )
-		{
+		if ( $roomtype->updateUniques() ) {
 			Flash::success('Der Raumtyp wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -79,8 +78,7 @@ class RoomtypesController extends BaseController {
 	 */
 	public function destroy(Roomtype $roomtype)
 	{
-		if ($roomtype->rooms->count() == 0)
-		{
+		if ($roomtype->rooms->count() == 0) {
 			$roomtype->delete();
 			Flash::success('Raumtyp erfolgreich gelöscht.');
 		}

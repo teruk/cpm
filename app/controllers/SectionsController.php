@@ -1,6 +1,7 @@
 <?php
 
-class SectionsController extends BaseController {
+class SectionsController extends BaseController 
+{
 	
 	/**
 	 * 
@@ -28,8 +29,7 @@ class SectionsController extends BaseController {
 		$input = Input::all();
 		$section = new Section($input);
 		
-		if ($section->save())
-		{
+		if ($section->save()) {
 			Flash::success('Bereich erfolgreich angelegt.');
 			return Redirect::back();
 		}
@@ -57,8 +57,7 @@ class SectionsController extends BaseController {
 	{
 		$input = Input::all();
 		$section->fill($input);
-		if ($section->updateUniques())
-		{
+		if ($section->updateUniques()) {
 			Flash::success('Der Bereich wurde aktualisiert.');
 			return Redirect::back();
 		}
@@ -66,5 +65,4 @@ class SectionsController extends BaseController {
 		Flash::error($section->errors());
 		return Redirect::back()->withInput();
 	}
-	
 }

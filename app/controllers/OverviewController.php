@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Redirect;
-class OverviewController extends BaseController {
+class OverviewController extends BaseController 
+{
 
 	/**
 	 * [getDegreeCourses description]
@@ -214,17 +215,14 @@ class OverviewController extends BaseController {
 							->get();
 		$planningIds = array();
 		$semester_periods_per_week_total = 0;
-		foreach ($shkplannings as $shk) 
-		{
+		foreach ($shkplannings as $shk) {
 			array_push($planningIds, $shk->id);
 			$semester_periods_per_week_total += $shk->semester_periods_per_week;
 		}
-		if (sizeof($planningIds) > 0)
-		{
+
+		if (sizeof($planningIds) > 0) {
 			$plannings = Planning::whereIn('id',$planningIds)->get();
-		}
-		else
-		{
+		} else {
 			$plannings = array();
 		}
 		$this->layout->content = View::make('overviews.studentAssistants', compact('plannings', 'turnNav', 'semester_periods_per_week_total'));

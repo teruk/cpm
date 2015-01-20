@@ -1,6 +1,7 @@
 <?php
 
-class RolesController extends BaseController {
+class RolesController extends BaseController 
+{
 
 	/**
 	 * show role overview
@@ -30,8 +31,7 @@ class RolesController extends BaseController {
 		$role = new Role();
 		$role->name = Input::get('name');
 		$role->description = Input::get('description');
-		if ( $role->save() )
-		{
+		if ( $role->save() ) {
 			Flash::success('Die Rolle wurde erfolgreich angelegt.');
 			return Redirect::back();
 		}
@@ -46,12 +46,10 @@ class RolesController extends BaseController {
 	*/
 	public function update(Role $role)
 	{
-		if ($role->name != "Admin")
-		{
+		if ($role->name != "Admin") {
 			$role->name = Input::get('name');
 			$role->description = Input::get('description');
-			if ( $role->save() )
-			{
+			if ( $role->save() ) {
 				Flash::success('Die Rolle wurde aktualisiert.');
 				return Redirect::route('roles.show', $role->id);
 			}
@@ -71,8 +69,7 @@ class RolesController extends BaseController {
 	public function destroy(Role $role)
 	{
 		// if user is has the role 'Admin', he can't be deleted
-		if ($role->name != "Admin")
-		{
+		if ($role->name != "Admin") {
 			$role->delete();
 			Flash::success('Die Rolle wurde erfolgreich gelöscht.');
 			return Redirect::back();
@@ -89,14 +86,12 @@ class RolesController extends BaseController {
 	public function updatePermission(Role $role)
 	{
 		$role_permissions_ids = array();
-		if (sizeof($role->perms) > 0)
-		{
+		if (sizeof($role->perms) > 0) {
 			foreach ($role->perms as $perm) {
 				array_push($role_permissions_ids, $perm->id);
 			}
 			$permissions = Permission::whereNotIn('id',$role_permissions_ids)->get();
-		}
-		else
+		} else
 			$permissions = Permission::all();
 
 		// check the current attached permissions, if there is any changed

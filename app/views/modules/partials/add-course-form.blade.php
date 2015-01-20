@@ -3,7 +3,6 @@
 		<div class="modal-body">
 			{{ Form::model(new Course, ['route' => ['saveCourse_path'], 'class' => "form-horizontal"])}}
 			{{ Form::hidden('module_id',$module->id) }}
-			{{ Form::hidden('tabindex',"courses") }}
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<fieldset>
 				<legend>Neue Lehrveranstaltung anlegen</legend>
