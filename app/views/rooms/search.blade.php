@@ -26,30 +26,30 @@
 			<div class="well">
 				{{ Form::model(new Room, ['method' => 'PATCH', 'route' => ['showRoomSearchResults_path'], 'class' => "form-horizontal"]) }}
 				<div class="form-group">
-	                {{ Form::label('min_seats', 'Min. Plätze*:', array('class' => "col-lg-5 control-label", 'id' => "min_seats")) }}
+	                {{ Form::label('minSeats', 'Min. Plätze*:', array('class' => "col-lg-5 control-label", 'id' => "minSeats")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::input('number', 'min_seats', '', array('id' => "min_seats", 'min' => 0, 'step' => 1, 'required' => true, 'class' => "form-control input-sm", 'autofocus' => true)) }}
+	                  {{ Form::input('number', 'minSeats', '', array('id' => "minSeats", 'min' => 0, 'step' => 1, 'required' => true, 'class' => "form-control input-sm", 'autofocus' => true)) }}
 	                </div>
               	</div>
 	              
               	<div class="form-group">
-	                {{ Form::label('max_seats', 'Max. Plätze:', array('class' => "col-lg-5 control-label", 'id' => "max_seats")) }}
+	                {{ Form::label('maxSeats', 'Max. Plätze:', array('class' => "col-lg-5 control-label", 'id' => "maxSeats")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::input('number', 'max_seats', '', array('id' => "max_seats", 'step' => 1, 'class' => "form-control input-sm")) }}
+	                  {{ Form::input('number', 'maxSeats', '', array('id' => "maxSeats", 'step' => 1, 'class' => "form-control input-sm")) }}
 	                </div>
               	</div>
 	              
               	<div class="form-group">
-	                {{ Form::label('room_type_id', 'Raumtyp*:', array('class' => "col-lg-5 control-label", 'id' => "room_type_id")) }}
+	                {{ Form::label('roomtypeId', 'Raumtyp*:', array('class' => "col-lg-5 control-label", 'id' => "roomtypeId")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::select('room_type_id', $roomtypes, 2, array('id' => "room_type_id", 'required' => true, 'class' => "form-control input-sm")) }}
+	                  {{ Form::select('roomtypeId', $roomtypes, 2, array('id' => "roomtypeId", 'required' => true, 'class' => "form-control input-sm")) }}
 	                </div>
               	</div>
 
               	<div class="form-group">
-	                {{ Form::label('turn_id', 'Semester*:', array('class' => "col-lg-5 control-label", 'id' => "turn_id")) }}
+	                {{ Form::label('turnId', 'Semester*:', array('class' => "col-lg-5 control-label", 'id' => "turnId")) }}
 	                <div class="col-lg-7">
-	                  {{ Form::select('turn_id', $turns, $currentTurn->id, array('id' => "turn_id", 'required' => true, 'class' => "form-control input-sm")) }}
+	                  {{ Form::select('turnId', $turns, $currentTurn->id, array('id' => "turnId", 'required' => true, 'class' => "form-control input-sm")) }}
 	                </div>
               	</div>
 

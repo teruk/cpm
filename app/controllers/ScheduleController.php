@@ -1,6 +1,7 @@
 <?php
 
-class ScheduleController extends \BaseController {
+class ScheduleController extends \BaseController 
+{
 	
 	/**
 	 * get a schedule for a default degree course
@@ -9,8 +10,8 @@ class ScheduleController extends \BaseController {
 	 */
 	public function getDefaultSchedule(Turn $turn)
 	{
-		$degreecourse = Degreecourse::first();
-		$this->setScheduleSession($turn->id, $degreecourse->id, 1);
+		$specialistregulation = Specialistregulation::first();
+		$this->setScheduleSession($turn->id, $specialistregulation->id, 1);
 
 		return Redirect::route('showSelectedSchedule_path');
 	}
@@ -18,13 +19,13 @@ class ScheduleController extends \BaseController {
 	/**
 	 * get schedule for a specific degree course semester
 	 * @param  Turn         $turn         [description]
-	 * @param  Degreecourse $degreecourse [description]
+	 * @param  Specialistregulation $specialistregulation [description]
 	 * @param  [type]       $semester     [description]
 	 * @return [type]                     [description]
 	 */
-	public function getSchedule(Turn $turn, Degreecourse $degreecourse, $semester)
+	public function getSchedule(Turn $turn, Specialistregulation $specialistregulation, $semester)
 	{
-		$this->setScheduleSession($turn->id, $degreecourse->id, $semester);
+		$this->setScheduleSession($turn->id, $specialistregulation->id, $semester);
 
 		return Redirect::route('showSelectedSchedule_path');
 	}
@@ -35,7 +36,7 @@ class ScheduleController extends \BaseController {
 	public function fetchSchedule()
 	{
 		$input = Input::all();
-		$this->setScheduleSession($input['turn_id'], $input['degreecourse_id'], $input['semester']);
+		$this->setScheduleSession($input['turnId'], $input['specialistregulationId'], $input['semester']);
 
 		return Redirect::route('showSelectedSchedule_path');
 	}
@@ -46,16 +47,16 @@ class ScheduleController extends \BaseController {
 	 */
 	public function generateSchedule()
 	{
-		$listofdegreecourses = Degreecourse::getList();
-		$listofturns = Turn::getList();
+		$specialistregulations = Specialistregulation::getList();
+		$turns = Turn::getAvailableTurns();
 		
 		$turn = Turn::findOrFail(Session::get('overview_schedule_turn'));
-		$degreecourse = Degreecourse::findOrFail(Session::get('overview_schedule_degreecourse'));
+		$specialistregulation = Specialistregulation::findOrFail(Session::get('overview_schedule_specialistregulation'));
 		$semester = Session::get('overview_schedule_semester');
 
 		$output = $this->generate();
 
-		$this->layout->content = View::make('overviews.schedule', compact('output','degreecourse', 'listofdegreecourses', 'listofturns', 'semester', 'turn'));
+		$this->layout->content = View::make('overviews.schedule', compact('output','specialistregulation', 'specialistregulations', 'turns', 'semester', 'turn'));
 	}
 
 	/**
@@ -64,10 +65,10 @@ class ScheduleController extends \BaseController {
 	 * @param [type] $degreecourseId [description]
 	 * @param [type] $semester       [description]
 	 */
-	private function setScheduleSession($turnId, $degreecourseId, $semester)
+	private function setScheduleSession($turnId, $specialistregulationId, $semester)
 	{
 		Session::set('overview_schedule_turn', $turnId);
-		Session::set('overview_schedule_degreecourse', $degreecourseId);
+		Session::set('overview_schedule_specialistregulation', $specialistregulationId);
 		Session::set('overview_schedule_semester', $semester);
 	}
 
@@ -78,62 +79,54 @@ class ScheduleController extends \BaseController {
 	private function generate()
 	{
 		$semester = Session::get('overview_schedule_semester');
-		$degreecourseId = Session::get('overview_schedule_degreecourse');
+		$specialistregulationId = Session::get('overview_schedule_specialistregulation');
 		$turnId = Session::get('overview_schedule_turn');
 
-		$listofcoursetypes = CourseType::lists('short','id');
+		$coursetypes = CourseType::lists('short','id');
 		// Get all lectures
-		if ($semester > 0)
-		{
+		if ($semester > 0) {
 			// for specific semester of a degree course
 			$events = DB::table('planning_room')
 					->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
-					->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
-					->join('modules', 'modules.id','=','degreecourse_module.module_id')
+					->join('module_specialistregulation','module_specialistregulation.module_id','=','courses.module_id')
+					->join('modules', 'modules.id','=','module_specialistregulation.module_id')
 					->join('rooms', 'rooms.id', '=','planning_room.room_id')
-					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
+					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','module_specialistregulation.section')
 					->where('plannings.turn_id','=',$turnId)
-					->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
-					->where('degreecourse_module.semester','=', $semester)
+					->where('module_specialistregulation.specialistregulation_id','=', $specialistregulationId)
+					->where('module_specialistregulation.semester','=', $semester)
 					->where('courses.coursetype_id', '=', 1)
 					->get();
-		}
-		else
-		{
+		} else {
 			// for all semesters of a degree course
 			$events = DB::table('planning_room')
 					->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 					->join('courses', 'courses.id', '=', 'plannings.course_id')
-					->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
-					->join('modules', 'modules.id','=','degreecourse_module.module_id')
+					->join('module_specialistregulation','module_specialistregulation.module_id','=','courses.module_id')
+					->join('modules', 'modules.id','=','module_specialistregulation.module_id')
 					->join('rooms', 'rooms.id', '=','planning_room.room_id')
-					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
+					->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','module_specialistregulation.section')
 					->where('plannings.turn_id','=',$turnId)
-					->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+					->where('module_specialistregulation.specialistregulation_id','=', $specialistregulationId)
 					->where('courses.coursetype_id', '=', 1)
 					->groupBy('planning_room.id') // Important
 					->get();
 		}
 		// generate the output
 		$output = array();
-		foreach ($events as $event)
-		{
+		foreach ($events as $event) {
 			$e = array();
-			$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->coursetype_id].' '.$event->short.' ('.$event->rname.')';
+			$e['title'] = $event->course_number. ' '.$coursetypes[$event->coursetype_id].' '.$event->short.' ('.$event->rname.')';
 			$day = $this->getWeekdayDate($event->weekday);
 			$e['start'] = $day.'T'.$event->start_time;
 			$e['end'] = $day.'T'.$event->end_time;
-			if ($event->section == 1)
-			{
-				if ($event->coursetype_id == 1)
-				{
+			if ($event->section == 1) {
+				if ($event->coursetype_id == 1) {
 					$e['backgroundColor'] = '#32CD32';
 					$e['borderColor'] = '#228B22';
 				}
-			}
-			else
-			{
+			} else {
 				$e['backgroundColor'] = '#BA55D3';
 				$e['borderColor'] = '#4B0082';
 			}
@@ -146,33 +139,31 @@ class ScheduleController extends \BaseController {
 			$events = DB::table('planning_room')
 				->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 				->join('courses', 'courses.id', '=', 'plannings.course_id')
-				->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
-				->join('modules', 'modules.id','=','degreecourse_module.module_id')
+				->join('module_specialistregulation','module_specialistregulation.module_id','=','courses.module_id')
+				->join('modules', 'modules.id','=','module_specialistregulation.module_id')
 				->join('rooms', 'rooms.id', '=','planning_room.room_id')
-				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
+				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','module_specialistregulation.section')
 				->where('plannings.turn_id','=',$turnId)
-				->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
-				->where('degreecourse_module.semester','=', $semester)
+				->where('module_specialistregulation.specialistregulation_id','=', $specialistregulationId)
+				->where('module_specialistregulation.semester','=', $semester)
 				->whereNotIn('courses.coursetype_id', array(1))
-				->orderBy('degreecourse_module.module_id', 'ASC')
+				->orderBy('module_specialistregulation.module_id', 'ASC')
 				->orderBy('plannings.course_number','ASC')
 				->orderBy('plannings.group_number','ASC')
 				->get();
-		}
-		else
-		{
+		} else {
 			// for all semesters of a degree course
 			$events = DB::table('planning_room')
 				->join('plannings','plannings.id', '=', 'planning_room.planning_id')
 				->join('courses', 'courses.id', '=', 'plannings.course_id')
-				->join('degreecourse_module','degreecourse_module.module_id','=','courses.module_id')
-				->join('modules', 'modules.id','=','degreecourse_module.module_id')
+				->join('module_specialistregulation','module_specialistregulation.module_id','=','courses.module_id')
+				->join('modules', 'modules.id','=','module_specialistregulation.module_id')
 				->join('rooms', 'rooms.id', '=','planning_room.room_id')
-				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','degreecourse_module.section')
+				->select('plannings.group_number', 'modules.short', 'rooms.name AS rname', 'courses.name AS cname', 'plannings.course_number', 'courses.coursetype_id', 'planning_room.weekday', 'planning_room.start_time', 'planning_room.end_time','module_specialistregulation.section')
 				->where('plannings.turn_id','=',$turnId)
-				->where('degreecourse_module.degreecourse_id','=', $degreecourseId)
+				->where('module_specialistregulation.specialistregulation_id','=', $specialistregulationId)
 				->whereNotIn('courses.coursetype_id', array(1))
-				->orderBy('degreecourse_module.module_id', 'ASC')
+				->orderBy('module_specialistregulation.module_id', 'ASC')
 				->orderBy('plannings.course_number','ASC')
 				->orderBy('plannings.group_number','ASC')
 				->get();
@@ -182,44 +173,46 @@ class ScheduleController extends \BaseController {
 		$starttime = "";
 		$group_number = "";
 		$e = array();
-		foreach ($events as $event)
-		{
+		foreach ($events as $event) {
 			// check if it's the course id, group number
-			if ($event->short != $module_short || ($weekday != $event->weekday || $starttime != $event->start_time) || $event->group_number != $group_number)
-			{
-				if (sizeof($e) > 0)
-				{
-					if ($event->section == 2)
-					{
+			if (
+				$event->short != $module_short || 
+				(
+					$weekday != $event->weekday || 
+					$starttime != $event->start_time
+				) || 
+				$event->group_number != $group_number
+			) {
+				if (sizeof($e) > 0) {
+					if ($event->section == 2) {
 						$e['backgroundColor'] = '#BA55D3';
 						$e['borderColor'] = '#4B0082';
 					}
 					array_push($output, $e);
 				}
+
 				$module_short = $event->short;
 				$weekday = $event->weekday;
 				$starttime = $event->start_time;
 				$group_number = $event->group_number;
 				$e = array();
-				$e['title'] = $event->course_number. ' '.$listofcoursetypes[$event->coursetype_id].'-'.$event->group_number.' '.$event->short.' '.$event->rname;
+				$e['title'] = $event->course_number. ' '.$coursetypes[$event->coursetype_id].'-'.$event->group_number.' '.$event->short.' '.$event->rname;
 				$day = $this->getWeekdayDate($event->weekday);
 				$e['start'] = $day.'T'.$event->start_time;
 				$e['end'] = $day.'T'.$event->end_time;
-			}
-			else
-			{
+			} else {
 				$e['title'] .= ', '.$event->rname;
 			}
 		}
-		if (sizeof($e) > 0)
-		{
-			if ($event->section == 2)
-			{
+
+		if (sizeof($e) > 0) {
+			if ($event->section == 2) {
 				$e['backgroundColor'] = '#BA55D3';
 				$e['borderColor'] = '#4B0082';
 			}
 			array_push($output, $e); // to push the last exercise group in the array
 		}
+
 		return $output;
 	}
 }

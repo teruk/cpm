@@ -10,7 +10,7 @@ class RoomOccupationController extends \BaseController {
 	public function fetchRoom()
 	{
 		$input = Input::all();
-		$this->setRoomOccupationSession($input['turn_id'], $input['room_id']);
+		$this->setRoomOccupationSession($input['turnId'], $input['roomId']);
 
 		return Redirect::route('showSelectedRoomOccupation_path');
 	}
@@ -46,11 +46,11 @@ class RoomOccupationController extends \BaseController {
 		$turn = Turn::findOrFail(Session::get('roomOccupation_turnId'));
 		$room = Room::findOrFail(Session::get('roomOccupation_roomId'));
 		$output = $this->generate($turn, $room);
-		$listofturns = Turn::getList();
-		$listofrooms = Room::getList();
-		$listofroomtypes = RoomType::orderBy('name','ASC')->lists('name','id');
+		$listOfTurns = Turn::getAvailableTurns();
+		$listOfRooms = Room::getList();
+		$listOfRoomtypes = RoomType::orderBy('name','ASC')->lists('name','id');
 		$turns = Turn::all();
-		$this->layout->content = View::make('overviews.room', compact('output', 'outputTurns','room','turn','listofrooms', 'listofturns','listofroomtypes'));
+		$this->layout->content = View::make('overviews.room', compact('output', 'outputTurns','room','turn','listOfRooms', 'listOfTurns','listOfRoomtypes'));
 	}
 
 	/**

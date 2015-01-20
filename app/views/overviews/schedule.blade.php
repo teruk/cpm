@@ -7,20 +7,20 @@
 	  <li class="active">Übersichten</li>
 	  <li class="active">Stundenpläne</li>
 	  <li class="active">{{ $turn->present() }} </li>
-	  <li class="active">{{ $degreecourse->present() }}</li>
+	  <li class="active">{{ $specialistregulation->present() }}</li>
 	  <li class="active">Fachsemester: {{ $semester }}</li>
 	</ol>
 @stop
 
 @section('main')
-	<h4>Stundenplan {{ $degreecourse->present() }} {{ $semester }}. Fachsemester im {{ $turn->present() }}</h4>
+	<h4>Stundenplan {{ $specialistregulation->present() }} {{ $semester }}. Fachsemester im {{ $turn->present() }}</h4>
 	<div class="row" style="margin-bottom: 5px;">
 		{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['fetchSchedule_path']]) }}
 		<div class="col-xs-2">
-		{{ Form::select('turn_id', $listofturns, $turn->id, array('id' => "turn_id", 'class' => "form-control input-sm"))}}
+		{{ Form::select('turnId', $turns, $turn->id, array('id' => "turnId", 'class' => "form-control input-sm"))}}
 		</div>
 		<div class="col-xs-3">
-			{{ Form::select('degreecourse_id', $listofdegreecourses, $degreecourse->id, array('id' => "degreecourse_id", 'class' => "form-control input-sm"))}}
+			{{ Form::select('specialistregulationId', $specialistregulations, $specialistregulation->id, array('id' => "specialistregulationId", 'class' => "form-control input-sm"))}}
 		</div>
 		<div class="col-xs-1">
 			{{ Form::button('<i class="glyphicon glyphicon-refresh"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-primary')) }}
@@ -33,20 +33,20 @@
 		<div class="col-sm-12">
 			<div class="btn-toolbar">
 			    <div class="btn-group  btn-group-justified">
-			    	@if ($degreecourse->degree->name == "Master")
-			    		{{ link_to_route('showSchedule_path', 'FS: 1', [$turn->id, $degreecourse->id, 1], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 2', [$turn->id, $degreecourse->id, 2], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 3', [$turn->id, $degreecourse->id, 3], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 4', [$turn->id, $degreecourse->id, 4], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: Alle', [$turn->id, $degreecourse->id, 0], ['class' => 'btn btn-default']) }}
+			    	@if ($specialistregulation->degreecourse->degree->name == "Master")
+			    		{{ link_to_route('showSchedule_path', 'FS: 1', [$turn->id, $specialistregulation->id, 1], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 2', [$turn->id, $specialistregulation->id, 2], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 3', [$turn->id, $specialistregulation->id, 3], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 4', [$turn->id, $specialistregulation->id, 4], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: Alle', [$turn->id, $specialistregulation->id, 0], ['class' => 'btn btn-default']) }}
 					@else
-						{{ link_to_route('showSchedule_path', 'FS: 1', [$turn->id, $degreecourse->id, 1], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 2', [$turn->id, $degreecourse->id, 2], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 3', [$turn->id, $degreecourse->id, 3], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 4', [$turn->id, $degreecourse->id, 4], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 5', [$turn->id, $degreecourse->id, 5], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: 6', [$turn->id, $degreecourse->id, 6], ['class' => 'btn btn-default']) }}
-			    		{{ link_to_route('showSchedule_path', 'FS: Alle', [$turn->id, $degreecourse->id, 0], ['class' => 'btn btn-default']) }}
+						{{ link_to_route('showSchedule_path', 'FS: 1', [$turn->id, $specialistregulation->id, 1], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 2', [$turn->id, $specialistregulation->id, 2], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 3', [$turn->id, $specialistregulation->id, 3], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 4', [$turn->id, $specialistregulation->id, 4], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 5', [$turn->id, $specialistregulation->id, 5], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: 6', [$turn->id, $specialistregulation->id, 6], ['class' => 'btn btn-default']) }}
+			    		{{ link_to_route('showSchedule_path', 'FS: Alle', [$turn->id, $specialistregulation->id, 0], ['class' => 'btn btn-default']) }}
 					@endif
 			    </div>
 			</div>

@@ -17,10 +17,10 @@
 		<div class="col-sm-12" style="margin-bottom: 5px;">
 			{{ Form::model($turn, ['method' => 'PATCH', 'route' => ['fetchRoomOccupation_path']]) }}
 			<div class="col-xs-2">
-			{{ Form::select('turn_id', $listofturns, $turn->id, array('id' => "turn_id", 'class' => "form-control input-sm"))}}
+			{{ Form::select('turnId', $listOfTurns, $turn->id, array('id' => "turnId", 'class' => "form-control input-sm"))}}
 			</div>
 			<div class="col-xs-3">
-				{{ Form::select('room_id', $listofrooms, $room->id, array('id' => "room_id", 'class' => "form-control input-sm"))}}
+				{{ Form::select('roomId', $listOfRooms, $room->id, array('id' => "roomId", 'class' => "form-control input-sm"))}}
 			</div>
 			<div class="col-xs-1">
 				{{ Form::button('<i class="glyphicon glyphicon-refresh"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-primary')) }}
@@ -50,7 +50,7 @@
 		       				<td>{{ $room->name }}</td>
 		    					<td>{{ $room->location }}</td>
 		    					<td>{{ $room->seats }}</td>
-		    					<td>{{ $listofroomtypes[$room->roomtype_id] }}</td>
+		    					<td>{{ $listOfRoomtypes[$room->roomtype_id] }}</td>
 		    					@if ($room->beamer)
 		    						<td>ja</td>
 		    					@else

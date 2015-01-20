@@ -18,7 +18,7 @@ class RoomSearchController extends \BaseController {
 		else
 			$turn = Turn::find(Session::get('turn'));
 
-		$turns = Turn::getList();
+		$turns = Turn::getAvailableTurns();
 		$roomtypes = RoomType::lists('name','id');
 		$this->layout->content = View::make('rooms.search', compact('searchresults','turns','roomtypes','turn'));
 	}
@@ -32,19 +32,17 @@ class RoomSearchController extends \BaseController {
 		$starttime = date('H:i:s', strtotime(Input::get('start_time')));
 		$endtime = date('H:i:s', strtotime(Input::get('end_time')));
 		$maxseats = 10000;
-		if (Input::get('max_seats') >= Input::get('min_seats') || Input::get('max_seats') == "")
-		{
-			if (Input::get('max_seats') != "")
-			{
-				$maxseats = Input::get('max_seats');
+		if (Input::get('maxSeats') >= Input::get('minSeats') || Input::get('maxSeats') == "") {
+			if (Input::get('maxSeats') != "") {
+				$maxseats = Input::get('maxSeats');
 			}
 			$results = DB::table('planning_room')
 						->join('plannings', 'planning_room.planning_id','=','plannings.id')
 						->join('rooms','rooms.id','=','planning_room.room_id')
 						->select('rooms.id')
-						->where('plannings.turn_id', '=', Input::get('turn_id')) // Import to select ohne results from the same turn
+						->where('plannings.turn_id', '=', Input::get('turnId')) // Import to select ohne results from the same turn
 						->where('planning_room.weekday','=' ,Input::get('weekday'))
-						->where('rooms.roomtype_id','=', Input::get('room_type_id'))
+						->where('rooms.roomtype_id','=', Input::get('roomtypeId'))
 						->where(function($query) use ($starttime, $endtime)
 						{
 							$query->where(function($q1) use ($starttime){
@@ -74,30 +72,26 @@ class RoomSearchController extends \BaseController {
 						})
 						->orderBy('seats','ASC')
 						->get();
-			$room_ids = array();
+			$roomIds = array();
 			foreach ($results as $res) {
-				array_push($room_ids, $res->id);
+				array_push($roomIds, $res->id);
 			}
 			$result = array();
-			if (sizeof($room_ids) > 0)
-			{
-				$result = Room::where('roomtype_id','=', Input::get('room_type_id'))
-								->where('seats','>=', Input::get('min_seats'))
+			if (sizeof($roomIds) > 0) {
+				$result = Room::where('roomtype_id','=', Input::get('roomtypeId'))
+								->where('seats','>=', Input::get('minSeats'))
 								->where('seats', '<=', $maxseats)
-								->whereNotIn('id',$room_ids)
+								->whereNotIn('id',$roomIds)
 								->get();
-			}
-			else
-			{
-				$result = Room::where('roomtype_id','=', Input::get('room_type_id'))
-								->where('seats','>=', Input::get('min_seats'))
+			} else {
+				$result = Room::where('roomtype_id','=', Input::get('roomtypeId'))
+								->where('seats','>=', Input::get('minSeats'))
 								->where('seats', '<=', $maxseats)
 								->get();
 			}
 			if (sizeof($result) > 0)
-				return Redirect::back()->withInput()->with('result', $result)->with('turn', Input::get('turn_id'));
-			else
-			{
+				return Redirect::back()->withInput()->with('result', $result)->with('turn', Input::get('turnId'));
+			else {
 				Flash::error('Keine freien Räume gefunden!');
 				return Redirect::back()->withInput();
 			}
@@ -106,5 +100,4 @@ class RoomSearchController extends \BaseController {
 		Flash::error('Fehlerhafte Eingabe! Die maximale Platzanzahl ist kleiner als die minimale Platzanzahl!');
 		return Redirect::back()->withInput();
 	}
-
 }

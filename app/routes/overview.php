@@ -83,7 +83,7 @@ Route::get('showDefaultSchedule/{turn}', [
 	'uses' => 'ScheduleController@getDefaultSchedule'
 	]);
 
-Route::get('showSchedule/{turn}/{degreecourse}/{semester}', [
+Route::get('showSchedule/{turn}/{specialistregulation}/{semester}', [
 	'as' => 'showSchedule_path',
 	'uses' => 'ScheduleController@getSchedule'
 	]);

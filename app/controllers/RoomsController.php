@@ -28,8 +28,7 @@ class RoomsController extends BaseController {
 		$input = Input::all();
 		$room = new Room();
 
-		if ($room->register($input))
-		{
+		if ($room->register($input)) {
 			Flash::success('Raum erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -62,8 +61,7 @@ class RoomsController extends BaseController {
 	{
 		$input = Input::all();
 
-		if ( $room->updateInformation($input) )
-		{
+		if ( $room->updateInformation($input) ) {
 			Flash::success('Der Raum wurde aktualisiert.');
 			return Redirect::back();
 		}

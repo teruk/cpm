@@ -9,3 +9,5 @@ Thumbs.db
 .settings
 /.buildpath
 /.project
+/public/css/bootstrap.cosmo.css
+/public/js/jquery.dataTables.js
