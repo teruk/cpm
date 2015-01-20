@@ -3,7 +3,8 @@
 
 use Illuminate\Session\Middleware;
 use Illuminate\Support\Facades\Redirect;
-class MediumtermplanningsController extends BaseController {
+class MediumtermplanningsController extends BaseController 
+{
 	
 	/**
 	 * 
@@ -77,8 +78,7 @@ class MediumtermplanningsController extends BaseController {
 		$newMediumtermplanning->module_id = $module->id;
 		$newMediumtermplanning->turn_id = $turn->id;
 
-		if ($newMediumtermplanning->save())
-		{
+		if ($newMediumtermplanning->save()) {
 			foreach ($mediumtermplanning->employees as $employee) {
 				$newMediumtermplanning->employees()->attach($employee->id, [
 					'semester_periods_per_week' => $employee->pivot->semester_periods_per_week, 
@@ -190,37 +190,50 @@ class MediumtermplanningsController extends BaseController {
 		 * creating a list of medium-term planning with the module_id as key
 		 * and value is an array with turn as key and as value the mediumtermplanning_id
 		 */
-		$listofmtps = array();
-		foreach ($mediumtermplannings as $mtp)
-		{
-			if (!array_key_exists($mtp->module_id, $listofmtps))
-				$listofmtps = array_add($listofmtps, $mtp->module_id, array($mtp->turn_id => $mtp->id));
+		$listOfMediumtermplannings = array();
+		foreach ($mediumtermplannings as $mediumterplanning) {
+			if (!array_key_exists($mediumterplanning->module_id, $listOfMediumtermplannings))
+				$listOfMediumtermplannings = array_add(
+					$listOfMediumtermplannings, 
+					$mediumterplanning->module_id, 
+					array($mediumterplanning->turn_id => $mediumterplanning->id)
+					);
 			else
-				$listofmtps[$mtp->module_id] = array_add($listofmtps[$mtp->module_id], $mtp->turn_id, $mtp->id);
-		
+				$listOfMediumtermplannings[$mediumterplanning->module_id] = array_add(
+					$listOfMediumtermplannings[$mediumterplanning->module_id], 
+					$mediumterplanning->turn_id, 
+					$mediumterplanning->id
+					);
 		}
 			
 		/*
 		 * Grouping the employees with the same mediumtermplanning_id
 		*/
-		$emps = DB::table('employee_mediumtermplanning')->select('employee_id', 'mediumtermplanning_id', 'annulled', 'semester_periods_per_week')->get();
-		$listofemps = array();
-		foreach ($emps as $emp)
-		{
-			if (!array_key_exists($emp->mediumtermplanning_id,$listofemps))
-			{
-				$listofemps = array_add($listofemps, $emp->mediumtermplanning_id, array(
-						$emp->employee_id => array(
-								'id' => $emp->employee_id,
-								'semester_periods_per_week' => $emp->semester_periods_per_week,
-								'annulled' => $emp->annulled)));
-			}
-			else
-			{
-				$listofemps[$emp->mediumtermplanning_id] = array_add($listofemps[$emp->mediumtermplanning_id], $emp->employee_id, array(
-						'id' => $emp->employee_id,
-						'semester_periods_per_week' => $emp->semester_periods_per_week,
-						'annulled' => $emp->annulled));
+		$employeeMediumtermplannings = DB::table('employee_mediumtermplanning')->select('employee_id', 'mediumtermplanning_id', 'annulled', 'semester_periods_per_week')->get();
+		$listOfEmployeeMediumtermplannings = array();
+		foreach ($employeeMediumtermplannings as $employeeMediumtermplanning) {
+			if (!array_key_exists($employeeMediumtermplanning->mediumtermplanning_id, $listOfEmployeeMediumtermplannings)) {
+				$listOfEmployeeMediumtermplannings = array_add(
+					$listOfEmployeeMediumtermplannings, 
+					$employeeMediumtermplanning->mediumtermplanning_id, 
+					array(
+						$employeeMediumtermplanning->employee_id => array(
+							'id' => $employeeMediumtermplanning->employee_id,
+							'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+							'annulled' => $employeeMediumtermplanning->annulled
+							)
+						)
+					);
+			} else {
+				$listOfEmployeeMediumtermplannings[$employeeMediumtermplanning->mediumtermplanning_id] = array_add(
+					$listOfEmployeeMediumtermplannings[$employeeMediumtermplanning->mediumtermplanning_id],
+					$employeeMediumtermplanning->employee_id, 
+					array(
+						'id' => $employeeMediumtermplanning->employee_id,
+						'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+						'annulled' => $employeeMediumtermplanning->annulled
+						)
+					);
 			}
 		}
 			
@@ -229,8 +242,7 @@ class MediumtermplanningsController extends BaseController {
 		 * no unnessesary modules will be fetch from db
 		 * @TODO add where-clause for department selection
 		 */
-		switch ($degree)
-		{
+		switch ($degree) {
 			case "Bachelor":
 				$modules = Module::bachelor()->get();
 				break;
@@ -242,14 +254,13 @@ class MediumtermplanningsController extends BaseController {
 			break;
 		}
 		
-		$listofmodules = array();
-		foreach ($modules as $module)
-		{
-			$listofmodules = array_add($listofmodules, $module->id, $module->short);
+		$listOfModules = array();
+		foreach ($modules as $module) {
+			$listOfModules = array_add($listOfModules, $module->id, $module->short);
 		}	
 			
 		// employees
-		$listofemployees = Employee::getList();
+		$listOfEmployees = Employee::getList();
 			
 		/*
 		 * building the array for the data grid
@@ -258,50 +269,49 @@ class MediumtermplanningsController extends BaseController {
 		* 2nd layer are the turns
 		* 3rd layer are the planned employees
 		*/
-		$mtpgrid = array();
-		if (sizeof($modules) > 0 && sizeof($listofemployees) > 0)
-		{
-			foreach ($modules as $module)
-			{
+		$mediumtermplanningGrid = array();
+		if (sizeof($modules) > 0 && sizeof($listOfEmployees) > 0) {
+			foreach ($modules as $module) {
 				$moduledata = array();
-				$lastmpid = -1;
+				$lastMediumtermplanningId = -1;
 				// search through the turns, if the module is planned
-				foreach ($turns as $turn)
-				{
+				foreach ($turns as $turn) {
 					$employee = array();
-					if (array_key_exists($module->id, $listofmtps))
-					{
-						if (array_key_exists($turn->id, $listofmtps[$module->id]))
-						{
-							$mpid = $listofmtps[$module->id][$turn->id]; // get the mediumtermplanning_id
+
+					if (array_key_exists($module->id, $listOfMediumtermplannings)) {
+
+						if (array_key_exists($turn->id, $listOfMediumtermplannings[$module->id])) {
+							$mediumtermplanningId = $listOfMediumtermplannings[$module->id][$turn->id]; // get the mediumtermplanning_id
 							// Check if this medium-term planning has employees assigned to it
-							if (array_key_exists($mpid, $listofemps))
-							{
-								foreach ( $listofemps[$mpid] as $emp )
-								{
-									$employee = array_add($employee, $emp['id'], array(
-											'employee_id' => $emp['id'],
-											'name' => $listofemployees[$emp['id']],
-											'semester_periods_per_week' => $emp['semester_periods_per_week'],
-											'annulled' => $emp['annulled'],
-									));
+							if (array_key_exists($mediumtermplanningId, $listOfEmployeeMediumtermplannings)) {
+								foreach ( $listOfEmployeeMediumtermplannings[$mediumtermplanningId] as $employeeMediumtermplanning ) {
+									$employee = array_add(
+										$employee, 
+										$employeeMediumtermplanning['id'], 
+										array(
+											'employee_id' => $employeeMediumtermplanning['id'],
+											'name' => $listOfEmployees[$employeeMediumtermplanning['id']],
+											'semester_periods_per_week' => $employeeMediumtermplanning['semester_periods_per_week'],
+											'annulled' => $employeeMediumtermplanning['annulled'],
+											)
+										);
 								}
-								$lastmpid = $mpid;
+								$lastMediumtermplanningId = $mediumtermplanningId;
 							}							
 						}
 					}
 					$moduledata = array_add($moduledata, $turn->id, $employee);
 				}
-				$mtpgrid = array_add($mtpgrid, $module->id, array(
+				$mediumtermplanningGrid = array_add($mediumtermplanningGrid, $module->id, array(
 						'id' => $module->id,
-						'short' => $listofmodules[$module->id],
-						'last_mpid' => $lastmpid,
+						'short' => $listOfModules[$module->id],
+						'last_mpid' => $lastMediumtermplanningId,
 						'turns'=> $moduledata,
 				));
 			}
 		}
 		
-		return $mtpgrid;
+		return $mediumtermplanningGrid;
 	}
 	
 	
@@ -320,47 +330,57 @@ class MediumtermplanningsController extends BaseController {
 		 * selecting the medium-term plannings
 		*/
 		$mediumtermplannings = Mediumtermplanning::all();
-		$listofmtps = array();
-		foreach ($mediumtermplannings as $mtp)
-		{
-			if (!array_key_exists($mtp->id, $listofmtps))
-			{
-				$listofmtps = array_add($listofmtps, $mtp->id, array($mtp->turn_id => $mtp->module_id));
-			}
-			else
-			{
-				$listofmtps[$mtp->id] = array_add($listofmtps[$mtp->id], $mtp->turn_id, $mtp->module_id);
+		$listOfMediumtermplannings = array();
+		foreach ($mediumtermplannings as $mediumtermplanning) {
+			if (!array_key_exists($mediumtermplanning->id, $listOfMediumtermplannings))	{
+				$listOfMediumtermplannings = array_add(
+					$listOfMediumtermplannings, 
+					$mediumtermplanning->id, 
+					array(
+						$mediumtermplanning->turn_id => $mediumtermplanning->module_id
+						)
+					);
+			} else {
+				$listOfMediumtermplannings[$mediumtermplanning->id] = array_add(
+					$listOfMediumtermplannings[$mediumtermplanning->id], 
+					$mediumtermplanning->turn_id, 
+					$mediumtermplanning->module_id
+					);
 			}		
 		}
 			
 		/*
 		 * Grouping the employees with the same midterm_planning_id
 		*/
-		$emps = DB::table('employee_mediumtermplanning')
+		$employeeMediumtermplannings = DB::table('employee_mediumtermplanning')
 				->join('employees','employees.id','=','employee_mediumtermplanning.employee_id')
 				->select('employee_mediumtermplanning.employee_id', 'employee_mediumtermplanning.mediumtermplanning_id', 'employee_mediumtermplanning.annulled', 'employee_mediumtermplanning.semester_periods_per_week')
 				->where('employees.firstname','!=','SHK')
 				->get();
-		$listofemtps = array();
-		foreach ($emps as $emp)
-		{
-			if (!array_key_exists($emp->employee_id, $listofemtps))
-			{
-				$listofemtps = array_add($listofemtps, $emp->employee_id, array(
-						$emp->mediumtermplanning_id => array(
-								'mediumtermplanning_id' => $emp->mediumtermplanning_id,
-								'semester_periods_per_week' => $emp->semester_periods_per_week,
-							'annulled' => $emp->annulled 
+		$listOfMediumtermplannings = array();
+		foreach ($employeeMediumtermplannings as $employeeMediumtermplanning) {
+			if (!array_key_exists($employeeMediumtermplanning->employee_id, $listOfMediumtermplannings)) {
+				$listOfMediumtermplannings = array_add(
+					$listOfMediumtermplannings, 
+					$employeeMediumtermplanning->employee_id, 
+					array(
+						$employeeMediumtermplanning->mediumtermplanning_id => array(
+							'mediumtermplanning_id' => $employeeMediumtermplanning->mediumtermplanning_id,
+							'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+							'annulled' => $employeeMediumtermplanning->annulled 
+							)
 						)
-				));
-			}
-			else 
-			{
-				$listofemtps[$emp->employee_id] = array_add($listofemtps[$emp->employee_id], $emp->mediumtermplanning_id, array(
-						'mediumtermplanning_id' => $emp->mediumtermplanning_id,
-						'semester_periods_per_week' => $emp->semester_periods_per_week,
-						'annulled' => $emp->annulled
-				));
+					);
+			} else {
+				$listOfMediumtermplannings[$employeeMediumtermplanning->employee_id] = array_add(
+					$listOfMediumtermplannings[$employeeMediumtermplanning->employee_id], 
+					$employeeMediumtermplanning->mediumtermplanning_id, 
+					array(
+						'mediumtermplanning_id' => $employeeMediumtermplanning->mediumtermplanning_id,
+						'semester_periods_per_week' => $employeeMediumtermplanning->semester_periods_per_week,
+						'annulled' => $employeeMediumtermplanning->annulled
+						)
+					);
 			}
 		}
 
@@ -369,8 +389,7 @@ class MediumtermplanningsController extends BaseController {
 		* no unnessesary modules will be fetch from db
 		* @TODO add where-clause for department selection
 		*/
-		switch ($degree)
-		{
+		switch ($degree){
 			case "Bachelor":
 				$modules = Module::bachelor()->get();
 				break;
@@ -383,8 +402,7 @@ class MediumtermplanningsController extends BaseController {
 		}
 		
 		$listofmodules = array();
-		foreach ($modules as $module)
-		{
+		foreach ($modules as $module) {
 			$listofmodules = array_add($listofmodules, $module->id, $module->short);
 		}
 			
@@ -399,35 +417,42 @@ class MediumtermplanningsController extends BaseController {
 		* 2nd layer are the turns
 		* 3rd layer are the planned employees
 		*/
-		$mtpgrid = array();
-		if (sizeof($modules) > 0 && sizeof($employees) > 0)
-		{
-			foreach ($employees as $employee)
-			{
+		$mediumtermplanningGrid = array();
+		if (sizeof($modules) > 0 && sizeof($employees) > 0) {
+			foreach ($employees as $employee) {
 				$employeedata = array ();
-				$teaching_load = 0;
+				$teachingLoad = 0;
 				// search though the turns, if employee is assigned to something
-				foreach ($turns as $turn)
-				{
+				foreach ($turns as $turn) {
 					$module = array();
 					// checking if employee is in the list
-					if (array_key_exists($employee->id, $listofemtps))
-					{
-						foreach ($listofemtps[$employee->id] as $emp)
-						{
+					if (array_key_exists($employee->id, $listOfMediumtermplannings)) {
+						foreach ($listOfMediumtermplannings[$employee->id] as $employeeMediumtermplanning) {
 			
-							if (array_key_exists($turn->id, $listofmtps[$emp['mediumtermplanning_id']]))
-							{
-								if (array_key_exists($listofmtps[$emp['mediumtermplanning_id']][$turn->id],$listofmodules))
-								{
-									$module = array_add($module, $listofmtps[$emp['mediumtermplanning_id']][$turn->id], array(
-											'module_id' => $listofmtps[$emp['mediumtermplanning_id']][$turn->id],
-											'short' => $listofmodules[$listofmtps[$emp['mediumtermplanning_id']][$turn->id]],
-											'semester_periods_per_week' => $emp['semester_periods_per_week'],
-											'annulled' => $emp['annulled'],
-									));
-									if (!$emp['annulled']){
-										$teaching_load += $emp['semester_periods_per_week'];
+							if (array_key_exists(
+									$turn->id, 
+									$listOfMediumtermplannings[$employeeMediumtermplanning['mediumtermplanning_id']]
+									)
+								) {
+
+								if (array_key_exists(
+										$listOfMediumtermplannings[$employeeMediumtermplanning['mediumtermplanning_id']][$turn->id],
+										$listofmodules
+										)
+									) {
+									$module = array_add(
+										$module, 
+										$listOfMediumtermplannings[$employeeMediumtermplanning['mediumtermplanning_id']][$turn->id], 
+										array(
+											'module_id' => $listOfMediumtermplannings[$employeeMediumtermplanning['mediumtermplanning_id']][$turn->id],
+											'short' => $listofmodules[$listOfMediumtermplannings[$employeeMediumtermplanning['mediumtermplanning_id']][$turn->id]],
+											'semester_periods_per_week' => $employeeMediumtermplanning['semester_periods_per_week'],
+											'annulled' => $employeeMediumtermplanning['annulled'],
+											)
+										);
+
+									if (!$employeeMediumtermplanning['annulled']) {
+										$teachingLoad += $employeeMediumtermplanning['semester_periods_per_week'];
 									}
 								}
 							}
@@ -435,21 +460,14 @@ class MediumtermplanningsController extends BaseController {
 					}
 					$employeedata = array_add($employeedata, $turn->id, $module);
 				}
-				$mtpgrid = array_add($mtpgrid, $employee->id, array(
+				$mediumtermplanningGrid = array_add($mediumtermplanningGrid, $employee->id, array(
 						'name' => $employee->name,
 						'employee_id' => $employee->id,
 						'turns'=> $employeedata,
-						'teaching_load' => $teaching_load,
+						'teaching_load' => $teachingLoad,
 				));
 			}
 		}
-		return $mtpgrid;
+		return $mediumtermplanningGrid;
 	}
-	
-	// public function export()
-	// {
-	// 	$mediumtermplannings = Mediumtermplanning::all();
-	// 	$employee_mediumtermplanning = DB::table('employee_mediumtermplanning')->select('*')->get();
-	// 	$this->layout->content = View::make('mediumtermplannings.export', compact('mediumtermplannings','employee_mediumtermplanning'));
-	// }
 }

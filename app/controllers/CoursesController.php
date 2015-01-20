@@ -115,10 +115,4 @@ class CoursesController extends BaseController
 		$history = Planning::courses($course)->get();
 		return View::make('courses.history', compact('course', 'history'));
 	}
-	
-	// public function export()
-	// {
-	// 	$courses = Course::all();
-	// 	$this->layout->content = View::make('courses.export', compact('courses'));
-	// }
 }

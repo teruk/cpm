@@ -1,7 +1,8 @@
 <?php
 
 
-class EmployeesController extends BaseController {
+class EmployeesController extends BaseController 
+{
 	
 	/**
 	 * Display a listing of employees
@@ -148,10 +149,4 @@ class EmployeesController extends BaseController {
 		}
 		return View::make('employees.history', compact('employee', 'plannings'));
 	}
-
-	// public function export()
-	// {
-	// 	$employees = Employee::all();
-	// 	$this->layout->content = View::make('employees.export', compact('employees'));
-	// }
 }

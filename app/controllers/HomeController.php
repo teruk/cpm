@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Input;
-class HomeController extends BaseController {
+class HomeController extends BaseController 
+{
 
 	/*
 	|--------------------------------------------------------------------------
@@ -48,30 +49,23 @@ class HomeController extends BaseController {
 
 		$validator = Validator::make(Input::all(),$rules);
 
-		if ($validator->fails()) 
-		{
+		if ($validator->fails()) {
 			Flash::error($validator);
 			return Redirect::to('login')->withInput(Input::except('password'));
-		} 
-		else 
-		{
+		} else {
 			$userdata = array(
 				'email' => Input::get('email'),
 				'password' => Input::get('password')
 			);
 
-			if (Auth::attempt($userdata)) 
-			{
-				if (Entrust::user()->inactive == 0)
-				{
+			if (Auth::attempt($userdata)) {
+				if (Entrust::user()->inactive == 0) {
 					$user = Entrust::user();
 					$user->last_login = new Datetime;
 					$user->save();
 					Flash::success('Sie haben sich erfolgreich eingeloggt.');
 					return Redirect::route('dashboard_path');
-				}
-				else
-				{
+				} else {
 					Auth::logout();
 					Flash::error('Dieser Account wurde deaktiviert! Bitte kontaktieren Sie den Administrator.');
 					return Redirect::route('login_path');
@@ -92,5 +86,4 @@ class HomeController extends BaseController {
 		Auth::logout();
 		return Redirect::route('login_path');
 	}
-
 }

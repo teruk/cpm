@@ -39,8 +39,7 @@ class ModulesController extends \BaseController
 			$module->individual_courses = 0;
 		
 		// the ardent package is responsible for the validation
-		if ( $this->module->save() )
-		{
+		if ( $this->module->save() ) {
 			Flash::success('Modul erfolgreich erstellt!');
 			return Redirect::back();
 		}
@@ -212,14 +211,4 @@ class ModulesController extends \BaseController
 		}
 		return View::make('modules.mediumtermplannings', compact('module', 'availableTurns', 'mediumtermplannings', 'mediumtermplanningTurns'));
 	}
-	
-	// public function export()
-	// {
-	// 	$modules = Module::all();
-	// 	$dgm = DB::table('degree_course_module')
-	// 			->select('degree_course_id', 'module_id', 'semester', 'section')
-	// 			->get();
-	// 	$this->layout->content = View::make('modules.export', compact('modules','dgm'));
-	// }
-
 }

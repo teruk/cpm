@@ -1,6 +1,7 @@
 <?php
 
-class LecturerAssignmentController extends \BaseController {
+class LecturerAssignmentController extends \BaseController 
+{
 
 	/**
 	 * show currently assigned lecturer and assign form
@@ -11,8 +12,7 @@ class LecturerAssignmentController extends \BaseController {
 	public function showLecturer(Turn $turn, Planning $planning)
 	{
 		// check if current user is allowed to access this planning
-		if (!$this->checkPlanningResponsibility($turn, $planning))
-		{
+		if (!$this->checkPlanningResponsibility($turn, $planning)) {
 			Flash::error('Sie haben keine Zugriffsberechtigung für diese Planung!');
 			return Redirect::route('home');
 		}
@@ -23,10 +23,9 @@ class LecturerAssignmentController extends \BaseController {
 		$employees = [];
 		if (Entrust::hasRole('Admin') || Entrust::can('view_planning'))
 			$employees = Employee::getList();
-		else 
-		{
-			$rg_ids = Entrust::user()->researchgroupIds();
-			$rawEmployees = Employee::whereIn('researchgroup_id',$rg_ids)
+		else {
+			$researchgroupIds = Entrust::user()->getResearchgroupIds();
+			$rawEmployees = Employee::whereIn('researchgroup_id',$researchgroupIds)
 								->orderBy('researchgroup_id', 'ASC')
 								->orderBy('name', 'ASC')
 								->get();
@@ -58,8 +57,6 @@ class LecturerAssignmentController extends \BaseController {
 	 */
 	public function assignLecturer(Turn $turn, Planning $planning)
 	{
-		Session::set('plannings_edit_tabindex', 1);
-
 		$employee = Employee::findOrFail(Input::get('employee_id'));
 		
 		$planning->employees()->attach($employee->id, [
@@ -81,14 +78,12 @@ class LecturerAssignmentController extends \BaseController {
 	 */
 	public function updateLecturer(Turn $turn, Planning $planning)
 	{
-		Session::set('plannings_edit_tabindex', 1);
 		// TODO check if the sum of semester periods per weeks exceeds the semester periods per week of the course
 		$employee = Employee::findOrFail(Input::get('employee_id'));		
 
 		// log
 		foreach ($planning->employees as $e) {
-			if ($e->id == $employee->id)
-			{
+			if ($e->id == $employee->id) {
 				$planninglog = new Planninglog();
 				$planninglog->logUpdatedPlanningEmployee($planning, $turn, $e, Input::get('semester_periods_per_week'));
 			}
@@ -109,8 +104,6 @@ class LecturerAssignmentController extends \BaseController {
 	*/
 	public function detachLecturer(Turn $turn, Planning $planning)
 	{
-		Session::set('plannings_edit_tabindex', 1);
-
 		// detach
 		$employee = Employee::findOrFail(Input::get('employee_id'));
 		$planning->employees()->detach($employee->id);
@@ -130,40 +123,41 @@ class LecturerAssignmentController extends \BaseController {
 	*/
 	public function copyLecturer(Turn $turn, Planning $planning)
 	{
-		$source_planning = Planning::findOrFail(Input::get('source_planning_id'));
-		$all_employees_copied = true;
+		$sourcePlanning = Planning::findOrFail(Input::get('source_planning_id'));
+		$allEmployeesCopied = true;
 		$message = "";
 		// if size of $planning->employee is higher than 0, check for duplicates
-		if ($planning->employees()->count() > 0)
-		{
-			$current_employee_ids = $this->getIds($planning->employees);
+		if ($planning->employees()->count() > 0) {
+			$currentEmployeeIds = array_fetch($planning->employees->toArray(), 'id');
 
-			foreach ($source_planning->employees as $spe) {
-				if (!in_array($spe->id, $current_employee_ids))
-				{
-					$planning->employees()->attach($spe->id, array('semester_periods_per_week' => $spe->pivot->semester_periods_per_week));
+			foreach ($sourcePlanning->employees as $sourcePlanningEmployee) {
+				if (!in_array($sourcePlanningEmployee->id, $currentEmployeeIds)) {
+					$planning->employees()->attach(
+						$sourcePlanningEmployee->id, 
+						array('semester_periods_per_week' => $sourcePlanningEmployee->pivot->semester_periods_per_week
+							)
+						);
 					// log
 					$planninglog = new Planninglog();
-					$planninglog->logCopiedPlanningEmployee($planning, $turn, $spe);
-				}
-				else
-				{
-					$all_employees_copied = false;
-					$message .= $spe->firstname.' '.$spe->name.'; ';
+					$planninglog->logCopiedPlanningEmployee($planning, $turn, $sourcePlanningEmployee);
+				} else {
+					$allEmployeesCopied = false;
+					$message .= $sourcePlanningEmployee->firstname.' '.$sourcePlanningEmployee->name.'; ';
 				}
 			}
-		}
-		else
-		{
-			foreach ($source_planning->employees as $e) {
-				$planning->employees()->attach($e->id, array('semester_periods_per_week' => $e->pivot->semester_periods_per_week));
+		} else {
+			foreach ($sourcePlanning->employees as $e) {
+				$planning->employees()->attach(
+					$e->id, 
+					array('semester_periods_per_week' => $e->pivot->semester_periods_per_week)
+					);
 				// log
 				$planninglog = new Planninglog();
 				$planninglog->logCopiedPlanningEmployee($planning, $turn, $e);
 			}
 		}
-		if ($all_employees_copied)
-		{
+
+		if ($allEmployeesCopied) {
 			Flash::success('Mitarbeiter wurden erfolgreich übernommen.');
 			return Redirect::back();
 		}
