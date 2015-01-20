@@ -1,21 +1,37 @@
-## Laravel PHP Framework
+## Course Planning Management System
+ [![License](https://poser.pugx.org/laravel/framework/license.png)](https://packagist.org/packages/laravel/framework)
 
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/version.png)](https://packagist.org/packages/laravel/framework) [![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.png)](https://packagist.org/packages/laravel/framework) [![Build Status](https://travis-ci.org/laravel/framework.png)](https://travis-ci.org/laravel/framework) [![License](https://poser.pugx.org/laravel/framework/license.png)](https://packagist.org/packages/laravel/framework)
+The Course Planning Management System (CPMS) should support the course planning of department or faculty from early phases of the planning to scheduling the courses. The main focus of CPMS is to optimize the cooperative work between the involved persons throughout the whole process.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, and caching.
+The Prototype was build as a part of a master thesis at the [Department of Informatics at the University of Hamburg](www.inf.uni-hamburg.de), to show how a web based software can support the cooperative work between different roles, reduce time effort, number of documents and trascription errors, and make the process more transparent.
 
-Laravel aims to make the development process a pleasing one for the developer without sacrificing application functionality. Happy developers make the best code. To this end, we've attempted to combine the very best of what we have seen in other web frameworks, including frameworks implemented in other languages, such as Ruby on Rails, ASP.NET MVC, and Sinatra.
+The CPMS is based on the [Laravel Framework](http://laravel.com) v. 4.2 and [Bootstrap](https://github.com/twbs/bootstrap) v.3.*.
+### Further used packages
 
-Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+- [Laracasts/Flash](https://github.com/laracasts/flash)
+- [Zizaco/Entrust](https://github.com/zizaco/entrust)
+- [Laravelbook/Ardent](https://github.com/laravelbook/ardent)
 
-## Official Documentation
+### Further extensions
+- [Datatables](http://www.datatables.net/)
+- [FullCalendar](http://fullcalendar.io/)
 
-Documentation for the entire framework can be found on the [Laravel website](http://laravel.com/docs).
+## Current Version
 
-### Contributing To Laravel
+The current version of CPMS is an early-stage prototype, which contains only a few fully functional features.
 
-**All issues and pull requests should be filed on the [laravel/framework](http://github.com/laravel/framework) repository.**
+### Core data management
+- core data management like degree courses, modules, courses, employees, research groups
+- user management, create and assign roles
+
+### Medium-term planning
+- assigning employees to modules
+
+### Semester planning
+-  generate course planning through different options like copying plannings from last semester or generate them from the medium-term planning
+-  assign or copy lecturer and rooms to plannings
+-  generate schedule for a specific semester of a degree course
 
 ### License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+The Course Planning Management System is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
