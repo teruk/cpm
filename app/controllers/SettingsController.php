@@ -20,7 +20,7 @@ class SettingsController extends \BaseController
 	 */
 	public function editCurrentTurn()
 	{
-		$turns = Turn::getList();
+		$turns = Turn::getAvailableTurns();
 		return View::make('settings.editCurrentTurn', compact('turns'));
 	}
 

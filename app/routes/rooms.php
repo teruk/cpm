@@ -27,15 +27,4 @@ Route::group(['prefix' => 'rooms', 'before' => 'auth'], function()
 		'as' => 'saveRoom_path',
 		'uses' => 'RoomsController@store'
 		]);
-
-	/** room search routes */
-	Route::get('showRoomSearchForm', [
-		'as' => 'showRoomSearchForm_path',
-		'uses' => 'RoomSearchController@showRoomSearch'
-		]);
-
-	Route::patch('showResults', [
-		'as' => 'showRoomSearchResults_path',
-		'uses' => 'RoomSearchController@search'
-		]);
 });

@@ -194,7 +194,7 @@
                                 <th>Name</th>
                                 <th>Arbeitsbereich</th>
                                 <th>Angestellt bis</th>
-                                <th>nach am FB?</th>
+                                <th>noch am FB?</th>
                             </tr>
                         </thead>
                         <tbody>

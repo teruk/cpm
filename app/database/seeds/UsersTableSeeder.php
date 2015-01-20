@@ -7,7 +7,7 @@ class UsersTableSeeder extends Seeder
 		DB::table('users')->delete();
 		$users = array(
 				['name' => 'Administrator', 'email' => 'admin@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
-				['name' => 'LehplanerIn', 'email' => 'lp@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
+				['name' => 'LehrplanerIn', 'email' => 'lp@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
 				['name' => 'RaumplanerIn', 'email' => 'rp@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
 				['name' => 'Hans Müller', 'email' => 'hm@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
 				['name' => 'Sabine Schulz', 'email' => 'ss@lpm.de', 'password' => Hash::make('passwort'), 'deactivated' => 0, 'last_login' => new Datetime],
