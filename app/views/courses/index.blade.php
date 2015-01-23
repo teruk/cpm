@@ -31,7 +31,7 @@
         } );
      
         // Order by the grouping
-        $('#data_table tbody').on( 'click', 'tr.group', function () {
+        $('#data_table tbody').on( 'click', 'tr.info', function () {
             var currentOrder = table.order()[0];
             if ( currentOrder[0] === 3 && currentOrder[1] === 'asc' ) {
                 table.order( [ 3, 'desc' ] ).draw();
