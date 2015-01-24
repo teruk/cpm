@@ -4,23 +4,21 @@
 	
 			<!-- <ul class="list-unstyled">
 				<li><b>Planungsoptionen:</b></li>
-				<li>{{ link_to_route('editPlanningInformation_path', 'Informationen bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-sm btn-link']) }}</li>
-				<li>{{ link_to_route('editPlanningLecturer_path', 'Lehrende verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-sm btn-link']) }}</li>
-				<li>{{ link_to_route('editPlanningRoom_path', 'Räume verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-sm btn-link']) }}</li>
-				<li>{{ link_to_route('editPlanningExam_path', 'Modulabschluss bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-sm btn-link']) }}</li>
-				<li>{{ link_to_route('showPlanningProtocol_path', 'Änderungsprotokoll', [$turn->id, $planning->id], ['class' => 'btn btn-sm btn-link']) }}</li>
+				<li>{{ link_to_route('editPlanningInformation_path', 'Informationen bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-link']) }}</li>
+				<li>{{ link_to_route('editPlanningLecturer_path', 'Lehrende verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-link']) }}</li>
+				<li>{{ link_to_route('editPlanningRoom_path', 'Räume verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-link']) }}</li>
+				<li>{{ link_to_route('editPlanningExam_path', 'Modulabschluss bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-link']) }}</li>
+				<li>{{ link_to_route('showPlanningProtocol_path', 'Änderungsprotokoll', [$turn->id, $planning->id], ['class' => 'btn btn-link']) }}</li>
 			</ul> -->
 
-			<div class="btn-group-vertical">
+			<div class="btn-group-vertical btn-block">
 				{{ link_to_route('editPlanningInformation_path', 'Informationen bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-default']) }}
 				{{ link_to_route('editPlanningLecturer_path', 'Lehrende verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-default']) }}
 				{{ link_to_route('editPlanningRoom_path', 'Räume und Zeiten verwalten', [$turn->id, $planning->id], ['class' => 'btn btn-default']) }}
 				{{ link_to_route('editPlanningExam_path', 'Modulabschluss bearbeiten', [$turn->id, $planning->id], ['class' => 'btn btn-default']) }}
 				{{ link_to_route('showPlanningProtocol_path', 'Änderungsprotokoll', [$turn->id, $planning->id], ['class' => 'btn btn-default']) }}
+				{{ link_to_route('showTurnPlannings_path', 'Zurück zur Übersicht', [$turn->id], ['class' => 'btn btn-link']) }}
 			</div>
-			<ul class="list-unstyled">
-				<li>{{ link_to_route('showTurnPlannings_path', 'Zurück zur Übersicht', [$turn->id], ['class' => 'btn btn-sm btn-link']) }}</li>
-			</ul>
 
 			<ul class="list-unstyled">
 				<li><b>Letzte Änderung:</b></li>
