@@ -24,7 +24,7 @@
 				Semesterplanung:
 				<ul>
 					<li>Generierung der Planung aus der Mittelfristigen Lehrplanung</li>
-					<li>Kopieren einen oder mehrere Lehrveranstaltungen aus vergangenen Semestern</li>
+					<li>Kopieren einer oder mehrerer Lehrveranstaltungen aus vergangenen Semestern</li>
 					<li>Kopieren eines kompletten Semesters</li>
 					<li>Planung einzelner Lehrveranstaltungen oder ganzer Module</li>
 					<li>Zuordnung von Lehrenden und Räumen zu Planungen</li>
